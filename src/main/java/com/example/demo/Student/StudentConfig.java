@@ -16,14 +16,14 @@ public class StudentConfig {
             Student serdar = new Student(
                 "Serdar",
                 "serdarakyol55@outlook.com",
-                LocalDate.of(1234, Month.MAY, 5),
-                21);
+                LocalDate.of(1234, Month.MAY, 5)
+                );
 
         Student anotherStudent = new Student(
             "anotherStudent",
             "anotherStudent@outlook.com",
-            LocalDate.of(1235, Month.MAY, 4),
-            21);
+            LocalDate.of(1235, Month.MAY, 4)
+            );
 
         repository.saveAll(List.of(serdar, anotherStudent));
         };
