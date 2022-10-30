@@ -23,10 +23,10 @@ public class StudentController {
 
     @GetMapping
 	public List<Student> getStudent(){
-		return studentService.getStudent();
+		return studentService.getStudents();
 	}
 
-    @PostMapping(value="path")
+    @PostMapping
     public void registerNewStudent(@RequestBody Student student){
         studentService.addNewStudent(student);
     }

@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table 
 public class Student {
-     @Id
+    @Id
     @SequenceGenerator(
         name = "student_sequence",
         sequenceName = "student_sequence",
@@ -94,7 +94,7 @@ public class Student {
         return "Student{" +
                "id=" + id +
                ", name='" + name + '\'' + 
-               ", email'" + email + '\'' +
+               ", email='" + email + '\'' +
                ", dob=" + dob +
                ", age=" + age +
                '}';
