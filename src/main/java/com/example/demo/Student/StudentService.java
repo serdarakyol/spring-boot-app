@@ -5,8 +5,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +22,13 @@ public class StudentService {
 		return studentRepository.findAll();
 	}
 
-	public ResponseEntity<String> addNewStudent(Student student) {
+	public void addNewStudent(Student student) {
 		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
 		if (studentOptional.isPresent()) {
-			return new ResponseEntity<String>("User exist", HttpStatus.BAD_REQUEST); // IllegalStateException("email taken");
+			throw new IllegalStateException("email taken");
 		}
 		studentRepository.save(student);
 		System.out.println(student);
-		return new ResponseEntity<String>("User created", HttpStatus.CREATED);
 	}
 
 	public void deleteStudent(Long studentId) {
