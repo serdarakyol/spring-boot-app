@@ -22,6 +22,12 @@ public class StudentService {
 		return studentRepository.findAll();
 	}
 
+	public Student getStudentById(Long studentId) {
+		Student student = studentRepository.findById(studentId)
+				.orElseThrow(() -> new IllegalStateException("Student with ID " + studentId + " doesn't exist"));
+		return student;
+	}
+
 	public void addNewStudent(Student student) {
 		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
 		if (studentOptional.isPresent()) {
