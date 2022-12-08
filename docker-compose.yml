@@ -1,0 +1,33 @@
+version: '3.1'
+services:
+  postgresqldb:
+    image: 'postgres'
+    container_name: postgresqldb
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=learning
+      - POSTGRES_PASSWORD=sa123456
+      - POSTGRES_DB=student
+    networks:
+      - spring-postgres
+
+  app:
+    image: 'crudapp:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - postgresqldb
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresqldb:5432/student
+      - SPRING_DATASOURCE_USERNAME=learning
+      - SPRING_DATASOURCE_PASSWORD=sa123456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - spring-postgres
+
+networks:
+  spring-postgres:
