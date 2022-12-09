@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+SOURCE="${BASH_SOURCE[0]}"
+ROOT_DIR=$(realpath ${SOURCE})
+
+function displayUsage() {
+    echo "
+Usage: $0 <command>
+<command>:
+    help
+        Display this help message.
+    build-jar
+        Build jar file
+"
+}
+
+function buildJar() {
+    if ! [ -x "$(command -v mvn --version)" ]; then
+        echo "Installing maven"
+        apt install maven
+    fi
+    mvn clean package
+}
+
+function main() {
+    case "${1-notset}" in
+        help)
+            displayUsage
+            ;;
+        build-jar)
+            buildJar "${@}"
+            ;;
+        *)
+            >&2 echo "Error: Unknown command: '${1-}'"
+            >&2 displayUsage
+            exit 1
+    esac
+}
+
+main "$@"
