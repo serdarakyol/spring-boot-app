@@ -24,6 +24,6 @@ jobs:
       - name: Save Jar file
         uses: actions/upload-artifact@v3
         with:
-          name: jar-file
-          path: target/jar-file.jar
+          name: demo-0.0.1-SNAPSHOT
+          path: target/demo-0.0.1-SNAPSHOT.jar
           retention-days: 1
