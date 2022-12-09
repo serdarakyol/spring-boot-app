@@ -20,9 +20,11 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Build Jar file
-        run: ./project-dev build-jar
+        run: |
+          mkdir -p dist
+          ./project-dev build-jar
       - name: Save Jar file
         uses: actions/upload-artifact@v3
         with:
           name: jar-file
-          path: /
+          path: dist/
