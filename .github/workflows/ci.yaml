@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  default:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,6 +21,8 @@ jobs:
           distribution: 'adopt'
       - name: Build Jar file
         run: ./project-dev build-jar
+      - name: Build APP
+        run: sudo ./project-dev code-run
       - name: Save Jar file
         uses: actions/upload-artifact@v3
         with:
