@@ -11,6 +11,8 @@ Usage: $0 <command>
         Display this help message.
     build-jar
         Build jar file
+    code-run
+        Runs containerized app
 "
 }
 
@@ -20,6 +22,37 @@ function buildJar() {
         apt install maven
     fi
     mvn clean package -DskipTests
+    costumized_success_message "Jar file built succesfully"
+}
+
+function costumized_error_message () {
+    local COLOR_RED="$(tput setaf 9 2>/dev/null || :)"
+    local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
+    echo "${COLOR_RED}ERROR: "$1"${COLOR_RESET}" 1>&2;
+    exit 1
+}
+
+function costumized_success_message () {
+    local COLOR_GREEN="$(tput setaf 10 2>/dev/null || :)"
+    local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
+    echo "${COLOR_GREEN}INFO: "$1"${COLOR_RESET}" 1>&2;
+}
+
+function codeRun() {
+    # check if script run with sudo
+    if [ "$EUID" -ne 0 ]; then 
+        costumized_error_message "code-run must run with sudo privileges."
+    fi
+
+    # check if docker installed
+    if ! [ -x "$(command -v docker --version)" ]; then
+        costumized_error_message "Docker Desktop is not installed. 
+        Please install Docker Desktop from https://docs.docker.com/get-docker/"
+    fi
+
+    # build app
+    docker build -t crudapp .
+    docker compose up
 }
 
 function main() {
@@ -29,6 +62,9 @@ function main() {
             ;;
         build-jar)
             buildJar "${@}"
+            ;;
+        code-run)
+            codeRun "${@}"
             ;;
         *)
             >&2 echo "Error: Unknown command: '${1-}'"
