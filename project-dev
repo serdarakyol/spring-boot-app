@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# as
 SOURCE="${BASH_SOURCE[0]}"
 ROOT_DIR="$(dirname "$(realpath ${SOURCE})")"
 
