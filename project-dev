@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SOURCE="${BASH_SOURCE[0]}"
-ROOT_DIR="$(dirname "$(realpath ${SOURCE})")"
+ROOT_DIR=$(realpath ${SOURCE})
 
 function displayUsage() {
     echo "
@@ -51,6 +51,7 @@ function codeRun() {
     fi
 
     # build app
+    docker build -t crudapp .
     docker compose up
 }
 
