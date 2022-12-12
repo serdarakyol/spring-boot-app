@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.validator.routines.EmailValidator;
 
 @Service
 public class StudentService {
@@ -31,7 +32,13 @@ public class StudentService {
 	public void addNewStudent(Student student) {
 		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
 		if (studentOptional.isPresent()) {
-			throw new IllegalStateException("email taken");
+			throw new IllegalStateException("E-mail is taken. Please add another E-mail");
+		}
+
+		boolean isMailValid = EmailValidator.getInstance().isValid(student.getEmail());
+		// check if mail is valid
+		if (!isMailValid){
+			throw new IllegalStateException("The E-mail is not valid. Please write a valid e-mail");
 		}
 		studentRepository.save(student);
 		System.out.println(student);
