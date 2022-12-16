@@ -51,7 +51,6 @@ function codeRun() {
     fi
 
     # build app
-    docker build -t crudapp .
     docker compose up
 }
 
