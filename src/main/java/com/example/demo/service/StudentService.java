@@ -41,8 +41,8 @@ public class StudentService {
 			throw new IllegalStateException("E-mail is taken. Please add another E-mail");
 		}
 
-		boolean isMailValid = emailValidator.isMailValid(student.getEmail()); //utils.isMailValid(student.getEmail());
 		// check if mail is valid
+		boolean isMailValid = emailValidator.isMailValid(student.getEmail());
 		if (!isMailValid){
 			throw new IllegalStateException("The E-mail is not valid. Please write a valid e-mail");
 		}
