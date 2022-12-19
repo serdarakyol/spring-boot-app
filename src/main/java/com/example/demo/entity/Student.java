@@ -6,6 +6,9 @@ import java.time.Period;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.GeneratedValue;
@@ -17,11 +20,13 @@ public class Student {
     @Id
     @SequenceGenerator(name = "student_sequence", sequenceName = "student_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_sequence")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
     private String name;
     private String email;
     private LocalDate dob;
     @Transient
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Integer age;
 
     public Student() {
@@ -67,20 +72,5 @@ public class Student {
 
     public Integer getAge() {
         return Period.between(this.dob, LocalDate.now()).getYears();
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", dob=" + dob +
-                ", age=" + age +
-                '}';
     }
 }
