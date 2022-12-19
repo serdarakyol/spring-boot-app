@@ -3,7 +3,13 @@ package com.example.demo.entity;
 import java.time.LocalDate;
 import java.time.Period;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 @Entity
 @Table
@@ -22,17 +28,6 @@ public class Student {
 
     }
 
-    public Student(Long id,
-            String name,
-            String email,
-            LocalDate dob) {
-
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.dob = dob;
-    }
-
     public Student(String name,
             String email,
             LocalDate dob) {
@@ -44,10 +39,6 @@ public class Student {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
