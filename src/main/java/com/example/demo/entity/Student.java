@@ -3,12 +3,11 @@ package com.example.demo.entity;
 import java.time.LocalDate;
 import java.time.Period;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.GeneratedValue;
