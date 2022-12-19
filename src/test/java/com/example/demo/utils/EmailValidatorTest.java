@@ -27,7 +27,9 @@ public class EmailValidatorTest {
         };
 
         for (int i=0; i<validMails.length; i++){
+            // test valid e-mails
             assertEquals(true, emailValidator.isMailValid(validMails[i]));
+            // test invalid e-mails
             assertEquals(false, emailValidator.isMailValid(inValidMails[i]));
         }
     }
