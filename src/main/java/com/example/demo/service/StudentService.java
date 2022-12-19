@@ -1,4 +1,4 @@
-package com.example.demo.Student;
+package com.example.demo.service;
 
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +7,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.validator.routines.EmailValidator;
+
+import com.example.demo.entity.Student;
+import com.example.demo.repository.StudentRepository;
+import com.example.demo.utils.EmailValidator;
 
 @Service
 public class StudentService {
@@ -15,10 +18,13 @@ public class StudentService {
 	private final StudentRepository studentRepository;
 
 	@Autowired
+    private EmailValidator emailValidator;
+
+	@Autowired
 	public StudentService(StudentRepository studentRepository) {
 		this.studentRepository = studentRepository;
 	}
-
+	
 	public List<Student> getStudents() {
 		return studentRepository.findAll();
 	}
@@ -35,8 +41,8 @@ public class StudentService {
 			throw new IllegalStateException("E-mail is taken. Please add another E-mail");
 		}
 
-		boolean isMailValid = EmailValidator.getInstance().isValid(student.getEmail());
 		// check if mail is valid
+		boolean isMailValid = emailValidator.isMailValid(student.getEmail());
 		if (!isMailValid){
 			throw new IllegalStateException("The E-mail is not valid. Please write a valid e-mail");
 		}
