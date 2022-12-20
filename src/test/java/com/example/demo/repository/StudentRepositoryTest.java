@@ -26,10 +26,10 @@ public class StudentRepositoryTest {
 
         studentRepository.save(student);
         
-        /*Student studentRecord = studentRepository.findStudentByEmail("serdarakyol55@outlook.com").get();
+        Student studentRecord = studentRepository.findStudentByEmail("serdarakyol55@outlook.com").get();
 
         assertEquals(student.getName(), studentRecord.getName());
         assertEquals(student.getEmail(), studentRecord.getEmail());
-        assertEquals(student.getAge(), studentRecord.getAge());*/
+        assertEquals(student.getAge(), studentRecord.getAge());
     }
 }
