@@ -32,5 +32,7 @@ public class StudentRepositoryTest {
         assertEquals(student.getName(), studentRecord.getName());
         assertEquals(student.getEmail(), studentRecord.getEmail());
         assertEquals(student.getAge(), studentRecord.getAge());
+        assertEquals(student.getDob(), studentRecord.getDob());
+        assertEquals(student.getId(), studentRecord.getId());
     }
 }
