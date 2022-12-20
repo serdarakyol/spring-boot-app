@@ -1,7 +1,6 @@
 package com.example.demo.repository;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +17,18 @@ public class StudentRepositoryTest {
 
     @Test
     void testFindStudentByEmail() {
+        // Given
         Student student = new Student(
             "Serdar",
             "serdarakyol55@outlook.com",
             LocalDate.parse("2000-03-29")
         );
-
         studentRepository.save(student);
         
+        // When
         Student studentRecord = studentRepository.findStudentByEmail("serdarakyol55@outlook.com").get();
 
+        // Then
         assertEquals(student.getName(), studentRecord.getName());
         assertEquals(student.getEmail(), studentRecord.getEmail());
         assertEquals(student.getAge(), studentRecord.getAge());
