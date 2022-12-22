@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.example.demo.entity.Student;
 
@@ -29,10 +29,6 @@ public class StudentRepositoryTest {
         Student studentRecord = studentRepository.findStudentByEmail("serdarakyol55@outlook.com").get();
 
         // Then
-        assertEquals(student.getName(), studentRecord.getName());
-        assertEquals(student.getEmail(), studentRecord.getEmail());
-        assertEquals(student.getAge(), studentRecord.getAge());
-        assertEquals(student.getDob(), studentRecord.getDob());
-        assertEquals(student.getId(), studentRecord.getId());
+        assertThat(studentRecord).isEqualTo(student);
     }
 }
