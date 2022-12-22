@@ -30,23 +30,21 @@ public class StudentServiceTest {
     }
 
     @Test
-    void testAddNewStudent() {
+    void testAddNewStudentSuccess() {
         // Given
         Student student = new Student(
-            "Serdar",
-            "serdarakyol55@outlook.com",
+            "test",
+            "test@outlook.com",
             LocalDate.parse("2000-03-29")
         );
 
+        // When
         studentService.addNewStudent(student);
 
-        // When
+        // Then
         ArgumentCaptor<Student> studentArgumentCaptor = ArgumentCaptor.forClass(Student.class);
-
         verify(studentRepository).save(studentArgumentCaptor.capture());
-
         Student record = studentArgumentCaptor.getValue();
-
         assertThat(record).isEqualTo(student);
     }
 

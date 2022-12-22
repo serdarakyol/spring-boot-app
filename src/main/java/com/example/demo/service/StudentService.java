@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,19 +11,24 @@ import com.example.demo.entity.Student;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.utils.EmailValidator;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class StudentService {
 
 	private final StudentRepository studentRepository;
 
-	@Autowired
-    private EmailValidator emailValidator;
+    private EmailValidator emailValidator = new EmailValidator();
 
+	/*
+	Note to me!!!
+	@RequiredArgsConstructor does the same thing like below code
 	@Autowired
 	public StudentService(StudentRepository studentRepository) {
 		this.studentRepository = studentRepository;
 	}
-	
+	*/
 	public List<Student> getStudents() {
 		return studentRepository.findAll();
 	}
