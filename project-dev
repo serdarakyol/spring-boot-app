@@ -21,7 +21,7 @@ function buildJar() {
         echo "Installing maven"
         apt install maven
     fi
-    mvn -P ci clean package && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file couldn't build"
+    mvn -P ci clean package -DskipTests && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file couldn't build"
 }
 
 function costumized_error_message () {
