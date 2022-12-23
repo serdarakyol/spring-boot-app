@@ -22,40 +22,40 @@ public class StudentServiceTest {
     @Mock
     private StudentRepository studentRepository;
     private StudentService studentService;
+    private long studentId = 1;
+    // Given
+    private Student student = new Student(
+        "test2",
+        "test2@outlook.com",
+        LocalDate.parse("2000-03-29")
+    );
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         studentService = new StudentService(studentRepository);
+        // When
+        studentService.addNewStudent(student);
     }
 
     @Test
     void testAddNewStudentSuccess() {
-        // Given
-        Student student = new Student(
-            "test",
-            "test@outlook.com",
-            LocalDate.parse("2000-03-29")
-        );
-
-        // When
-        studentService.addNewStudent(student);
-
         // Then
         ArgumentCaptor<Student> studentArgumentCaptor = ArgumentCaptor.forClass(Student.class);
         verify(studentRepository).save(studentArgumentCaptor.capture());
-        Student record = studentArgumentCaptor.getValue();
-        assertThat(record).isEqualTo(student);
+        Student studentRecord = studentArgumentCaptor.getValue();
+        assertThat(studentRecord).isEqualTo(student);
     }
 
     @Test
     void testDeleteStudent() {
-
+        //studentService.deleteStudent((long) 1);
     }
 
     @Test
     void testGetStudentById() {
-
+        Student studentRecord = studentService.getStudentById(studentId);
+        assertThat(studentRecord).isEqualTo(student);
     }
 
     @Test
