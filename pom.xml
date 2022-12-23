@@ -43,6 +43,15 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+        <profile>
+            <id>ci</id>
+            <properties>
+                <activatedProperties>ci</activatedProperties>
+            </properties>
+        </profile>
+    </profiles>
+
 	<build>
 		<plugins>
 			<plugin>
