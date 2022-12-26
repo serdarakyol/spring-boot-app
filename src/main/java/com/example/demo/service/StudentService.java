@@ -71,6 +71,10 @@ public class StudentService {
 			student.setName(name);
 		}
 
+		if (!emailValidator.isMailValid(email)) {
+			throw new IllegalStateException("E-mail is not valid");
+		}
+
 		if (email != null && email.length() > 0 && !Objects.equals(student.getEmail(), email)) {
 			Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
 			// check if e-mail taken
