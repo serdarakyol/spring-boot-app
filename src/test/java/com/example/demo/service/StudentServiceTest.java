@@ -22,7 +22,6 @@ public class StudentServiceTest {
     @Mock
     private StudentRepository studentRepository;
     private StudentService studentService;
-    private long studentId = 1;
     // Given
     private Student student = new Student(
         "test2",
@@ -45,27 +44,5 @@ public class StudentServiceTest {
         verify(studentRepository).save(studentArgumentCaptor.capture());
         Student studentRecord = studentArgumentCaptor.getValue();
         assertThat(studentRecord).isEqualTo(student);
-    }
-
-    @Test
-    void testDeleteStudent() {
-        //studentService.deleteStudent((long) 1);
-    }
-
-    @Test
-    void testGetStudentById() {
-        Student studentRecord = studentService.getStudentById(studentId);
-        assertThat(studentRecord).isEqualTo(student);
-    }
-
-    @Test
-    void testGetStudents() {
-        studentService.getStudents();
-        verify(studentRepository).findAll();
-    }
-
-    @Test
-    void testUpdateStudent() {
-
     }
 }
