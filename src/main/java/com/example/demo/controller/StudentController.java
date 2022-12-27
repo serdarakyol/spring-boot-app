@@ -47,13 +47,14 @@ public class StudentController {
         studentService.addNewStudent(student);
         return BodyResponses.CREATED;
     }
-
     @DeleteMapping(path = "{studentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStudent(@PathVariable("studentId") Long studentId) {
         studentService.deleteStudent(studentId);
     }
 
     @PutMapping(path = "{studentId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateStudent(
             @PathVariable("studentId") Long studentId,
             @RequestParam(required = false) String name,

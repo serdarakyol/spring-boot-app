@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Student;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.utils.Utils;
 
@@ -16,9 +18,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
-	private final String  emailTakenMsg= "E-mail is taken. Please add another E-mail";
+	private final String emailTakenMsg= "E-mail is taken. Please add another E-mail";
 	private final String emailNotValidMsg = "The E-mail is not valid. Please write a valid e-mail";
-	private final String studentExistMsg = "Student doesn't exist, student ID: ";
+	private final String studentNotExistMsg = "Student doesn't exist, student ID: ";
 
 	private final StudentRepository studentRepository;
     private Utils emailValidator = new Utils();
@@ -39,7 +41,7 @@ public class StudentServiceImpl implements StudentService{
 	@Override
 	public Student getStudentById(Long studentId) {
 		Student student = studentRepository.findById(studentId)
-				.orElseThrow(() -> new IllegalStateException(studentExistMsg + studentId));
+				.orElseThrow(() -> new NotFoundException(studentNotExistMsg + studentId));
 		return student;
 	}
 
@@ -47,13 +49,13 @@ public class StudentServiceImpl implements StudentService{
 	public void addNewStudent(Student student) {
 		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
 		if (studentOptional.isPresent()) {
-			throw new IllegalStateException(emailTakenMsg);
+			throw new BadRequestException(emailTakenMsg);
 		}
 
 		// check if mail is valid
 		boolean isMailValid = emailValidator.isMailValid(student.getEmail());
 		if (!isMailValid){
-			throw new IllegalStateException(emailNotValidMsg);
+			throw new BadRequestException(emailNotValidMsg);
 		}
 		studentRepository.save(student);
 	}
@@ -62,7 +64,7 @@ public class StudentServiceImpl implements StudentService{
 	public void deleteStudent(Long studentId) {
 		boolean isExist = studentRepository.existsById(studentId);
 		if (!isExist) {
-			throw new IllegalStateException(studentExistMsg + studentId);
+			throw new NotFoundException(studentNotExistMsg + studentId);
 		}
 		studentRepository.deleteById(studentId);
 	}
@@ -71,21 +73,21 @@ public class StudentServiceImpl implements StudentService{
 	@Override
 	public void updateStudent(Long studentId, String name, String email) {
 		Student student = studentRepository.findById(studentId)
-				.orElseThrow(() -> new IllegalStateException(studentExistMsg + studentId));
+				.orElseThrow(() -> new NotFoundException(studentNotExistMsg + studentId));
 
 		if (name != null && name.length() > 0 && !Objects.equals(student.getName(), name)) {
 			student.setName(name);
 		}
 
 		if (!emailValidator.isMailValid(email)) {
-			throw new IllegalStateException(emailNotValidMsg);
+			throw new BadRequestException(emailNotValidMsg);
 		}
 
 		if (email != null && email.length() > 0 && !Objects.equals(student.getEmail(), email)) {
 			Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
 			// check if e-mail taken
 			if (studentOptional.isPresent()) {
-				throw new IllegalStateException(emailTakenMsg);
+				throw new BadRequestException(emailTakenMsg);
 			}
 			student.setEmail(email);
 		}
