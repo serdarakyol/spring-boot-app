@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.demo.entity.Student;
 import com.example.demo.repository.StudentRepository;
+import com.example.demo.serviceIml.StudentServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceTest {

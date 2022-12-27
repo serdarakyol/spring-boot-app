@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Student;
-import com.example.demo.service.StudentServiceImpl;
+import com.example.demo.serviceIml.StudentServiceImpl;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,18 +48,18 @@ public class StudentController {
         return BodyResponses.CREATED;
     }
     @DeleteMapping(path = "{studentId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteStudent(@PathVariable("studentId") Long studentId) {
+    public String deleteStudent(@PathVariable("studentId") Long studentId) {
         studentService.deleteStudent(studentId);
+        return BodyResponses.DELETED;
     }
 
     @PutMapping(path = "{studentId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateStudent(
+    public String updateStudent(
             @PathVariable("studentId") Long studentId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email) {
         studentService.updateStudent(studentId, name, email);
+        
+        return BodyResponses.UPDATED;
     }
-
 }

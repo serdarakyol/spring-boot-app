@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.serviceIml;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +11,7 @@ import com.example.demo.entity.Student;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.repository.StudentRepository;
+import com.example.demo.service.StudentService;
 import com.example.demo.utils.Utils;
 
 import lombok.RequiredArgsConstructor;
