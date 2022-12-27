@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 public class EmailValidatorTest {
     @Test
     void testIsMailValid() {
-        EmailValidator emailValidator = new EmailValidator();
+        Utils utils = new Utils();
         String[] validMails = {
             "serdarakyol55@hotmail.com",
             "serdar@akyol.com",
@@ -28,9 +28,9 @@ public class EmailValidatorTest {
 
         for (int i=0; i<validMails.length; i++){
             // test valid e-mails
-            assertEquals(true, emailValidator.isMailValid(validMails[i]));
+            assertEquals(true, utils.isMailValid(validMails[i]));
             // test invalid e-mails
-            assertEquals(false, emailValidator.isMailValid(inValidMails[i]));
+            assertEquals(false, utils.isMailValid(inValidMails[i]));
         }
     }
 }
