@@ -31,13 +31,18 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getStudent() {
+    public List<Student> getStudents() {
         return studentService.getStudents();
     }
 
-    @GetMapping(path = "{studentId}")
-    public Student getStudentById(@RequestParam("studentId") Long studentId) {
+    @GetMapping(path = "by-id/{studentId}")
+    public Student getStudentById(@PathVariable("studentId") Long studentId) {
         return studentService.getStudentById(studentId);
+    }
+
+    @GetMapping(path = "by-email/{studentEmail}")
+    public Student getStudentByEmail(@PathVariable(value = "studentEmail") String email) {
+        return studentService.getStudentByEmail(email);
     }
 
     @PostMapping
