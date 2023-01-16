@@ -21,7 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class StudentServiceImpl implements StudentService{
 	private final String emailTakenMsg= "E-mail is taken. Please add another E-mail";
 	private final String emailNotValidMsg = "The E-mail is not valid. Please write a valid e-mail";
-	private final String studentNotExistMsg = "Student doesn't exist, student ID: ";
+	private final String studentNotExistByIdMsg = "Student doesn't exist, student ID: ";
+	private final String studentNotExistByEmailMsg = "Student doesn't exist, student E-MAIL: ";
 
 	private final StudentRepository studentRepository;
     private Utils emailValidator = new Utils();
@@ -42,13 +43,17 @@ public class StudentServiceImpl implements StudentService{
 	@Override
 	public Student getStudentById(Long studentId) {
 		Student student = studentRepository.findById(studentId)
-				.orElseThrow(() -> new NotFoundException(studentNotExistMsg + studentId));
+				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
 		return student;
 	}
 
 	@Override
 	public Student getStudentByEmail(String email){
-		return studentRepository.findStudentByEmail(email).get();
+		Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
+		if (studentOptional.isEmpty()) {
+			throw new NotFoundException(studentNotExistByEmailMsg + email);
+		}
+		return studentOptional.get();
 	}
 
 	@Override
@@ -70,7 +75,7 @@ public class StudentServiceImpl implements StudentService{
 	public void deleteStudent(Long studentId) {
 		boolean isExist = studentRepository.existsById(studentId);
 		if (!isExist) {
-			throw new NotFoundException(studentNotExistMsg + studentId);
+			throw new NotFoundException(studentNotExistByIdMsg + studentId);
 		}
 		studentRepository.deleteById(studentId);
 	}
@@ -79,7 +84,7 @@ public class StudentServiceImpl implements StudentService{
 	@Override
 	public void updateStudent(Long studentId, String name, String email) {
 		Student student = studentRepository.findById(studentId)
-				.orElseThrow(() -> new NotFoundException(studentNotExistMsg + studentId));
+				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
 
 		if (name != null && name.length() > 0 && !Objects.equals(student.getName(), name)) {
 			student.setName(name);
