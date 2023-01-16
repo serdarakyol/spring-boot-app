@@ -10,6 +10,7 @@ public interface StudentService {
     public void deleteStudent(Long studentId);
     public void updateStudent(Long studentId, String name, String email);
     public Student getStudentById(Long studentId);
+    public Student getStudentByEmail(String email);
     public List<Student> getStudents();
 
 }

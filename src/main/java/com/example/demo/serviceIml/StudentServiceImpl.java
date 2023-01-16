@@ -47,6 +47,11 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
+	public Student getStudentByEmail(String email){
+		return studentRepository.findStudentByEmail(email).get();
+	}
+
+	@Override
 	public void addNewStudent(Student student) {
 		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
 		if (studentOptional.isPresent()) {
