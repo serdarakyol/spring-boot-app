@@ -23,37 +23,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping(path = "api/v1/student")
 public class StudentController {
 
-    private final StudentServiceImpl studentService;
+    private final StudentServiceImpl studentServiceImpl;
 
     @Autowired
-    public StudentController(StudentServiceImpl studentService) {
-        this.studentService = studentService;
+    public StudentController(StudentServiceImpl studentServiceImpl) {
+        this.studentServiceImpl = studentServiceImpl;
     }
 
     @GetMapping
     public List<Student> getStudents() {
-        return studentService.getStudents();
+        return studentServiceImpl.getStudents();
     }
 
     @GetMapping(path = "by-id/{studentId}")
     public Student getStudentById(@PathVariable("studentId") Long studentId) {
-        return studentService.getStudentById(studentId);
+        return studentServiceImpl.getStudentById(studentId);
     }
 
     @GetMapping(path = "by-email/{studentEmail}")
     public Student getStudentByEmail(@PathVariable(value = "studentEmail") String email) {
-        return studentService.getStudentByEmail(email);
+        return studentServiceImpl.getStudentByEmail(email);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String registerNewStudent(@RequestBody Student student) {
-        studentService.addNewStudent(student);
+        studentServiceImpl.addNewStudent(student);
         return BodyResponses.CREATED;
     }
     @DeleteMapping(path = "{studentId}")
     public String deleteStudent(@PathVariable("studentId") Long studentId) {
-        studentService.deleteStudent(studentId);
+        studentServiceImpl.deleteStudent(studentId);
         return BodyResponses.DELETED;
     }
 
@@ -62,7 +62,7 @@ public class StudentController {
             @PathVariable("studentId") Long studentId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email) {
-        studentService.updateStudent(studentId, name, email);
+        studentServiceImpl.updateStudent(studentId, name, email);
         
         return BodyResponses.UPDATED;
     }
