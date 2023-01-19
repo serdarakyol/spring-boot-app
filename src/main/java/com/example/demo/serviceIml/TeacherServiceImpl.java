@@ -82,6 +82,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+	public Teacher getTeacherById(int teacherId) {
+		Teacher teacher = teacherRepository.findById(teacherId)
+				.orElseThrow(() -> new NotFoundException(teacherNotExistByIdMsg + teacherId));
+		return teacher;
+	}
+
+    @Override
     public List<Teacher> getTeachers() {
         return teacherRepository.findAll();
     }

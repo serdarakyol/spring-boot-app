@@ -52,6 +52,11 @@ public class TeacherController {
         return BodyResponses.DELETED;
     }
 
+    @GetMapping(path = "teacher/by-id/{teacherId}")
+    public Teacher getTeacherById(@PathVariable("teacherId") int teacherId) {
+        return teacherServiceImpl.getTeacherById(teacherId);
+    }
+
     @GetMapping(path = "teachers")
     public List<Teacher> getTeachers() {
         return teacherServiceImpl.getTeachers();
