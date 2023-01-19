@@ -21,7 +21,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
-    private final String teacherNotExistByIdMsg = "Teacher doesn't exist with ID: ";
+    private final String teacherNotExistByIdMsg = "Teacher does not exist with ID: ";
+    private final String teacherNotExistByEmailMsg = "Teacher does not exist with E-MAIL: ";
 
     @Autowired
     private final TeacherRepository teacherRepository;
@@ -87,6 +88,15 @@ public class TeacherServiceImpl implements TeacherService {
 				.orElseThrow(() -> new NotFoundException(teacherNotExistByIdMsg + teacherId));
 		return teacher;
 	}
+
+    @Override
+    public Teacher getTeacherByEmail(String teacherEmail) {
+        Optional<Teacher> teacherOptional = teacherRepository.findTeacherByTeacherEmail(teacherEmail);
+		if (teacherOptional.isEmpty()) {
+			throw new NotFoundException(teacherNotExistByEmailMsg + teacherEmail);
+		}
+		return teacherOptional.get();
+    }
 
     @Override
     public List<Teacher> getTeachers() {

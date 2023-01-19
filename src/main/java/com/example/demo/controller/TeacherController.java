@@ -57,6 +57,11 @@ public class TeacherController {
         return teacherServiceImpl.getTeacherById(teacherId);
     }
 
+    @GetMapping(path = "teacher/by-email/{teacherEmail}")
+    public Teacher getTeacherById(@PathVariable("teacherEmail") String teacherEmail) {
+        return teacherServiceImpl.getTeacherByEmail(teacherEmail);
+    }
+
     @GetMapping(path = "teachers")
     public List<Teacher> getTeachers() {
         return teacherServiceImpl.getTeachers();
