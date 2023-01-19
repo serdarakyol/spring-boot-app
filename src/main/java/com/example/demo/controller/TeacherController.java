@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,13 +37,19 @@ public class TeacherController {
     }
 
     @PutMapping(path = "teacher/{teacherId}")
-    public String updateTeacher(
+    public String updateTeacherById(
         @PathVariable("teacherId") int teacherId,
         @RequestParam(required = false) String teacherName,
         @RequestParam(required = false) String teacherEmail
     ) {
-        teacherServiceImpl.updateTeacher(teacherId, teacherName, teacherEmail);
+        teacherServiceImpl.updateTeacherById(teacherId, teacherName, teacherEmail);
         return BodyResponses.UPDATED;
+    }
+
+    @DeleteMapping(path = "teacher/{teacherId}")
+    public String deleteTeacher(@PathVariable("teacherId") int teacherId) {
+        teacherServiceImpl.deleteTeacherById(teacherId);
+        return BodyResponses.DELETED;
     }
 
     @GetMapping(path = "teachers")

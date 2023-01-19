@@ -44,7 +44,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Transactional
     @Override
-    public void updateTeacher(int teacherId, String teacherName, String teacherEmail){
+    public void updateTeacherById(int teacherId, String teacherName, String teacherEmail){
         Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(
             () -> new NotFoundException(teacherNotExistByIdMsg + teacherId)
         );
@@ -69,7 +69,16 @@ public class TeacherServiceImpl implements TeacherService {
 
             teacher.setTeacherEmail(teacherEmail);
         }
-        
+    }
+
+    @Override
+    public void deleteTeacherById(int teacherId) {
+        boolean isExist = teacherRepository.existsById(teacherId);
+        if (!isExist) {
+            throw new NotFoundException(teacherNotExistByIdMsg);
+        }
+
+        teacherRepository.deleteById(teacherId);
     }
 
     @Override

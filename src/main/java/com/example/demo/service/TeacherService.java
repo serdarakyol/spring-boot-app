@@ -6,6 +6,7 @@ import com.example.demo.entity.Teacher;
 
 public interface TeacherService {
     public void addNewTeacher(Teacher teacher);
-    public void updateTeacher(int studentId, String name, String email);
+    public void updateTeacherById(int teacherId, String teacherName, String teacherEmail);
+    public void deleteTeacherById(int teacherId);
     public List<Teacher> getTeachers();
 }
