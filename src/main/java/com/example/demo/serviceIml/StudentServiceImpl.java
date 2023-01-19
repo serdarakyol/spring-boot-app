@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.controller.CommonResponses;
 import com.example.demo.entity.Student;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
@@ -19,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
-	private final String emailTakenMsg= "E-mail is taken. Please add another E-mail";
-	private final String emailNotValidMsg = "The E-mail is not valid. Please write a valid e-mail";
 	private final String studentNotExistByIdMsg = "Student doesn't exist, student ID: ";
 	private final String studentNotExistByEmailMsg = "Student doesn't exist, student E-MAIL: ";
 
@@ -60,13 +59,13 @@ public class StudentServiceImpl implements StudentService{
 	public void addNewStudent(Student student) {
 		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
 		if (studentOptional.isPresent()) {
-			throw new BadRequestException(emailTakenMsg);
+			throw new BadRequestException(CommonResponses.emailTakenMsg);
 		}
 
 		// check if mail is valid
 		boolean isMailValid = emailValidator.isMailValid(student.getEmail());
 		if (!isMailValid){
-			throw new BadRequestException(emailNotValidMsg);
+			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
 		studentRepository.save(student);
 	}
@@ -91,14 +90,14 @@ public class StudentServiceImpl implements StudentService{
 		}
 
 		if (!emailValidator.isMailValid(email)) {
-			throw new BadRequestException(emailNotValidMsg);
+			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
 
 		if (email != null && email.length() > 0 && !Objects.equals(student.getEmail(), email)) {
 			Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
 			// check if e-mail taken
 			if (studentOptional.isPresent()) {
-				throw new BadRequestException(emailTakenMsg);
+				throw new BadRequestException(CommonResponses.emailTakenMsg);
 			}
 			student.setEmail(email);
 		}

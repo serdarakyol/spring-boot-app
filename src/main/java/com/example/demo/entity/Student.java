@@ -13,7 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
 @Entity
-@Table
+@Table(name = "Student")
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
