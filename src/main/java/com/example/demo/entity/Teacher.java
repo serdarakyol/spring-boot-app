@@ -22,7 +22,7 @@ public class Teacher {
     @GeneratedValue
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private int teacherId;
-    @Getter @Setter private String teachName;
+    @Getter @Setter private String teacherName;
     @Getter @Setter private String teacherEmail;
     @Getter @Setter private LocalDate dob;
     @Transient
