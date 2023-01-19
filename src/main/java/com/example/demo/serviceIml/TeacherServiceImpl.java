@@ -24,7 +24,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void addNewTeacher(Teacher teacher) {
-        Optional<Teacher> teacherOptional = teacherRepository.findTeacherByEmail(teacher.getTeacherEmail());
+        Optional<Teacher> teacherOptional = teacherRepository.findTeacherByTeacherEmail(teacher.getTeacherEmail());
         if (teacherOptional.isPresent()) {
             throw new BadRequestException(CommonResponses.emailTakenMsg);
         }

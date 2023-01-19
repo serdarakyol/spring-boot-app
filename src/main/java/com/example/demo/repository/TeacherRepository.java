@@ -10,6 +10,6 @@ import com.example.demo.entity.Teacher;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
-    @Query("SELECT t FROM Teacher t WHERE t.email = ?1")
-    Optional<Teacher> findTeacherByEmail(String email);
+    @Query("SELECT t FROM Teacher t WHERE t.teacherEmail = ?1")
+    Optional<Teacher> findTeacherByTeacherEmail(String teacherEmail);
 }

@@ -12,7 +12,6 @@ import javax.persistence.Transient;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 @Entity
@@ -23,15 +22,14 @@ public class Teacher {
     @GeneratedValue
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private int teacherId;
-    @NonNull
     @Getter @Setter private String teachName;
-    @Getter @Setter private LocalDate dob;
     @Getter @Setter private String teacherEmail;
+    @Getter @Setter private LocalDate dob;
     @Transient
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @Setter private Integer age;
+    @Setter private Integer teacherAge;
 
-    public Integer getAge() {
+    public Integer getTeacherAge() {
         return Period.between(this.dob, LocalDate.now()).getYears();
     }
 }
