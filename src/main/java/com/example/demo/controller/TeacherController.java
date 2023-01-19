@@ -19,7 +19,7 @@ import com.example.demo.entity.Teacher;
 import com.example.demo.serviceIml.TeacherServiceImpl;
 
 @RestController
-@RequestMapping(path = "api/v1")
+@RequestMapping(path = "api/v1/teacher")
 public class TeacherController {
 
     private final TeacherServiceImpl teacherServiceImpl;
@@ -29,14 +29,14 @@ public class TeacherController {
         this.teacherServiceImpl = teacherServiceImpl;
     }
 
-    @PostMapping(path = "teacher")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String registerNewTeacher(@RequestBody Teacher teacher) {
         teacherServiceImpl.addNewTeacher(teacher);
         return BodyResponses.CREATED;
     }
 
-    @PutMapping(path = "teacher/{teacherId}")
+    @PutMapping(path = "{teacherId}")
     public String updateTeacherById(
         @PathVariable("teacherId") int teacherId,
         @RequestParam(required = false) String teacherName,
@@ -46,23 +46,23 @@ public class TeacherController {
         return BodyResponses.UPDATED;
     }
 
-    @DeleteMapping(path = "teacher/{teacherId}")
+    @DeleteMapping(path = "{teacherId}")
     public String deleteTeacher(@PathVariable("teacherId") int teacherId) {
         teacherServiceImpl.deleteTeacherById(teacherId);
         return BodyResponses.DELETED;
     }
 
-    @GetMapping(path = "teacher/by-id/{teacherId}")
+    @GetMapping(path = "by-id/{teacherId}")
     public Teacher getTeacherById(@PathVariable("teacherId") int teacherId) {
         return teacherServiceImpl.getTeacherById(teacherId);
     }
 
-    @GetMapping(path = "teacher/by-email/{teacherEmail}")
+    @GetMapping(path = "by-email/{teacherEmail}")
     public Teacher getTeacherById(@PathVariable("teacherEmail") String teacherEmail) {
         return teacherServiceImpl.getTeacherByEmail(teacherEmail);
     }
 
-    @GetMapping(path = "teachers")
+    @GetMapping
     public List<Teacher> getTeachers() {
         return teacherServiceImpl.getTeachers();
     }
