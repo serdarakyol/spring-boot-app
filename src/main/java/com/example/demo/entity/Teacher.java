@@ -29,6 +29,8 @@ public class Teacher {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Setter private Integer teacherAge;
 
+    public Teacher() {}
+
     public Integer getTeacherAge() {
         return Period.between(this.dob, LocalDate.now()).getYears();
     }

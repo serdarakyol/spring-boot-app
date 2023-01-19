@@ -1,5 +1,6 @@
 package com.example.demo.serviceIml;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,10 @@ public class TeacherServiceImpl implements TeacherService {
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
         teacherRepository.save(teacher);
+    }
+
+    @Override
+    public List<Teacher> getTeachers() {
+        return teacherRepository.findAll();
     }
 }

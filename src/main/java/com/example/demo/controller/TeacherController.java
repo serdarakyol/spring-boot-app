@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
-import org.checkerframework.common.reflection.qual.GetConstructor;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,9 @@ public class TeacherController {
         return BodyResponses.CREATED;
     }
 
-    //@GetMapping(path = "teachers")
-    //public 
+    @GetMapping(path = "teachers")
+    public List<Teacher> getTeachers() {
+        return teacherServiceImpl.getTeachers();
+    }
     
 }
