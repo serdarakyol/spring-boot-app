@@ -25,7 +25,7 @@ public class Teacher {
     private int teacherId;
     @NonNull @Getter @Setter private String teacherName;
     @NonNull @Getter @Setter private String teacherEmail;
-    @NonNull @Getter @Setter private LocalDate dob;
+    @NonNull @Getter @Setter private LocalDate teacherDOB;
     @Transient
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Setter private Integer teacherAge;
@@ -33,6 +33,6 @@ public class Teacher {
     public Teacher() {}
 
     public Integer getTeacherAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
+        return Period.between(this.teacherDOB, LocalDate.now()).getYears();
     }
 }

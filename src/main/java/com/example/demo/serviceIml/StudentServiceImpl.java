@@ -40,7 +40,7 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public Student getStudentById(Integer studentId) {
+	public Student getStudentById(int studentId) {
 		Student student = studentRepository.findById(studentId)
 				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
 		return student;
@@ -71,7 +71,7 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public void deleteStudent(Integer studentId) {
+	public void deleteStudent(int studentId) {
 		boolean isExist = studentRepository.existsById(studentId);
 		if (!isExist) {
 			throw new NotFoundException(studentNotExistByIdMsg + studentId);
@@ -81,7 +81,7 @@ public class StudentServiceImpl implements StudentService{
 
 	@Transactional
 	@Override
-	public void updateStudent(Integer studentId, String studentName, String studentEmail) {
+	public void updateStudent(int studentId, String studentName, String studentEmail) {
 		Student student = studentRepository.findById(studentId)
 				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
 

@@ -36,7 +36,7 @@ public class StudentController {
     }
 
     @GetMapping(path = "by-id/{studentId}")
-    public Student getStudentById(@PathVariable("studentId") Integer studentId) {
+    public Student getStudentById(@PathVariable("studentId") int studentId) {
         return studentServiceImpl.getStudentById(studentId);
     }
 
@@ -52,14 +52,14 @@ public class StudentController {
         return BodyResponses.CREATED;
     }
     @DeleteMapping(path = "{studentId}")
-    public String deleteStudent(@PathVariable("studentId") Integer studentId) {
+    public String deleteStudent(@PathVariable("studentId") int studentId) {
         studentServiceImpl.deleteStudent(studentId);
         return BodyResponses.DELETED;
     }
 
     @PutMapping(path = "{studentId}")
     public String updateStudent(
-            @PathVariable("studentId") Integer studentId,
+            @PathVariable("studentId") int studentId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email) {
         studentServiceImpl.updateStudent(studentId, name, email);
