@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.Period;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,60 +18,24 @@ import javax.persistence.GenerationType;
 
 @Entity
 @Table(name = "Student")
+@RequiredArgsConstructor
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private Long id;
-    private String name;
-    private String email;
-    private LocalDate dob;
+    private int studentId;
+    @NonNull @Getter @Setter private String studentName;
+    @NonNull @Getter @Setter private String studentEmail;
+    @NonNull @Getter @Setter private LocalDate studentDOB;
     @Transient
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private Integer age;
+    private Integer studentAge;
 
     public Student() {
 
     }
 
-    public Student(String name,
-            String email,
-            LocalDate dob) {
-
-        this.name = name;
-        this.email = email;
-        this.dob = dob;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
-
-    public Integer getAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
+    public Integer getStudentAge() {
+        return Period.between(this.studentDOB, LocalDate.now()).getYears();
     }
 }

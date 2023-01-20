@@ -40,30 +40,30 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public Student getStudentById(Long studentId) {
+	public Student getStudentById(Integer studentId) {
 		Student student = studentRepository.findById(studentId)
 				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
 		return student;
 	}
 
 	@Override
-	public Student getStudentByEmail(String email){
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
+	public Student getStudentByEmail(String studentEmail){
+		Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentEmail);
 		if (studentOptional.isEmpty()) {
-			throw new NotFoundException(studentNotExistByEmailMsg + email);
+			throw new NotFoundException(studentNotExistByEmailMsg + studentEmail);
 		}
 		return studentOptional.get();
 	}
 
 	@Override
 	public void addNewStudent(Student student) {
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
+		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getStudentEmail());
 		if (studentOptional.isPresent()) {
 			throw new BadRequestException(CommonResponses.emailTakenMsg);
 		}
 
 		// check if mail is valid
-		boolean isMailValid = emailValidator.isMailValid(student.getEmail());
+		boolean isMailValid = emailValidator.isMailValid(student.getStudentEmail());
 		if (!isMailValid){
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
@@ -71,7 +71,7 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public void deleteStudent(Long studentId) {
+	public void deleteStudent(Integer studentId) {
 		boolean isExist = studentRepository.existsById(studentId);
 		if (!isExist) {
 			throw new NotFoundException(studentNotExistByIdMsg + studentId);
@@ -81,25 +81,25 @@ public class StudentServiceImpl implements StudentService{
 
 	@Transactional
 	@Override
-	public void updateStudent(Long studentId, String name, String email) {
+	public void updateStudent(Integer studentId, String studentName, String studentEmail) {
 		Student student = studentRepository.findById(studentId)
 				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
 
-		if (name != null && name.length() > 0 && !Objects.equals(student.getName(), name)) {
-			student.setName(name);
+		if (studentName != null && studentName.length() > 0 && !Objects.equals(student.getStudentName(), studentName)) {
+			student.setStudentName(studentName);
 		}
 
-		if (!emailValidator.isMailValid(email)) {
+		if (!emailValidator.isMailValid(studentEmail)) {
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
 
-		if (email != null && email.length() > 0 && !Objects.equals(student.getEmail(), email)) {
-			Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
+		if (studentEmail != null && studentEmail.length() > 0 && !Objects.equals(student.getStudentEmail(), studentEmail)) {
+			Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentEmail);
 			// check if e-mail taken
 			if (studentOptional.isPresent()) {
 				throw new BadRequestException(CommonResponses.emailTakenMsg);
 			}
-			student.setEmail(email);
+			student.setStudentEmail(studentEmail);
 		}
 	}
 
