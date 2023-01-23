@@ -27,7 +27,7 @@ public class StudentServiceTest {
     private Student student = new Student(
         "test2",
         "test2@outlook.com",
-        LocalDate.parse("2000-03-29")
+        LocalDate.parse("2000-01-23")
     );
 
     @BeforeEach
@@ -45,5 +45,6 @@ public class StudentServiceTest {
         verify(studentRepository).save(studentArgumentCaptor.capture());
         Student studentRecord = studentArgumentCaptor.getValue();
         assertThat(studentRecord).isEqualTo(student);
+        assertThat(student.getStudentAge()).isEqualTo(23);
     }
 }
