@@ -24,7 +24,6 @@ public class StudentServiceImpl implements StudentService{
 	private final String studentNotExistByEmailMsg = "Student doesn't exist, student E-MAIL: ";
 
 	private final StudentRepository studentRepository;
-    private Utils emailValidator = new Utils();
 
 	/*
 	Note to me!!!
@@ -63,7 +62,7 @@ public class StudentServiceImpl implements StudentService{
 		}
 
 		// check if mail is valid
-		boolean isMailValid = emailValidator.isMailValid(student.getStudentEmail());
+		boolean isMailValid = Utils.isMailValid(student.getStudentEmail());
 		if (!isMailValid){
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
@@ -89,7 +88,7 @@ public class StudentServiceImpl implements StudentService{
 			student.setStudentName(studentName);
 		}
 
-		if (!emailValidator.isMailValid(studentEmail)) {
+		if (!Utils.isMailValid(studentEmail)) {
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
 
