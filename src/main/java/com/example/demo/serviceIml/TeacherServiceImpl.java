@@ -26,7 +26,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Autowired
     private final TeacherRepository teacherRepository;
-    private Utils customUtils = new Utils();
     
 
     @Override
@@ -37,7 +36,7 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         // check if mail is valid
-        if ( !customUtils.isMailValid(teacher.getTeacherEmail()) ) {
+        if ( !Utils.isMailValid(teacher.getTeacherEmail()) ) {
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
         teacherRepository.save(teacher);
@@ -56,7 +55,7 @@ public class TeacherServiceImpl implements TeacherService {
             teacher.setTeacherName(teacherName);
         }
 
-        if (!customUtils.isMailValid(teacherEmail)) {
+        if (!Utils.isMailValid(teacherEmail)) {
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 

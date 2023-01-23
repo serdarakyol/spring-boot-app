@@ -4,10 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public class EmailValidatorTest {
+public class UtilsTest {
     @Test
     void testIsMailValid() {
-        Utils utils = new Utils();
         String[] validMails = {
             "serdarakyol55@hotmail.com",
             "serdar@akyol.com",
@@ -28,9 +27,9 @@ public class EmailValidatorTest {
 
         for (int i=0; i<validMails.length; i++){
             // test valid e-mails
-            assertEquals(true, utils.isMailValid(validMails[i]));
+            assertEquals(true, Utils.isMailValid(validMails[i]));
             // test invalid e-mails
-            assertEquals(false, utils.isMailValid(inValidMails[i]));
+            assertEquals(false, Utils.isMailValid(inValidMails[i]));
         }
     }
 }
