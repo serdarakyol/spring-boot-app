@@ -50,7 +50,7 @@ function codeRun() {
     fi
 
     # build app
-    docker compose up
+    docker compose up --build
 }
 
 function main() {
