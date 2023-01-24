@@ -37,6 +37,12 @@ function costumized_success_message () {
     echo "${COLOR_GREEN}INFO: "$1"${COLOR_RESET}" 1>&2;
 }
 
+function costumized_warning_message () {
+    local COLOR_YELLOW="$(tput setaf 3 2>/dev/null || :)"
+    local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
+    echo "${COLOR_YELLOW}INFO: "$1"${COLOR_RESET}" 1>&2;
+}
+
 function codeRun() {
     # check if script run with sudo
     if [ "$EUID" -ne 0 ]; then 
@@ -53,6 +59,14 @@ function codeRun() {
     docker compose up --build
 }
 
+function performansTesting() {
+    # check if locust installed
+    if ! [ -x "$(command -v locust -V)" ]; then
+        costumized_warning_message "Locust is not installed. Installing..."
+        pip3 install locust
+    fi
+}
+
 function main() {
     case "${1-notset}" in
         help)
@@ -63,6 +77,9 @@ function main() {
             ;;
         code-run)
             codeRun "${@}"
+            ;;
+        performans-run)
+            performansTesting "${@}"
             ;;
         *)
             >&2 echo "Error: Unknown command: '${1-}'"
