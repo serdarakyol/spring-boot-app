@@ -13,6 +13,8 @@ Usage: $0 <command>
         Build jar file
     code-run
         Runs containerized app
+    performans-test
+        Stress testing for the API
 "
 }
 
@@ -65,6 +67,11 @@ function performansTesting() {
         costumized_warning_message "Locust is not installed. Installing..."
         pip3 install locust
     fi
+    local HOST=http://localhost:8080
+    local CONCURRENT=500
+    local RATE=500
+    local DURATION=30
+    locust -f ${ROOT_DIR}/performans-testing/locust.py --host ${HOST} --headless --users=${CONCURRENT} --spawn-rate=${RATE} --run-time=${DURATION}s --reset-stats --print-stats
 }
 
 function main() {
@@ -78,7 +85,7 @@ function main() {
         code-run)
             codeRun "${@}"
             ;;
-        performans-run)
+        performans-test)
             performansTesting "${@}"
             ;;
         *)
