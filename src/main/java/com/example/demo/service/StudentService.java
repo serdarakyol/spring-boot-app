@@ -7,7 +7,7 @@ import com.example.demo.entity.Student;
 public interface StudentService {
     public void addNewStudent(Student student);
     public void deleteStudent(int studentId);
-    public void updateStudent(int studentId, String name, String email);
+    public void updateStudent(int studentId, String studentName, String studentEmail);
     public Student getStudentById(int studentId);
     public Student getStudentByEmail(String email);
     public List<Student> getStudents();

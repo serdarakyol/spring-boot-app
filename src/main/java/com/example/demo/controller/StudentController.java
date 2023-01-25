@@ -60,9 +60,9 @@ public class StudentController {
     @PutMapping(path = "{studentId}")
     public String updateStudent(
             @PathVariable("studentId") int studentId,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String email) {
-        studentServiceImpl.updateStudent(studentId, name, email);
+            @RequestParam(required = false) String studentName,
+            @RequestParam(required = false) String studentEmail) {
+        studentServiceImpl.updateStudent(studentId, studentName, studentEmail);
         
         return BodyResponses.UPDATED;
     }
