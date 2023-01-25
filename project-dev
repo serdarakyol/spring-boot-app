@@ -70,8 +70,8 @@ function performansTesting() {
     local HOST=http://localhost:8080
     local CONCURRENT=500
     local RATE=500
-    local DURATION=30
-    locust -f ${ROOT_DIR}/performans-testing/locust.py --host ${HOST} --headless --users=${CONCURRENT} --spawn-rate=${RATE} --run-time=${DURATION}s --reset-stats --print-stats
+    local DURATION=10
+    locust -f ${ROOT_DIR}/performans-testing/locust.py --host ${HOST} --headless --users=${CONCURRENT} --spawn-rate=${RATE} --run-time=${DURATION}s --reset-stats --only-summary
 }
 
 function main() {
