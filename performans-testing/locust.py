@@ -72,9 +72,15 @@ class TeacherProcess(LoadTest):
             teacher_email = teacher_email.replace("@", "%40")
             teacher_id = str(random.choice(self.ids))
             request_string = f"{self.path_all}/{teacher_id}?teacherName={teacher_name}&teacherEmail={teacher_email}"
-
+                
             return request_string
+        # this is added for handle None returns
+        return f"{self.path_all}/1?teacherName=ibjy&teacherEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
 
+    def on_start(self):
+        self.client.post(url=self.path_all,
+                         json=self._generate_post_data(),
+                         headers=h)
 
 class StudentProcess(LoadTest):
     def __init__(self, *args, **kwargs):
@@ -106,3 +112,10 @@ class StudentProcess(LoadTest):
             request_string = f"{self.path_all}/{student_id}?studentName={student_name}&studentEmail={student_email}"
 
             return request_string
+        # this is added for handle None returns
+        return f"{self.path_all}/1?studentName=ibjy&studentEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
+
+    def on_start(self):
+        self.client.post(url=self.path_all,
+                         json=self._generate_post_data(),
+                         headers=h)
