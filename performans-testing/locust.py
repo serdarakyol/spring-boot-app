@@ -51,6 +51,11 @@ class TeacherProcess(LoadTest):
         self.counter = 0
         self.ids = []
 
+    def on_start(self):
+        self.client.post(url=self.path_all,
+                         json=self._generate_post_data(),
+                         headers=h)
+
     def _generate_post_data(self) -> dict:
         request_data = {
             "teacherName": str,
@@ -77,10 +82,6 @@ class TeacherProcess(LoadTest):
         # this is added for handle None returns
         return f"{self.path_all}/1?teacherName=ibjy&teacherEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
 
-    def on_start(self):
-        self.client.post(url=self.path_all,
-                         json=self._generate_post_data(),
-                         headers=h)
 
 class StudentProcess(LoadTest):
     def __init__(self, *args, **kwargs):
@@ -88,6 +89,11 @@ class StudentProcess(LoadTest):
         self.path_all = "/api/v1/student"
         self.counter = 0
         self.ids = []
+    
+    def on_start(self):
+        self.client.post(url=self.path_all,
+                         json=self._generate_post_data(),
+                         headers=h)
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -114,8 +120,3 @@ class StudentProcess(LoadTest):
             return request_string
         # this is added for handle None returns
         return f"{self.path_all}/1?studentName=ibjy&studentEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
-
-    def on_start(self):
-        self.client.post(url=self.path_all,
-                         json=self._generate_post_data(),
-                         headers=h)
