@@ -1,5 +1,4 @@
 from locust import HttpUser, task, between
-from locust.exception import RescheduleTask
 import string
 import random
 import time
@@ -36,7 +35,7 @@ class LoadTest(HttpUser):
     def get_all(self):
         self.client.get(url=self.path_all)
 
-    @task(1000)
+    @task(100)
     def post_request(self):
         self.client.post(url=self.path_all, json=self._generate_post_data(), headers=h)
 
@@ -71,7 +70,7 @@ class TeacherProcess(LoadTest):
             teacher_name = self.generate_random_string()
             teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
             teacher_email = teacher_email.replace("@", "%40")
-            teacher_id = str(random.choice(1, self.ids))
+            teacher_id = str(random.choice(self.ids))
             request_string = f"{self.path_all}/{teacher_id}?teacherName={teacher_name}&teacherEmail={teacher_email}"
 
             return request_string
@@ -84,7 +83,7 @@ class StudentProcess(LoadTest):
         self.counter = 0
         self.ids = []
 
-    def _generate_post_data(self):
+    def _generate_post_data(self) -> dict:
         request_data = {
             "studentName": str,
             "studentEmail": str,
@@ -103,7 +102,7 @@ class StudentProcess(LoadTest):
             student_name = self.generate_random_string()
             student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
             student_email = student_email.replace("@", "%40")
-            student_id = str(random.choice(1, self.ids))
+            student_id = str(random.choice(self.ids))
             request_string = f"{self.path_all}/{student_id}?studentName={student_name}&studentEmail={student_email}"
 
             return request_string
