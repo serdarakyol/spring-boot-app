@@ -62,8 +62,7 @@ public class StudentServiceImpl implements StudentService{
 		}
 
 		// check if mail is valid
-		boolean isMailValid = Utils.isMailValid(student.getStudentEmail());
-		if (!isMailValid){
+		if (!Utils.isMailValid(student.getStudentEmail())){
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
 		studentRepository.save(student);
