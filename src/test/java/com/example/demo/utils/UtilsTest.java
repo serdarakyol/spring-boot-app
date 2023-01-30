@@ -17,12 +17,15 @@ public class UtilsTest {
         };
 
         String[] inValidMails = {
+            "Serdar.akyol@gmail.com",
             "!serdarakyol55@hotmail.com",
             "@akyol.com",
             "serdar_ak-yol_55@",
             "serdarakyol55@gmail.c",
             "@serdar@hotma.com",
             "serdar@.com",
+            "string@asd,com",
+            "STRING@ad.co"
         };
 
         for (int i=0; i<validMails.length; i++){
