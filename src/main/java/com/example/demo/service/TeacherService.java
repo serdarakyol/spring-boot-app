@@ -8,6 +8,7 @@ public interface TeacherService {
     public void addNewTeacher(Teacher teacher);
     public void updateTeacherById(int teacherId, String teacherName, String teacherEmail);
     public void deleteTeacherById(int teacherId);
+    public void deleteTeacherByMail(String teacherEmail);
     public Teacher getTeacherById(int teacherId);
     public Teacher getTeacherByEmail(String teacherId);
     public List<Teacher> getTeachers();

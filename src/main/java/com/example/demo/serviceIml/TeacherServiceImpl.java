@@ -82,6 +82,16 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public void deleteTeacherByMail(String teacherEmail) {
+        boolean isTeacherExist = teacherRepository.findTeacherByTeacherEmail(teacherEmail).isPresent();
+        if (!isTeacherExist) {
+            throw new NotFoundException(teacherNotExistByIdMsg);
+        }
+        
+        teacherRepository.deleteTeacherByMail(teacherEmail);
+    }
+
+    @Override
 	public Teacher getTeacherById(int teacherId) {
 		Teacher teacher = teacherRepository.findById(teacherId)
 				.orElseThrow(() -> new NotFoundException(teacherNotExistByIdMsg + teacherId));

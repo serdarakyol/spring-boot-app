@@ -46,9 +46,15 @@ public class TeacherController {
         return BodyResponses.UPDATED;
     }
 
-    @DeleteMapping(path = "{teacherId}")
+    @DeleteMapping(path = "by-id/{teacherId}")
     public String deleteTeacher(@PathVariable("teacherId") int teacherId) {
         teacherServiceImpl.deleteTeacherById(teacherId);
+        return BodyResponses.DELETED;
+    }
+
+    @DeleteMapping(path = "by-email/{teacherEmail}")
+    public String deleteTeacher(@PathVariable("teacherEmail") String teacherEmail) {
+        teacherServiceImpl.deleteTeacherByMail(teacherEmail);
         return BodyResponses.DELETED;
     }
 
