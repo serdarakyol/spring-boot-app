@@ -23,41 +23,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping(path = "api/v1/student")
 public class StudentController {
 
-    private final StudentServiceImpl studentService;
+    private final StudentServiceImpl studentServiceImpl;
 
     @Autowired
-    public StudentController(StudentServiceImpl studentService) {
-        this.studentService = studentService;
+    public StudentController(StudentServiceImpl studentServiceImpl) {
+        this.studentServiceImpl = studentServiceImpl;
     }
 
     @GetMapping
-    public List<Student> getStudent() {
-        return studentService.getStudents();
+    public List<Student> getStudents() {
+        return studentServiceImpl.getStudents();
     }
 
-    @GetMapping(path = "{studentId}")
-    public Student getStudentById(@RequestParam("studentId") Long studentId) {
-        return studentService.getStudentById(studentId);
+    @GetMapping(path = "by-id/{studentId}")
+    public Student getStudentById(@PathVariable("studentId") int studentId) {
+        return studentServiceImpl.getStudentById(studentId);
+    }
+
+    @GetMapping(path = "by-email/{studentEmail}")
+    public Student getStudentByEmail(@PathVariable(value = "studentEmail") String email) {
+        return studentServiceImpl.getStudentByEmail(email);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String registerNewStudent(@RequestBody Student student) {
-        studentService.addNewStudent(student);
+        studentServiceImpl.addNewStudent(student);
         return BodyResponses.CREATED;
     }
     @DeleteMapping(path = "{studentId}")
-    public String deleteStudent(@PathVariable("studentId") Long studentId) {
-        studentService.deleteStudent(studentId);
+    public String deleteStudent(@PathVariable("studentId") int studentId) {
+        studentServiceImpl.deleteStudent(studentId);
         return BodyResponses.DELETED;
     }
 
     @PutMapping(path = "{studentId}")
     public String updateStudent(
-            @PathVariable("studentId") Long studentId,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String email) {
-        studentService.updateStudent(studentId, name, email);
+            @PathVariable("studentId") int studentId,
+            @RequestParam(required = false) String studentName,
+            @RequestParam(required = false) String studentEmail) {
+        studentServiceImpl.updateStudent(studentId, studentName, studentEmail);
         
         return BodyResponses.UPDATED;
     }
