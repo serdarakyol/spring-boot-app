@@ -69,12 +69,22 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public void deleteStudent(int studentId) {
-		boolean isExist = studentRepository.existsById(studentId);
-		if (!isExist) {
+	public void deleteStudentById(int studentId) {
+		boolean isStudentExist = studentRepository.existsById(studentId);
+		if (!isStudentExist) {
 			throw new NotFoundException(studentNotExistByIdMsg + studentId);
 		}
 		studentRepository.deleteById(studentId);
+	}
+
+	@Override
+	public void deleteStudentByEmail(String studentEmail) {
+		boolean isStudentExist = studentRepository.findStudentByEmail(studentEmail).isPresent();
+		if (!isStudentExist) {
+			throw new NotFoundException(studentNotExistByIdMsg + studentEmail);
+		}
+
+		studentRepository.deleteStudentByEmail(studentEmail);
 	}
 
 	@Transactional
