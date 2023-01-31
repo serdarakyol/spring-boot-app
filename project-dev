@@ -61,7 +61,7 @@ function codeRun() {
     docker compose up --build
 }
 
-function performansTesting() {
+function performanceTesting() {
     # check if locust installed
     if ! [ -x "$(command -v locust -V)" ]; then
         costumized_warning_message "Locust is not installed. Installing..."
@@ -85,8 +85,8 @@ function main() {
         code-run)
             codeRun "${@}"
             ;;
-        performans-test)
-            performansTesting "${@}"
+        performance-test)
+            performanceTesting "${@}"
             ;;
         *)
             >&2 echo "Error: Unknown command: '${1-}'"

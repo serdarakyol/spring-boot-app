@@ -19,7 +19,7 @@ class LoadTest(HttpUser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.path_all = None
-        self.path_one = None
+        self.saved_emails = []
 
     def generate_random_string(self, min_name_size=2, max_name_size=20) -> str:
         letters = string.ascii_lowercase
@@ -35,6 +35,16 @@ class LoadTest(HttpUser):
     def get_all(self):
         self.client.get(url=self.path_all)
 
+    @task
+    def get_one_by_id(self):
+        random_id = random.randint(1, len(self.saved_emails))
+        self.client.get(url=f"{self.path_all}/by-id/{random_id}")
+
+    @task
+    def get_one_by_email(self):
+        random_email = random.choice(self.saved_emails)
+        self.client.get(url=f"{self.path_all}/by-email/{random_email}")
+
     @task(100)
     def post_request(self):
         self.client.post(url=self.path_all, json=self._generate_post_data(), headers=h)
@@ -48,13 +58,14 @@ class TeacherProcess(LoadTest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.path_all = "/api/v1/teacher"
-        self.counter = 0
-        self.ids = []
 
     def on_start(self):
-        self.client.post(url=self.path_all,
-                         json=self._generate_post_data(),
-                         headers=h)
+        for _ in range(2):
+            generated_data = self._generate_post_data()
+            self.client.post(url=self.path_all,
+                             json=generated_data,
+                             headers=h)
+            self.saved_emails.append(generated_data["teacherEmail"])
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -65,17 +76,16 @@ class TeacherProcess(LoadTest):
         request_data["teacherName"] = self.generate_random_string()
         request_data["teacherEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["teacherDOB"] = self.generate_random_dob()
-        self.counter += 1
-        self.ids.append(self.counter)
+        self.saved_emails.append(request_data["teacherEmail"])
 
         return request_data
 
     def _generate_put_data(self) -> str:
-        if len(self.ids) > 0:
+        if len(self.saved_emails) > 0:
             teacher_name = self.generate_random_string()
             teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
             teacher_email = teacher_email.replace("@", "%40")
-            teacher_id = str(random.choice(self.ids))
+            teacher_id = str(random.randint(1, len(self.saved_emails)))
             request_string = f"{self.path_all}/{teacher_id}?teacherName={teacher_name}&teacherEmail={teacher_email}"
                 
             return request_string
@@ -87,13 +97,14 @@ class StudentProcess(LoadTest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.path_all = "/api/v1/student"
-        self.counter = 0
-        self.ids = []
-    
+
     def on_start(self):
-        self.client.post(url=self.path_all,
-                         json=self._generate_post_data(),
-                         headers=h)
+        for _ in range(2):
+            generated_data = self._generate_post_data()
+            self.client.post(url=self.path_all,
+                             json=generated_data,
+                             headers=h)
+            self.saved_emails.append(generated_data["studentEmail"])
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -104,17 +115,16 @@ class StudentProcess(LoadTest):
         request_data["studentName"] = self.generate_random_string()
         request_data["studentEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["studentDOB"] = self.generate_random_dob()
-        self.counter += 1
-        self.ids.append(self.counter)
+        self.saved_emails.append(request_data["studentEmail"])
 
         return request_data
     
     def _generate_put_data(self) -> str:
-        if len(self.ids) > 0:
+        if len(self.saved_emails) > 0:
             student_name = self.generate_random_string()
             student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
             student_email = student_email.replace("@", "%40")
-            student_id = str(random.choice(self.ids))
+            student_id = str(random.randint(1, len(self.saved_emails)))
             request_string = f"{self.path_all}/{student_id}?studentName={student_name}&studentEmail={student_email}"
 
             return request_string
