@@ -51,9 +51,15 @@ public class StudentController {
         studentServiceImpl.addNewStudent(student);
         return BodyResponses.CREATED;
     }
-    @DeleteMapping(path = "{studentId}")
-    public String deleteStudent(@PathVariable("studentId") int studentId) {
-        studentServiceImpl.deleteStudent(studentId);
+    @DeleteMapping(path = "by-id/{studentId}")
+    public String deleteStudentById(@PathVariable("studentId") int studentId) {
+        studentServiceImpl.deleteStudentById(studentId);
+        return BodyResponses.DELETED;
+    }
+
+    @DeleteMapping(path = "by-email/{studentEmail}")
+    public String deleteStudentByEmail(@PathVariable("studentEmail") String studentEmail) {
+        studentServiceImpl.deleteStudentByEmail(studentEmail);
         return BodyResponses.DELETED;
     }
 
