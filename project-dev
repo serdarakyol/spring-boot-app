@@ -13,7 +13,7 @@ Usage: $0 <command>
         Build jar file
     code-run
         Runs containerized app
-    performans-test
+    performance-test
         Stress testing for the API
 "
 }
@@ -71,7 +71,7 @@ function performanceTesting() {
     local CONCURRENT=500
     local RATE=500
     local DURATION=10
-    locust -f ${ROOT_DIR}/performans-testing/locust.py --host ${HOST} --headless --users=${CONCURRENT} --spawn-rate=${RATE} --run-time=${DURATION}s --reset-stats --only-summary
+    locust -f ${ROOT_DIR}/performance-testing/locust.py --host ${HOST} --headless --users=${CONCURRENT} --spawn-rate=${RATE} --run-time=${DURATION}s --reset-stats --only-summary
 }
 
 function main() {

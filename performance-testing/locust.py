@@ -1,4 +1,4 @@
-from locust import HttpUser, task, between
+from locust import task, between, FastHttpUser
 import string
 import random
 import time
@@ -13,7 +13,7 @@ h = {
 
 random.seed()
 
-class LoadTest(HttpUser):
+class LoadTest(FastHttpUser):
     wait_time = between(WAIT_TIME_MIN, WAIT_TIME_MAX)
     abstract = True
     def __init__(self, *args, **kwargs):
@@ -45,11 +45,11 @@ class LoadTest(HttpUser):
         random_email = random.choice(self.saved_emails)
         self.client.get(url=f"{self.base_path}/by-email/{random_email}")
 
-    @task(100)
+    @task(20)
     def post_request(self):
         self.client.post(url=self.base_path, json=self._generate_post_data(), headers=h)
 
-    @task(2)
+    @task(4)
     def put_request(self):
         self.client.put(url=self._generate_put_data())
 
@@ -106,7 +106,10 @@ class StudentProcess(LoadTest):
     
     def on_stop(self):
         for email in self.saved_emails:
-            self.client.delete(url=f"{self.base_path}/by-email/{email}")
+            with self.client.delete(url=f"{self.base_path}/by-email/{email}",
+                                    catch_response=True) as response:
+                if response.status_code == 404:
+                    response.success()
 
     def _generate_post_data(self) -> dict:
         request_data = {
