@@ -1,4 +1,4 @@
-from locust import HttpUser, task, between
+from locust import task, between, FastHttpUser
 import string
 import random
 import time
@@ -13,13 +13,13 @@ h = {
 
 random.seed()
 
-class LoadTest(HttpUser):
+class LoadTest(FastHttpUser):
     wait_time = between(WAIT_TIME_MIN, WAIT_TIME_MAX)
     abstract = True
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.path_all = None
-        self.path_one = None
+        self.base_path = None
+        self.saved_emails = []
 
     def generate_random_string(self, min_name_size=2, max_name_size=20) -> str:
         letters = string.ascii_lowercase
@@ -33,13 +33,23 @@ class LoadTest(HttpUser):
 
     @task(1)
     def get_all(self):
-        self.client.get(url=self.path_all)
+        self.client.get(url=self.base_path)
 
-    @task(100)
+    @task(1)
+    def get_one_by_id(self):
+        random_id = random.randint(1, len(self.saved_emails))
+        self.client.get(url=f"{self.base_path}/by-id/{random_id}")
+
+    @task(1)
+    def get_one_by_email(self):
+        random_email = random.choice(self.saved_emails)
+        self.client.get(url=f"{self.base_path}/by-email/{random_email}")
+
+    @task(20)
     def post_request(self):
-        self.client.post(url=self.path_all, json=self._generate_post_data(), headers=h)
+        self.client.post(url=self.base_path, json=self._generate_post_data(), headers=h)
 
-    @task(2)
+    @task(4)
     def put_request(self):
         self.client.put(url=self._generate_put_data())
 
@@ -47,14 +57,21 @@ class LoadTest(HttpUser):
 class TeacherProcess(LoadTest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.path_all = "/api/v1/teacher"
-        self.counter = 0
-        self.ids = []
+        self.base_path = "/api/v1/teacher"
 
     def on_start(self):
-        self.client.post(url=self.path_all,
+        self.client.post(url=self.base_path,
                          json=self._generate_post_data(),
                          headers=h)
+    
+    def on_stop(self):
+        time.sleep(1)
+        for email in self.saved_emails:
+            with self.client.delete(url=f"{self.base_path}/by-email/{email}",
+                                    catch_response=True) as response:
+                # delete that after add logging to the API
+                if response.status_code == 404:
+                    response.success()
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -65,35 +82,41 @@ class TeacherProcess(LoadTest):
         request_data["teacherName"] = self.generate_random_string()
         request_data["teacherEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["teacherDOB"] = self.generate_random_dob()
-        self.counter += 1
-        self.ids.append(self.counter)
+        self.saved_emails.append(request_data["teacherEmail"])
 
         return request_data
 
     def _generate_put_data(self) -> str:
-        if len(self.ids) > 0:
+        if len(self.saved_emails) > 0:
             teacher_name = self.generate_random_string()
             teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
             teacher_email = teacher_email.replace("@", "%40")
-            teacher_id = str(random.choice(self.ids))
-            request_string = f"{self.path_all}/{teacher_id}?teacherName={teacher_name}&teacherEmail={teacher_email}"
+            teacher_id = str(random.randint(1, len(self.saved_emails)))
+            request_string = f"{self.base_path}/{teacher_id}?teacherName={teacher_name}&teacherEmail={teacher_email}"
                 
             return request_string
         # this is added for handle None returns
-        return f"{self.path_all}/1?teacherName=ibjy&teacherEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
+        return f"{self.base_path}/1?teacherName=ibjy&teacherEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
 
 
 class StudentProcess(LoadTest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.path_all = "/api/v1/student"
-        self.counter = 0
-        self.ids = []
-    
+        self.base_path = "/api/v1/student"
+
     def on_start(self):
-        self.client.post(url=self.path_all,
+        self.client.post(url=self.base_path,
                          json=self._generate_post_data(),
                          headers=h)
+    
+    def on_stop(self):
+        time.sleep(1)
+        for email in self.saved_emails:
+            with self.client.delete(url=f"{self.base_path}/by-email/{email}",
+                                    catch_response=True) as response:
+                # delete that after add logging to the API
+                if response.status_code == 404:
+                    response.success()
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -104,19 +127,18 @@ class StudentProcess(LoadTest):
         request_data["studentName"] = self.generate_random_string()
         request_data["studentEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["studentDOB"] = self.generate_random_dob()
-        self.counter += 1
-        self.ids.append(self.counter)
+        self.saved_emails.append(request_data["studentEmail"])
 
         return request_data
     
     def _generate_put_data(self) -> str:
-        if len(self.ids) > 0:
+        if len(self.saved_emails) > 0:
             student_name = self.generate_random_string()
             student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
             student_email = student_email.replace("@", "%40")
-            student_id = str(random.choice(self.ids))
-            request_string = f"{self.path_all}/{student_id}?studentName={student_name}&studentEmail={student_email}"
+            student_id = str(random.randint(1, len(self.saved_emails)))
+            request_string = f"{self.base_path}/{student_id}?studentName={student_name}&studentEmail={student_email}"
 
             return request_string
         # this is added for handle None returns
-        return f"{self.path_all}/1?studentName=ibjy&studentEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
+        return f"{self.base_path}/1?studentName=ibjy&studentEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
