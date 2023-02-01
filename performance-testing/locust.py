@@ -60,11 +60,9 @@ class TeacherProcess(LoadTest):
         self.base_path = "/api/v1/teacher"
 
     def on_start(self):
-        for _ in range(2):
-            generated_data = self._generate_post_data()
-            self.client.post(url=self.base_path,
-                             json=generated_data,
-                             headers=h)
+        self.client.post(url=self.base_path,
+                         json=self._generate_post_data(),
+                         headers=h)
     
     def on_stop(self):
         time.sleep(1)
@@ -107,11 +105,9 @@ class StudentProcess(LoadTest):
         self.base_path = "/api/v1/student"
 
     def on_start(self):
-        for _ in range(2):
-            generated_data = self._generate_post_data()
-            self.client.post(url=self.base_path,
-                             json=generated_data,
-                             headers=h)
+        self.client.post(url=self.base_path,
+                         json=self._generate_post_data(),
+                         headers=h)
     
     def on_stop(self):
         time.sleep(1)
