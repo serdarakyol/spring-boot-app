@@ -108,6 +108,7 @@ class StudentProcess(LoadTest):
         for email in self.saved_emails:
             with self.client.delete(url=f"{self.base_path}/by-email/{email}",
                                     catch_response=True) as response:
+                # delete that after add logging to the API
                 if response.status_code == 404:
                     response.success()
 
