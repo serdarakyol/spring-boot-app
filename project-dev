@@ -83,6 +83,7 @@ function performanceTesting() {
 
 function testCoverageReport() {
     checkMaven
+    # mvn generates test coverage in this file by default
     local REPORT_FILE=${ROOT_DIR}/target/site/jacoco/index.html
     local REPORT_SUCCESS_MSG="The report visualized successfully. Generated file: ${REPORT_FILE}"
     cd ${ROOT_DIR}
