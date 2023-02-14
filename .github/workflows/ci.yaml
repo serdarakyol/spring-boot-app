@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: harmon758/postgresql-action@v1
-      with:
-        postgresql version: '11'
-        postgresql db: school_management
-        postgresql user: learning
-        postgresql password: sa123456
+        with:
+          postgresql version: '11'
+          postgresql db: school_management
+          postgresql user: learning
+          postgresql password: sa123456
       - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
