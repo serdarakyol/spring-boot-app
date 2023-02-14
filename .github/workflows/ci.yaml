@@ -13,8 +13,8 @@ jobs:
   default:
     runs-on: ubuntu-latest
     services:
-      postgresqldb:
-        image: postgresqldb
+      postgres:
+        image: postgres
         env:
           POSTGRES_PASSWORD: sa123456
           POSTGRES_USER: learning
