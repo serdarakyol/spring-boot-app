@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: harmon758/postgresql-action@v1
         with:
-          postgresql version: '11'
+          postgresql version: '15.1'
           postgresql db: school_management
           postgresql user: learning
           postgresql password: sa123456
