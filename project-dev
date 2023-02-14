@@ -15,14 +15,21 @@ Usage: $0 <command>
         Runs containerized app
     performance-test
         Stress testing for the API
+    test-coverage-report
+        Shows unit test coverage reports
 "
 }
 
-function buildJar() {
+function checkMaven() {
+    # Check maven if installed or not. If not install
     if ! [ -x "$(command -v mvn --version)" ]; then
         echo "Installing maven"
         apt install maven
     fi
+}
+
+function buildJar() {
+    checkMaven
     mvn clean package -DskipTests && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file could not build"
 }
 
@@ -42,7 +49,7 @@ function costumized_success_message () {
 function costumized_warning_message () {
     local COLOR_YELLOW="$(tput setaf 3 2>/dev/null || :)"
     local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
-    echo "${COLOR_YELLOW}INFO: "$1"${COLOR_RESET}" 1>&2;
+    echo "${COLOR_YELLOW}WARNING: "$1"${COLOR_RESET}" 1>&2;
 }
 
 function codeRun() {
@@ -74,6 +81,24 @@ function performanceTesting() {
     locust -f ${ROOT_DIR}/performance-testing/locust.py --host ${HOST} --headless --users=${CONCURRENT} --spawn-rate=${RATE} --run-time=${DURATION}s --reset-stats --only-summary
 }
 
+function testCoverageReport() {
+    checkMaven
+    local REPORT_FILE=${ROOT_DIR}/target/site/jacoco/index.html
+    cd ${ROOT_DIR}
+    # run test coverage
+    mvn clean test jacoco:report
+    # show report
+    if [ -x "$(command -v firefox -V)" ]; then
+        firefox --new-window ${REPORT_FILE}
+        costumized_success_message "The report visualized successfully. Generated file: ${REPORT_FILE}"
+    elif [ -x "$(command -v firefox -V)" ]; then
+        google-chrome --new-window ${REPORT_FILE}
+        costumized_success_message "The report visualized successfully. Generated file: ${REPORT_FILE}"
+    else
+        costumized_warning_message "The report generated but couldn't visualize. Generated file: ${REPORT_FILE}"
+    fi
+}
+
 function main() {
     case "${1-notset}" in
         help)
@@ -87,6 +112,9 @@ function main() {
             ;;
         performance-test)
             performanceTesting "${@}"
+            ;;
+        test-coverage-report)
+            testCoverageReport "${@}"
             ;;
         *)
             >&2 echo "Error: Unknown command: '${1-}'"
