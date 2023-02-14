@@ -30,7 +30,7 @@ function checkMaven() {
 
 function buildJar() {
     checkMaven
-    mvn clean package -DskipTests && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file could not build"
+    mvn clean package && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file could not build"
 }
 
 function costumized_error_message () {
@@ -101,12 +101,6 @@ function testCoverageReport() {
     fi
 }
 
-function setupPostgreSQLForCI() {
-    local CONFIG_FILE=${ROOT_DIR}/src/main/resources/application.properties
-    sed -i 's/localhost/postgres/' ${CONFIG_FILE}
-    cat ${CONFIG_FILE}
-}
-
 function main() {
     case "${1-notset}" in
         help)
@@ -123,9 +117,6 @@ function main() {
             ;;
         test-coverage-report)
             testCoverageReport "${@}"
-            ;;
-        setup-ci)
-            setupPostgreSQLForCI
             ;;
         *)
             >&2 echo "Error: Unknown command: '${1-}'"
