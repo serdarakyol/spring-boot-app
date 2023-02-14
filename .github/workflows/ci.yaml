@@ -12,13 +12,9 @@ concurrency:
 jobs:
   default:
     runs-on: ubuntu-latest
-    # Service containers to run with `container-job`
     services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
+      postgresqldb:
+        image: postgresqldb
         env:
           POSTGRES_PASSWORD: sa123456
           POSTGRES_USER: learning
@@ -30,7 +26,8 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v3
+      - name: Pull repository
+        uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
