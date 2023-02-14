@@ -104,6 +104,7 @@ function testCoverageReport() {
 function setupPostgreSQLForCI() {
     local CONFIG_FILE=${ROOT_DIR}/src/main/resources/application.properties
     sed -i 's/localhost/postgres/' ${CONFIG_FILE}
+    cat ${CONFIG_FILE}
 }
 
 function main() {
