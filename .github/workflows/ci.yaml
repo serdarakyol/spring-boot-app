@@ -36,10 +36,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Setup config
-        run: |
-          mkdir config
-          echo 'spring.datasource.url=jdbc:postgresql://postgres:5432/school_management' > config/application.properties
+      - name: Setup CI needs variables
+        run: ./project-dev setup-ci
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Update dependency graph
