@@ -30,7 +30,7 @@ function checkMaven() {
 
 function buildJar() {
     checkMaven
-    mvn clean package -DskipTests && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file could not build"
+    mvn clean package && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file could not build"
 }
 
 function costumized_error_message () {
