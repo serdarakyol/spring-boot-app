@@ -20,7 +20,6 @@
 		<org.projectlombok.version>1.18.26</org.projectlombok.version>
 		<org.springdoc.version>1.6.14</org.springdoc.version>
 		<org.jacoco.version>0.8.7</org.jacoco.version>
-		<org.apache.maven.plugins.version>3.8.1</org.apache.maven.plugins.version>
 	</properties>
 	<dependencies>
 		<dependency>
