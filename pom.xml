@@ -17,6 +17,11 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
+		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+		<org.projectlombok.version>1.18.26</org.projectlombok.version>
+		<org.springdoc.version>1.6.14</org.springdoc.version>
+		<org.jacoco.version>0.8.7</org.jacoco.version>
+		<org.apache.maven.plugins.version>3.8.1</org.apache.maven.plugins.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -41,7 +46,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.14</version>
+			<version>${org.springdoc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -51,6 +56,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${org.projectlombok.version}</version>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
@@ -64,7 +70,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.7</version>
+				<version>${org.jacoco.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -82,5 +88,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
