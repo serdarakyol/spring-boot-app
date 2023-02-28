@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,12 +36,12 @@ public class TeacherController {
     }
 
     @PutMapping(path = "{teacherId}")
-    public String updateTeacherById(
-        @PathVariable("teacherId") int teacherId,
-        @RequestParam(required = false) String teacherName,
-        @RequestParam(required = false) String teacherEmail
-    ) {
-        teacherServiceImpl.updateTeacherById(teacherId, teacherName, teacherEmail);
+    public String updateTeacherById(@PathVariable("teacherId") int teacherId, @RequestBody Teacher teacher) {
+        teacherServiceImpl.updateTeacherById(
+                teacherId,
+                teacher.getTeacherName(),
+                teacher.getTeacherEmail(),
+                teacher.getTeacherDOB());
         return BodyResponses.UPDATED;
     }
 
@@ -72,5 +71,4 @@ public class TeacherController {
     public List<Teacher> getTeachers() {
         return teacherServiceImpl.getTeachers();
     }
-    
 }
