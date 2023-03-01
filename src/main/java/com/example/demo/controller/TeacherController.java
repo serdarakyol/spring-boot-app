@@ -14,19 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.TeacherDTO;
 import com.example.demo.entity.Teacher;
+import com.example.demo.mapper.TeacherMapper;
 import com.example.demo.serviceIml.TeacherServiceImpl;
 
 @RestController
 @RequestMapping(path = "api/v1/teacher")
 public class TeacherController {
 
-    private final TeacherServiceImpl teacherServiceImpl;
+    @Autowired
+    private TeacherServiceImpl teacherServiceImpl;
 
     @Autowired
-    public TeacherController(TeacherServiceImpl teacherServiceImpl) {
-        this.teacherServiceImpl = teacherServiceImpl;
-    }
+    private TeacherMapper teacherMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,17 +59,20 @@ public class TeacherController {
     }
 
     @GetMapping(path = "by-id/{teacherId}")
-    public Teacher getTeacherById(@PathVariable("teacherId") int teacherId) {
-        return teacherServiceImpl.getTeacherById(teacherId);
+    public TeacherDTO getTeacherById(@PathVariable("teacherId") int teacherId) {
+        Teacher teacher = teacherServiceImpl.getTeacherById(teacherId);
+        return teacherMapper.teacherToDto(teacher);
     }
 
     @GetMapping(path = "by-email/{teacherEmail}")
-    public Teacher getTeacherById(@PathVariable("teacherEmail") String teacherEmail) {
-        return teacherServiceImpl.getTeacherByEmail(teacherEmail);
+    public TeacherDTO getTeacherById(@PathVariable("teacherEmail") String teacherEmail) {
+        Teacher teacher = teacherServiceImpl.getTeacherByEmail(teacherEmail);
+        return teacherMapper.teacherToDto(teacher);
     }
 
     @GetMapping
-    public List<Teacher> getTeachers() {
-        return teacherServiceImpl.getTeachers();
+    public List<TeacherDTO> getTeachers() {
+        List<Teacher> teachers = teacherServiceImpl.getTeachers();
+        return teacherMapper.teacherToDto(teachers);
     }
 }
