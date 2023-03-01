@@ -27,7 +27,7 @@ public class StudentController {
     private StudentServiceImpl studentServiceImpl;
 
     @Autowired
-	private StudentMapper studentMapper;
+    private StudentMapper studentMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
