@@ -14,19 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.StudentDTO;
 import com.example.demo.entity.Student;
+import com.example.demo.mapper.StudentMapper;
 import com.example.demo.serviceIml.StudentServiceImpl;
 
 @RestController
 @RequestMapping(path = "api/v1/student")
 public class StudentController {
 
-    private final StudentServiceImpl studentServiceImpl;
+    @Autowired
+    private StudentServiceImpl studentServiceImpl;
 
     @Autowired
-    public StudentController(StudentServiceImpl studentServiceImpl) {
-        this.studentServiceImpl = studentServiceImpl;
-    }
+	private StudentMapper studentMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,17 +60,20 @@ public class StudentController {
     }
 
     @GetMapping(path = "by-id/{studentId}")
-    public Student getStudentById(@PathVariable("studentId") int studentId) {
-        return studentServiceImpl.getStudentById(studentId);
+    public StudentDTO getStudentById(@PathVariable("studentId") int studentId) {
+        Student student = studentServiceImpl.getStudentById(studentId);
+        return studentMapper.studentToDto(student);
     }
 
     @GetMapping(path = "by-email/{studentEmail}")
-    public Student getStudentByEmail(@PathVariable(value = "studentEmail") String email) {
-        return studentServiceImpl.getStudentByEmail(email);
+    public StudentDTO getStudentByEmail(@PathVariable(value = "studentEmail") String email) {
+        Student student = studentServiceImpl.getStudentByEmail(email);
+        return studentMapper.studentToDto(student);
     }
 
     @GetMapping
-    public List<Student> getStudents() {
-        return studentServiceImpl.getStudents();
+    public List<StudentDTO> getStudents() {
+        List<Student> students = studentServiceImpl.getStudents();
+        return studentMapper.studentToDto(students);
     }
 }
