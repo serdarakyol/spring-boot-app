@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +18,16 @@ import com.example.demo.entity.Student;
 import com.example.demo.mapper.StudentMapper;
 import com.example.demo.serviceIml.StudentServiceImpl;
 
+import lombok.AllArgsConstructor;
+
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "api/v1/student")
 public class StudentController {
 
-    @Autowired
-    private StudentServiceImpl studentServiceImpl;
+    private final StudentServiceImpl studentServiceImpl;
 
-    @Autowired
-    private StudentMapper studentMapper;
+    private final StudentMapper studentMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
