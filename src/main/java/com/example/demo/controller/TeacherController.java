@@ -37,12 +37,8 @@ public class TeacherController {
     }
 
     @PutMapping(path = "{teacherId}")
-    public String updateTeacherById(@PathVariable("teacherId") int teacherId, @RequestBody Teacher teacher) {
-        teacherServiceImpl.updateTeacherById(
-                teacherId,
-                teacher.getTeacherName(),
-                teacher.getTeacherEmail(),
-                teacher.getTeacherDOB());
+    public String updateTeacherById(@PathVariable("teacherId") int teacherId, @RequestBody Teacher updateTeacher) {
+        teacherServiceImpl.updateTeacherById(teacherId, updateTeacher);
         return BodyResponses.UPDATED;
     }
 

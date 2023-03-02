@@ -37,12 +37,8 @@ public class StudentController {
     }
 
     @PutMapping(path = "{studentId}")
-    public String updateStudent(@PathVariable("studentId") int studentId, @RequestBody Student student) {
-        studentServiceImpl.updateStudent(
-                studentId,
-                student.getStudentName(),
-                student.getStudentEmail(),
-                student.getStudentDOB());
+    public String updateStudent(@PathVariable("studentId") int studentId, @RequestBody Student updateStudent) {
+        studentServiceImpl.updateStudent(studentId, updateStudent);
 
         return BodyResponses.UPDATED;
     }
