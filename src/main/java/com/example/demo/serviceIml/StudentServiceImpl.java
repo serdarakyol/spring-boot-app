@@ -1,8 +1,6 @@
 package com.example.demo.serviceIml;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,37 +42,30 @@ public class StudentServiceImpl implements StudentService{
 
 	@Transactional
 	@Override
-	public void updateStudent(int studentId, String studentName, String studentEmail, LocalDate studentDOB) {
-		Student student = studentRepository.findById(studentId)
+	public void updateStudent(int studentId, Student updateStudent) {
+		Student currentStudent = studentRepository.findById(studentId)
 				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
 
 		// Student name processing
-		if (studentName == null || studentName.length() < 2 || Objects.equals(student.getStudentName(), studentName)) {
+		if (updateStudent.getStudentName().length() < 2) {
 			throw new BadRequestException(CommonResponses.nameNotValidMsg);
 		}
-		student.setStudentName(studentName);
+		currentStudent.setStudentName(updateStudent.getStudentName());
 
-		// Student email processing
-		if (!Utils.isMailValid(studentEmail)) {
+		// Check student email if valid
+		if (!Utils.isMailValid(updateStudent.getStudentEmail())) {
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
 
-		if (studentEmail == null || studentEmail.length() < 2 || Objects.equals(student.getStudentEmail(), studentEmail)) {
-			throw new BadRequestException(CommonResponses.emailNotValidMsg);
-		}
-
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentEmail);
+		Optional<Student> studentOptional = studentRepository.findStudentByEmail(updateStudent.getStudentEmail());
 		// check if e-mail taken
 		if (studentOptional.isPresent()) {
 			throw new BadRequestException(CommonResponses.emailTakenMsg);
 		}
-		student.setStudentEmail(studentEmail);
+		currentStudent.setStudentEmail(updateStudent.getStudentEmail());
 
-		// Student DOB processing
-		if (studentDOB == null || Objects.equals(studentDOB, student.getStudentDOB())){
-			throw new BadRequestException(CommonResponses.birthdayNotValidMsg);
-		}
-		student.setStudentDOB(studentDOB);
+		// no need process for the DOB becase it's @NonNull in the entity class
+		currentStudent.setStudentDOB(updateStudent.getStudentDOB());
 	}
 
 	@Override

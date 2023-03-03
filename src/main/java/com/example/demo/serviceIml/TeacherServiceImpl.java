@@ -1,8 +1,6 @@
 package com.example.demo.serviceIml;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,37 +42,30 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Transactional
     @Override
-    public void updateTeacherById(int teacherId, String teacherName, String teacherEmail, LocalDate teacherDOB) {
-        Teacher teacher = teacherRepository.findById(teacherId)
+    public void updateTeacherById(int teacherId, Teacher updatedTeacher) {
+        Teacher currentTeacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new NotFoundException(teacherNotExistByIdMsg + teacherId));
 
         // Teacher name processing
-        if (teacherName == null || teacherName.length() < 2 || Objects.equals(teacher.getTeacherName(), teacherName)) {
+        if (updatedTeacher.getTeacherName().length() < 2) {
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
-        teacher.setTeacherName(teacherName);
+        currentTeacher.setTeacherName(updatedTeacher.getTeacherName());
 
-        // Teacher email processing
-        if (!Utils.isMailValid(teacherEmail)) {
+        // Check teacher email if valid
+        if (!Utils.isMailValid(updatedTeacher.getTeacherEmail())) {
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
-        if (teacherEmail == null || teacherEmail.length() < 2 || Objects.equals(teacher.getTeacherEmail(), teacherEmail)) {
-            throw new BadRequestException(CommonResponses.emailNotValidMsg);
-        }
-
-        Optional<Teacher> teacherOptional = teacherRepository.findTeacherByTeacherEmail(teacherEmail);
+        Optional<Teacher> teacherOptional = teacherRepository.findTeacherByTeacherEmail(updatedTeacher.getTeacherEmail());
         // check if e-mail taken
         if (teacherOptional.isPresent()) {
             throw new BadRequestException(CommonResponses.emailTakenMsg);
         }
-        teacher.setTeacherEmail(teacherEmail);
+        currentTeacher.setTeacherEmail(updatedTeacher.getTeacherEmail());
 
-        // Teacher DOB processing
-        if (teacherDOB == null || Objects.equals(teacherDOB, teacher.getTeacherDOB())) {
-            throw new BadRequestException(CommonResponses.birthdayNotValidMsg);
-        }
-        teacher.setTeacherDOB(teacherDOB);
+        // no need process for the DOB becase it's @NonNull in the entity class
+        currentTeacher.setTeacherDOB(updatedTeacher.getTeacherDOB());
     }
 
     @Override

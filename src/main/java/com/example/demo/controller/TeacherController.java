@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +18,16 @@ import com.example.demo.entity.Teacher;
 import com.example.demo.mapper.TeacherMapper;
 import com.example.demo.serviceIml.TeacherServiceImpl;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "api/v1/teacher")
 public class TeacherController {
 
-    @Autowired
-    private TeacherServiceImpl teacherServiceImpl;
+    private final TeacherServiceImpl teacherServiceImpl;
 
-    @Autowired
-    private TeacherMapper teacherMapper;
+    private final TeacherMapper teacherMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -37,12 +37,8 @@ public class TeacherController {
     }
 
     @PutMapping(path = "{teacherId}")
-    public String updateTeacherById(@PathVariable("teacherId") int teacherId, @RequestBody Teacher teacher) {
-        teacherServiceImpl.updateTeacherById(
-                teacherId,
-                teacher.getTeacherName(),
-                teacher.getTeacherEmail(),
-                teacher.getTeacherDOB());
+    public String updateTeacherById(@PathVariable("teacherId") int teacherId, @RequestBody Teacher updateTeacher) {
+        teacherServiceImpl.updateTeacherById(teacherId, updateTeacher);
         return BodyResponses.UPDATED;
     }
 
