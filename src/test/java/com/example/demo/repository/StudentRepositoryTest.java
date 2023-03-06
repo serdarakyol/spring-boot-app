@@ -26,7 +26,7 @@ public class StudentRepositoryTest {
         studentRepository.save(student);
         
         // When
-        Student studentRecord = studentRepository.findStudentByEmail("serdarakyol55@outlook.com").get();
+        Student studentRecord = studentRepository.findByEmail("serdarakyol55@outlook.com").get();
 
         // Then
         assertThat(studentRecord).isEqualTo(student);

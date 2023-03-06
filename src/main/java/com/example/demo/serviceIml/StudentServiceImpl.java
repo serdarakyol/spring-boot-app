@@ -3,6 +3,8 @@ package com.example.demo.serviceIml;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,90 +22,122 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
-	private final String studentNotExistByIdMsg = "Student doesn't exist, student ID: ";
-	private final String studentNotExistByEmailMsg = "Student doesn't exist, student E-MAIL: ";
+	private final String studentNotExistByIdMsg = "Student doesn't exist with ID: ";
+	private final String studentNotExistByEmailMsg = "Student doesn't exist with E-MAIL: ";
+	private final String studentSuccessfullyDeleteMsg = "Student successfully deleted with E-mail: ";
+	private final String studentSuccessfullyFoundMsg = "Student successfully found: ";
+
+	static Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
 
 	@Autowired
 	private final StudentRepository studentRepository;
 
 	@Override
-	public void addNewStudent(Student student) {
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getStudentEmail());
-		if (studentOptional.isPresent()) {
+	public void addNewStudent(final Student student) {
+        String studentEmail = student.getStudentEmail();
+		if (studentRepository.isExistByEmail(studentEmail)){
+			log.error("Student already exist with e-mail: {}", studentEmail);
 			throw new BadRequestException(CommonResponses.emailTakenMsg);
 		}
 
 		// check if mail is valid
 		if (!Utils.isMailValid(student.getStudentEmail())){
+			log.error(CommonResponses.emailNotValidMsg);
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
+
+        if (student.getStudentName().length() < 2){
+            log.error(CommonResponses.nameNotValidMsg);
+			throw new BadRequestException(CommonResponses.nameNotValidMsg);
+        }
+
 		studentRepository.save(student);
+		log.info("New student saved: {}", student.toString());
 	}
 
 	@Transactional
 	@Override
-	public void updateStudent(int studentId, Student updateStudent) {
-		Student currentStudent = studentRepository.findById(studentId)
-				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
+	public void updateStudent(int studentId, final Student updateStudent) {
+        // check if the student is exist
+		if (!studentRepository.existsById(studentId)){
+			log.error(studentNotExistByIdMsg + studentId);
+			throw new NotFoundException(studentNotExistByIdMsg + studentId);
+		}
+
+        Student currentStudent = studentRepository.findById(studentId).get();
 
 		// Student name processing
 		if (updateStudent.getStudentName().length() < 2) {
+			log.error(CommonResponses.nameNotValidMsg);
 			throw new BadRequestException(CommonResponses.nameNotValidMsg);
 		}
 		currentStudent.setStudentName(updateStudent.getStudentName());
 
 		// Check student email if valid
 		if (!Utils.isMailValid(updateStudent.getStudentEmail())) {
+			log.error(CommonResponses.emailNotValidMsg);
 			throw new BadRequestException(CommonResponses.emailNotValidMsg);
 		}
 
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(updateStudent.getStudentEmail());
 		// check if e-mail taken
-		if (studentOptional.isPresent()) {
+		if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
+			log.error(CommonResponses.emailTakenMsg);
 			throw new BadRequestException(CommonResponses.emailTakenMsg);
 		}
 		currentStudent.setStudentEmail(updateStudent.getStudentEmail());
 
 		// no need process for the DOB becase it's @NonNull in the entity class
 		currentStudent.setStudentDOB(updateStudent.getStudentDOB());
+		log.info("Student updated: {} ", currentStudent.toString());
 	}
 
 	@Override
 	public void deleteStudentById(int studentId) {
-		boolean isStudentExist = studentRepository.existsById(studentId);
-		if (!isStudentExist) {
+		if (!studentRepository.existsById(studentId)) {
+			log.error(studentNotExistByIdMsg + studentId);
 			throw new NotFoundException(studentNotExistByIdMsg + studentId);
 		}
 		studentRepository.deleteById(studentId);
+		log.info(studentSuccessfullyDeleteMsg + studentId);
 	}
 
 	@Override
 	public void deleteStudentByEmail(String studentEmail) {
-		boolean isStudentExist = studentRepository.findStudentByEmail(studentEmail).isPresent();
-		if (!isStudentExist) {
-			throw new NotFoundException(studentNotExistByIdMsg + studentEmail);
+		if (!studentRepository.isExistByEmail(studentEmail)) {
+			log.error(studentNotExistByEmailMsg + studentEmail);
+			throw new NotFoundException(studentNotExistByEmailMsg + studentEmail);
 		}
-		studentRepository.deleteStudentByEmail(studentEmail);
+		studentRepository.deleteByEmail(studentEmail);
+		log.info(studentSuccessfullyDeleteMsg + studentEmail);
 	}
 
 	@Override
 	public Student getStudentById(int studentId) {
-		Student student = studentRepository.findById(studentId)
-				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
+		Optional<Student> studentRecord = studentRepository.findById(studentId);
+		if (!studentRecord.isPresent()){
+			log.error(studentNotExistByIdMsg + studentId);
+			throw new NotFoundException(studentNotExistByIdMsg + studentId);
+		}
+		Student student = studentRecord.get();
+		log.info(studentSuccessfullyFoundMsg + student.toString());
 		return student;
 	}
 
 	@Override
 	public Student getStudentByEmail(String studentEmail){
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentEmail);
-		if (studentOptional.isEmpty()) {
+		Optional<Student> studentOptional = studentRepository.findByEmail(studentEmail);
+		if (!studentOptional.isPresent()) {
+			log.error(studentNotExistByEmailMsg + studentEmail);
 			throw new NotFoundException(studentNotExistByEmailMsg + studentEmail);
 		}
-		return studentOptional.get();
+		Student student = studentOptional.get();
+		log.info(studentSuccessfullyFoundMsg + student.toString());
+		return student;
 	}
 
 	@Override
 	public List<Student> getStudents() {
+        log.info("All students are called.");
 		return studentRepository.findAll();
 	}
 }
