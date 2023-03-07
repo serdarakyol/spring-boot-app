@@ -36,23 +36,23 @@ public class StudentServiceImpl implements StudentService {
     public void addNewStudent(final Student student) {
         String studentEmail = student.getStudentEmail();
         if (studentRepository.isExistByEmail(studentEmail)) {
-            log.error(studentExist + "E-MAIL: " + studentEmail);
+            log.error("addNewStudent: " + studentExist + "E-MAIL: " + studentEmail);
             throw new BadRequestException(studentExist + "E-MAIL: " + studentEmail);
         }
 
         // check if mail is valid
         if (!Utils.isMailValid(student.getStudentEmail())) {
-            log.error(CommonResponses.emailNotValidMsg);
+            log.error("addNewStudent: " + CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         if (student.getStudentName().length() < 2) {
-            log.error(CommonResponses.nameNotValidMsg);
+            log.error("addNewStudent: " + CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
 
         studentRepository.save(student);
-        log.info("New student saved: {}", student.toString());
+        log.info("addNewStudent: New student saved: {}", student.toString());
     }
 
     @Transactional
@@ -60,7 +60,7 @@ public class StudentServiceImpl implements StudentService {
     public void updateStudent(int studentId, final Student updateStudent) {
         // check if the student is exist
         if (!studentRepository.existsById(studentId)) {
-            log.error(studentNotExistMsg + "ID: " + studentId);
+            log.error("updateStudent:" + studentNotExistMsg + "ID: " + studentId);
             throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
         }
 
@@ -68,58 +68,58 @@ public class StudentServiceImpl implements StudentService {
 
         // Student name processing
         if (updateStudent.getStudentName().length() < 2) {
-            log.error(CommonResponses.nameNotValidMsg);
+            log.error("updateStudent:" + CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
         currentStudent.setStudentName(updateStudent.getStudentName());
 
         // Check student email if valid
         if (!Utils.isMailValid(updateStudent.getStudentEmail())) {
-            log.error(CommonResponses.emailNotValidMsg);
+            log.error("updateStudent:" + CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         // check if e-mail taken
         if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
-            log.error(CommonResponses.emailTakenMsg);
+            log.error("updateStudent:" + CommonResponses.emailTakenMsg);
             throw new BadRequestException(CommonResponses.emailTakenMsg);
         }
         currentStudent.setStudentEmail(updateStudent.getStudentEmail());
 
         // no need process for the DOB becase it's @NonNull in the entity class
         currentStudent.setStudentDOB(updateStudent.getStudentDOB());
-        log.info("Student updated: {} ", currentStudent.toString());
+        log.info("updateStudent: Student updated: {} ", currentStudent.toString());
     }
 
     @Override
     public void deleteStudentById(int studentId) {
         if (!studentRepository.existsById(studentId)) {
-            log.error(studentNotExistMsg + "ID: " + studentId);
+            log.error("deleteStudentById: " + studentNotExistMsg + "ID: " + studentId);
             throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
         }
         studentRepository.deleteById(studentId);
-        log.info(studentSuccessfullyDeleteMsg + "ID: " + studentId);
+        log.info("deleteStudentById: " + studentSuccessfullyDeleteMsg + "ID: " + studentId);
     }
 
     @Override
     public void deleteStudentByEmail(String studentEmail) {
         if (!studentRepository.isExistByEmail(studentEmail)) {
-            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
+            log.error("deleteStudentByEmail: " + studentNotExistMsg + "E-MAIL: " + studentEmail);
             throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
         }
         studentRepository.deleteByEmail(studentEmail);
-        log.info(studentSuccessfullyDeleteMsg + "E-MAIL: " + studentEmail);
+        log.info("deleteStudentByEmail: " + studentSuccessfullyDeleteMsg + "E-MAIL: " + studentEmail);
     }
 
     @Override
     public Student getStudentById(int studentId) {
         Optional<Student> studentRecord = studentRepository.findById(studentId);
         if (!studentRecord.isPresent()) {
-            log.error(studentNotExistMsg + "ID: " + studentId);
+            log.error("getStudentById: " + studentNotExistMsg + "ID: " + studentId);
             throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
         }
         Student student = studentRecord.get();
-        log.info(studentSuccessfullyFoundMsg + student.toString());
+        log.info("getStudentById: " + studentSuccessfullyFoundMsg + student.toString());
         return student;
     }
 
@@ -127,17 +127,17 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentByEmail(String studentEmail) {
         Optional<Student> studentOptional = studentRepository.findByEmail(studentEmail);
         if (!studentOptional.isPresent()) {
-            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
+            log.error("getStudentByEmail: " + studentNotExistMsg + "E-MAIL: " + studentEmail);
             throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
         }
         Student student = studentOptional.get();
-        log.info(studentSuccessfullyFoundMsg + student.toString());
+        log.info("getStudentByEmail: " + studentSuccessfullyFoundMsg + student.toString());
         return student;
     }
 
     @Override
     public List<Student> getStudents() {
-        log.info("All students are called.");
+        log.info("getStudents: All students are called.");
         return studentRepository.findAll();
     }
 }
