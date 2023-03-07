@@ -22,10 +22,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
-    private final String studentNotExistByIdMsg = "Student doesn't exist with ID: ";
-    private final String studentNotExistByEmailMsg = "Student doesn't exist with E-MAIL: ";
-    private final String studentSuccessfullyDeleteMsg = "Student successfully deleted with E-mail: ";
+    private final String studentNotExistMsg = "Student doesn't exist with ";
+    private final String studentSuccessfullyDeleteMsg = "Student successfully deleted with ";
     private final String studentSuccessfullyFoundMsg = "Student successfully found: ";
+    private final String studentExist = "Student already exist with ";
 
     static Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
 
@@ -36,8 +36,8 @@ public class StudentServiceImpl implements StudentService {
     public void addNewStudent(final Student student) {
         String studentEmail = student.getStudentEmail();
         if (studentRepository.isExistByEmail(studentEmail)) {
-            log.error("Student already exist with e-mail: {}", studentEmail);
-            throw new BadRequestException(CommonResponses.emailTakenMsg);
+            log.error(studentExist + "E-MAIL: " + studentEmail);
+            throw new BadRequestException(studentExist + "E-MAIL: " + studentEmail);
         }
 
         // check if mail is valid
@@ -60,8 +60,8 @@ public class StudentServiceImpl implements StudentService {
     public void updateStudent(int studentId, final Student updateStudent) {
         // check if the student is exist
         if (!studentRepository.existsById(studentId)) {
-            log.error(studentNotExistByIdMsg + studentId);
-            throw new NotFoundException(studentNotExistByIdMsg + studentId);
+            log.error(studentNotExistMsg + "ID: " + studentId);
+            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
         }
 
         Student currentStudent = studentRepository.findById(studentId).get();
@@ -94,29 +94,29 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void deleteStudentById(int studentId) {
         if (!studentRepository.existsById(studentId)) {
-            log.error(studentNotExistByIdMsg + studentId);
-            throw new NotFoundException(studentNotExistByIdMsg + studentId);
+            log.error(studentNotExistMsg + "ID: " + studentId);
+            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
         }
         studentRepository.deleteById(studentId);
-        log.info(studentSuccessfullyDeleteMsg + studentId);
+        log.info(studentSuccessfullyDeleteMsg + "ID: " + studentId);
     }
 
     @Override
     public void deleteStudentByEmail(String studentEmail) {
         if (!studentRepository.isExistByEmail(studentEmail)) {
-            log.error(studentNotExistByEmailMsg + studentEmail);
-            throw new NotFoundException(studentNotExistByEmailMsg + studentEmail);
+            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
+            throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
         }
         studentRepository.deleteByEmail(studentEmail);
-        log.info(studentSuccessfullyDeleteMsg + studentEmail);
+        log.info(studentSuccessfullyDeleteMsg + "E-MAIL: " + studentEmail);
     }
 
     @Override
     public Student getStudentById(int studentId) {
         Optional<Student> studentRecord = studentRepository.findById(studentId);
         if (!studentRecord.isPresent()) {
-            log.error(studentNotExistByIdMsg + studentId);
-            throw new NotFoundException(studentNotExistByIdMsg + studentId);
+            log.error(studentNotExistMsg + "ID: " + studentId);
+            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
         }
         Student student = studentRecord.get();
         log.info(studentSuccessfullyFoundMsg + student.toString());
@@ -127,8 +127,8 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentByEmail(String studentEmail) {
         Optional<Student> studentOptional = studentRepository.findByEmail(studentEmail);
         if (!studentOptional.isPresent()) {
-            log.error(studentNotExistByEmailMsg + studentEmail);
-            throw new NotFoundException(studentNotExistByEmailMsg + studentEmail);
+            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
+            throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
         }
         Student student = studentOptional.get();
         log.info(studentSuccessfullyFoundMsg + student.toString());
