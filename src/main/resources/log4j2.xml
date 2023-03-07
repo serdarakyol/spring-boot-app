@@ -17,7 +17,7 @@
     <Loggers>
         <Logger name="com.example.demo" level="debug" additivity="false">
             <AppenderRef ref="Product"/>
-            <!-- <AppenderRef ref="Console"/> -->
+            <AppenderRef ref="Console"/>
         </Logger>
         <Root level="error">
             <AppenderRef ref="Product"/>
