@@ -15,10 +15,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "Student")
 @RequiredArgsConstructor
+@ToString
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

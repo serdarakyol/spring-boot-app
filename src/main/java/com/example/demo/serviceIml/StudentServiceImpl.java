@@ -3,6 +3,8 @@ package com.example.demo.serviceIml;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,101 +21,134 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class StudentServiceImpl implements StudentService{
-	private final String studentNotExistByIdMsg = "Student doesn't exist, student ID: ";
-	private final String studentNotExistByEmailMsg = "Student doesn't exist, student E-MAIL: ";
+public class StudentServiceImpl implements StudentService {
+    private final String studentNotExistMsg = "Student doesn't exist with ";
+    private final String studentSuccessfullyDeleteMsg = "Student successfully deleted with ";
+    private final String studentSuccessfullyFoundMsg = "Student successfully found: ";
+    private final String studentExist = "Student already exist with ";
 
-	@Autowired
-	private final StudentRepository studentRepository;
+    static Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
 
-	@Override
-	public void addNewStudent(Student student) {
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getStudentEmail());
-		if (studentOptional.isPresent()) {
-			throw new BadRequestException(CommonResponses.emailTakenMsg);
-		}
+    @Autowired
+    private final StudentRepository studentRepository;
 
-		// check if mail is valid
-		if (!Utils.isMailValid(student.getStudentEmail())){
-			throw new BadRequestException(CommonResponses.emailNotValidMsg);
-		}
-		studentRepository.save(student);
-	}
+    @Override
+    public void addNewStudent(final Student student) {
+        String studentEmail = student.getStudentEmail();
+        if (studentRepository.isExistByEmail(studentEmail)) {
+            log.error(studentExist + "E-MAIL: " + studentEmail);
+            throw new BadRequestException(studentExist + "E-MAIL: " + studentEmail);
+        }
 
-	@Transactional
-	@Override
-	public void updateStudent(int studentId, Student updateStudent) {
-		Student currentStudent = studentRepository.findById(studentId)
-				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
+        // check if mail is valid
+        if (!Utils.isMailValid(student.getStudentEmail())) {
+            log.error(CommonResponses.emailNotValidMsg);
+            throw new BadRequestException(CommonResponses.emailNotValidMsg);
+        }
 
-		// Student name processing
-		if (updateStudent.getStudentName().length() < 2) {
-			throw new BadRequestException(CommonResponses.nameNotValidMsg);
-		}
-		currentStudent.setStudentName(updateStudent.getStudentName());
+        if (student.getStudentName().length() < 2) {
+            log.error(CommonResponses.nameNotValidMsg);
+            throw new BadRequestException(CommonResponses.nameNotValidMsg);
+        }
 
-		// Check student email if valid
-		if (!Utils.isMailValid(updateStudent.getStudentEmail())) {
-			throw new BadRequestException(CommonResponses.emailNotValidMsg);
-		}
+        studentRepository.save(student);
+        log.info("New student saved: {}", student.toString());
+    }
 
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(updateStudent.getStudentEmail());
-		// check if e-mail taken
-		if (studentOptional.isPresent()) {
-			throw new BadRequestException(CommonResponses.emailTakenMsg);
-		}
-		currentStudent.setStudentEmail(updateStudent.getStudentEmail());
+    @Transactional
+    @Override
+    public void updateStudent(int studentId, final Student updateStudent) {
+        // check if the student is exist
+        if (!studentRepository.existsById(studentId)) {
+            log.error(studentNotExistMsg + "ID: " + studentId);
+            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
+        }
 
-		// no need process for the DOB becase it's @NonNull in the entity class
-		currentStudent.setStudentDOB(updateStudent.getStudentDOB());
-	}
+        Student currentStudent = studentRepository.findById(studentId).get();
 
-	@Override
-	public void deleteStudentById(int studentId) {
-		boolean isStudentExist = studentRepository.existsById(studentId);
-		if (!isStudentExist) {
-			throw new NotFoundException(studentNotExistByIdMsg + studentId);
-		}
-		studentRepository.deleteById(studentId);
-	}
+        // Student name processing
+        if (updateStudent.getStudentName().length() < 2) {
+            log.error(CommonResponses.nameNotValidMsg);
+            throw new BadRequestException(CommonResponses.nameNotValidMsg);
+        }
+        currentStudent.setStudentName(updateStudent.getStudentName());
 
-	@Override
-	public void deleteStudentByEmail(String studentEmail) {
-		boolean isStudentExist = studentRepository.findStudentByEmail(studentEmail).isPresent();
-		if (!isStudentExist) {
-			throw new NotFoundException(studentNotExistByIdMsg + studentEmail);
-		}
-		studentRepository.deleteStudentByEmail(studentEmail);
-	}
+        // Check student email if valid
+        if (!Utils.isMailValid(updateStudent.getStudentEmail())) {
+            log.error(CommonResponses.emailNotValidMsg);
+            throw new BadRequestException(CommonResponses.emailNotValidMsg);
+        }
 
-	@Override
-	public Student getStudentById(int studentId) {
-		Student student = studentRepository.findById(studentId)
-				.orElseThrow(() -> new NotFoundException(studentNotExistByIdMsg + studentId));
-		return student;
-	}
+        // check if e-mail taken
+        if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
+            log.error(CommonResponses.emailTakenMsg);
+            throw new BadRequestException(CommonResponses.emailTakenMsg);
+        }
+        currentStudent.setStudentEmail(updateStudent.getStudentEmail());
 
-	@Override
-	public Student getStudentByEmail(String studentEmail){
-		Optional<Student> studentOptional = studentRepository.findStudentByEmail(studentEmail);
-		if (studentOptional.isEmpty()) {
-			throw new NotFoundException(studentNotExistByEmailMsg + studentEmail);
-		}
-		return studentOptional.get();
-	}
+        // no need process for the DOB becase it's @NonNull in the entity class
+        currentStudent.setStudentDOB(updateStudent.getStudentDOB());
+        log.info("Student updated: {} ", currentStudent.toString());
+    }
 
-	@Override
-	public List<Student> getStudents() {
-		return studentRepository.findAll();
-	}
+    @Override
+    public void deleteStudentById(int studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            log.error(studentNotExistMsg + "ID: " + studentId);
+            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
+        }
+        studentRepository.deleteById(studentId);
+        log.info(studentSuccessfullyDeleteMsg + "ID: " + studentId);
+    }
+
+    @Override
+    public void deleteStudentByEmail(String studentEmail) {
+        if (!studentRepository.isExistByEmail(studentEmail)) {
+            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
+            throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
+        }
+        studentRepository.deleteByEmail(studentEmail);
+        log.info(studentSuccessfullyDeleteMsg + "E-MAIL: " + studentEmail);
+    }
+
+    @Override
+    public Student getStudentById(int studentId) {
+        Optional<Student> studentRecord = studentRepository.findById(studentId);
+        if (!studentRecord.isPresent()) {
+            log.error(studentNotExistMsg + "ID: " + studentId);
+            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
+        }
+        Student student = studentRecord.get();
+        log.info(studentSuccessfullyFoundMsg + student.toString());
+        return student;
+    }
+
+    @Override
+    public Student getStudentByEmail(String studentEmail) {
+        Optional<Student> studentOptional = studentRepository.findByEmail(studentEmail);
+        if (!studentOptional.isPresent()) {
+            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
+            throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
+        }
+        Student student = studentOptional.get();
+        log.info(studentSuccessfullyFoundMsg + student.toString());
+        return student;
+    }
+
+    @Override
+    public List<Student> getStudents() {
+        log.info("getStudents: All students are called.");
+        return studentRepository.findAll();
+    }
 }
-
 
 /*
-Note to me!!!
-@RequiredArgsConstructor does the same thing like below code
-@Autowired
-public StudentService(StudentRepository studentRepository) {
-	this.studentRepository = studentRepository;
-}
-*/
+ * Note to me!!!
+ * 
+ * @RequiredArgsConstructor does the same thing like below code
+ * 
+ * @Autowired
+ * public StudentService(StudentRepository studentRepository) {
+ * this.studentRepository = studentRepository;
+ * }
+ */
