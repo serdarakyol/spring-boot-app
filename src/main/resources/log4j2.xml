@@ -17,6 +17,8 @@
     <Loggers>
         <Logger name="com.example.demo" level="debug" additivity="false">
             <AppenderRef ref="Product"/>
+            <!-- Close Console in the production because the logging file will 
+                be duplicated which means unnecessarily memory allocation -->
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="error">
