@@ -60,7 +60,7 @@ public class StudentServiceImpl implements StudentService {
     public void updateStudent(int studentId, final Student updateStudent) {
         // check if the student is exist
         if (!studentRepository.existsById(studentId)) {
-            log.error("updateStudent:" + studentNotExistMsg + "ID: " + studentId);
+            log.error("updateStudent: " + studentNotExistMsg + "ID: " + studentId);
             throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
         }
 
@@ -68,20 +68,20 @@ public class StudentServiceImpl implements StudentService {
 
         // Student name processing
         if (updateStudent.getStudentName().length() < 2) {
-            log.error("updateStudent:" + CommonResponses.nameNotValidMsg);
+            log.error("updateStudent: " + CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
         currentStudent.setStudentName(updateStudent.getStudentName());
 
         // Check student email if valid
         if (!Utils.isMailValid(updateStudent.getStudentEmail())) {
-            log.error("updateStudent:" + CommonResponses.emailNotValidMsg);
+            log.error("updateStudent: " + CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         // check if e-mail taken
         if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
-            log.error("updateStudent:" + CommonResponses.emailTakenMsg);
+            log.error("updateStudent: " + CommonResponses.emailTakenMsg);
             throw new BadRequestException(CommonResponses.emailTakenMsg);
         }
         currentStudent.setStudentEmail(updateStudent.getStudentEmail());
