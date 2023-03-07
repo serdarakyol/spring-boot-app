@@ -36,23 +36,23 @@ public class TeacherServiceImpl implements TeacherService {
     public void addNewTeacher(Teacher teacher) {
         String teacherEmail = teacher.getTeacherEmail();
         if (teacherRepository.isExistByEmail(teacherEmail)) {
-            log.error("addNewTeacher: " + teacherExistMsg + "E-MAIL: " + teacherEmail);
+            log.error(teacherExistMsg + "E-MAIL: " + teacherEmail);
             throw new BadRequestException(teacherExistMsg + "E-MAIL: " + teacherEmail);
         }
 
         // check if mail is valid
         if (!Utils.isMailValid(teacher.getTeacherEmail())) {
-            log.error("addNewTeacher: " + CommonResponses.emailNotValidMsg);
+            log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         if (teacher.getTeacherName().length() < 2) {
-            log.error("addNewTeacher: " + CommonResponses.nameNotValidMsg);
+            log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
 
         teacherRepository.save(teacher);
-        log.info("addNewTeacher: New teacher saved: {}", teacher.toString());
+        log.info("New teacher saved: {}", teacher.toString());
     }
 
     @Transactional
@@ -60,7 +60,7 @@ public class TeacherServiceImpl implements TeacherService {
     public void updateTeacherById(int teacherId, Teacher updatedTeacher) {
         // check if the teacher is exist
         if (!teacherRepository.existsById(teacherId)) {
-            log.error("updateTeacherById: " + teacherNotExistMsg + "ID: " + teacherId);
+            log.error(teacherNotExistMsg + "ID: " + teacherId);
             throw new NotFoundException(teacherNotExistMsg + "ID: " + teacherId);
         }
 
@@ -68,58 +68,58 @@ public class TeacherServiceImpl implements TeacherService {
 
         // Teacher name processing
         if (updatedTeacher.getTeacherName().length() < 2) {
-            log.error("updateTeacherById: " + CommonResponses.nameNotValidMsg);
+            log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
         currentTeacher.setTeacherName(updatedTeacher.getTeacherName());
 
         // Check teacher email if valid
         if (!Utils.isMailValid(updatedTeacher.getTeacherEmail())) {
-            log.error("updateTeacherById: " + CommonResponses.emailNotValidMsg);
+            log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         // check if e-mail taken
         if (teacherRepository.isExistByEmail(updatedTeacher.getTeacherEmail())) {
-            log.error("updateTeacherById: " + CommonResponses.emailTakenMsg);
+            log.error(CommonResponses.emailTakenMsg);
             throw new BadRequestException(CommonResponses.emailTakenMsg);
         }
         currentTeacher.setTeacherEmail(updatedTeacher.getTeacherEmail());
 
         // no need process for the DOB becase it's @NonNull in the entity class
         currentTeacher.setTeacherDOB(updatedTeacher.getTeacherDOB());
-        log.info("updateTeacherById: Teacher updated: {}", currentTeacher.toString());
+        log.info("Teacher updated: {}", currentTeacher.toString());
     }
 
     @Override
     public void deleteTeacherById(int teacherId) {
         if (!teacherRepository.existsById(teacherId)) {
-            log.error("deleteTeacherById: " + teacherNotExistMsg + "ID: " + teacherId);
+            log.error(teacherNotExistMsg + "ID: " + teacherId);
             throw new NotFoundException(teacherNotExistMsg + "ID: " + teacherId);
         }
         teacherRepository.deleteById(teacherId);
-        log.info("deleteTeacherById: " + teacherSuccessfullyDeleteMsg + "ID: " + teacherId);
+        log.info(teacherSuccessfullyDeleteMsg + "ID: " + teacherId);
     }
 
     @Override
     public void deleteTeacherByMail(String teacherEmail) {
         if (!teacherRepository.isExistByEmail(teacherEmail)) {
-            log.error("deleteTeacherByMail: " + teacherNotExistMsg + "E-MAIL: " + teacherEmail);
+            log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
             throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
         }
         teacherRepository.deleteTeacherByMail(teacherEmail);
-        log.info("deleteTeacherByMail: " + teacherSuccessfullyDeleteMsg + "E-MAIL: " + teacherEmail);
+        log.info(teacherSuccessfullyDeleteMsg + "E-MAIL: " + teacherEmail);
     }
 
     @Override
     public Teacher getTeacherById(int teacherId) {
         Optional<Teacher> teacherRecord = teacherRepository.findById(teacherId);
         if (!teacherRecord.isPresent()) {
-            log.error("getTeacherById: " + teacherNotExistMsg + "ID: " + teacherId);
+            log.error(teacherNotExistMsg + "ID: " + teacherId);
             throw new NotFoundException(teacherNotExistMsg + "ID: " + teacherId);
         }
         Teacher teacher = teacherRecord.get();
-        log.info("getTeacherById: " + teacherSuccessfullyFound + teacher.toString());
+        log.info(teacherSuccessfullyFound + teacher.toString());
         return teacher;
     }
 
@@ -127,11 +127,11 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getTeacherByEmail(String teacherEmail) {
         Optional<Teacher> teacherOptional = teacherRepository.findTeacherByTeacherEmail(teacherEmail);
         if (!teacherOptional.isPresent()) {
-            log.error("getTeacherByEmail: " + teacherNotExistMsg + "E-MAIL: " + teacherEmail);
+            log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
             throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
         }
         Teacher teacher = teacherOptional.get();
-        log.info("getTeacherByEmail: " +teacherSuccessfullyFound + teacher.toString());
+        log.info(teacherSuccessfullyFound + teacher.toString());
         return teacher;
     }
 
