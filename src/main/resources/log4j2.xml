@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                pattern="demo %d{yyyy-MM-dd'T'HH:mm:ss.SSS000}{GMT}Z %-7p %t:%F:%L %msg%n"
+            />
+        </Console>
+        <File name="Product" fileName="/tmp/demo/demo.log" append="true">
+            <PatternLayout>
+                <Pattern>
+                    demo %d{yyyy-MM-dd'T'HH:mm:ss.SSS000}{GMT}Z %-7p %t:%F:%L %msg%n
+                </Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.example.demo" level="debug" additivity="false">
+            <AppenderRef ref="Product"/>
+            <!-- Close Console in the production because the logging file will 
+                be duplicated which means unnecessarily memory allocation -->
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="Product"/>
+        </Root>
+    </Loggers>
+</Configuration>

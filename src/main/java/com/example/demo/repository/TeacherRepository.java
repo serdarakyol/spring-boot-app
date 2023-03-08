@@ -21,4 +21,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     @Transactional
     @Query("DELETE FROM Teacher t WHERE t.teacherEmail = :teacherEmail")
     void deleteTeacherByMail(@Param("teacherEmail") String teacherEmail);
+
+    @Query("SELECT COUNT(t.teacherEmail) = 1 FROM Teacher t WHERE t.teacherEmail = :teacherEmail")
+    boolean isExistByEmail(@Param("teacherEmail") String teacherEmail);
 }

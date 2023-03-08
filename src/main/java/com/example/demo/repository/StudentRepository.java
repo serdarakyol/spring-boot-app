@@ -15,10 +15,13 @@ import com.example.demo.entity.Student;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT s FROM Student s WHERE s.studentEmail = ?1")
-    Optional<Student> findStudentByEmail(String email);
+    Optional<Student> findByEmail(String email);
 
     @Modifying
     @Transactional
     @Query("DELETE FROM Student s WHERE s.studentEmail = :studentEmail")
-    void deleteStudentByEmail(@Param("studentEmail") String studentEmail);
+    void deleteByEmail(@Param("studentEmail") String studentEmail);
+
+    @Query("SELECT COUNT(s.studentEmail) = 1 FROM Student s WHERE s.studentEmail = :studentEmail")
+    boolean isExistByEmail(@Param("studentEmail") String studentEmail);
 }
