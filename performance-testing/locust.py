@@ -65,14 +65,14 @@ class TeacherProcess(LoadTest):
                          json=self._generate_post_data(),
                          headers=h)
     
-    #def on_stop(self):
-    #    time.sleep(1)
-    #    for email in self.saved_emails:
-    #        with self.client.delete(url=f"{self.base_path}/by-email/{email}",
-    #                                catch_response=True) as response:
-    #            # delete that after add logging to the API
-    #            if response.status_code == 404:
-    #                response.success()
+    def on_stop(self):
+        time.sleep(1)
+        for email in self.saved_emails:
+            with self.client.delete(url=f"{self.base_path}/by-email/{email}",
+                                    catch_response=True) as response:
+                # delete that after add logging to the API
+                if response.status_code == 404:
+                    response.success()
 
     def _generate_post_data(self) -> dict:
         request_data = {
