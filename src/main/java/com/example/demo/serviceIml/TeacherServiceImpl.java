@@ -57,14 +57,15 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Transactional
     @Override
-    public void updateTeacherById(int teacherId, Teacher updatedTeacher) {
+    public void updateTeacherById(String teacherEmail, Teacher updatedTeacher) {
+        Optional<Teacher> teacher = teacherRepository.findByEmail(teacherEmail);
         // check if the teacher is exist
-        if (!teacherRepository.existsById(teacherId)) {
-            log.error(teacherNotExistMsg + "ID: " + teacherId);
-            throw new NotFoundException(teacherNotExistMsg + "ID: " + teacherId);
+        if (!teacher.isPresent()) {
+            log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
+            throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
         }
 
-        Teacher currentTeacher = teacherRepository.findById(teacherId).get();
+        Teacher currentTeacher = teacher.get();
 
         // Teacher name processing
         if (updatedTeacher.getTeacherName().length() < 2) {
@@ -102,12 +103,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public void deleteTeacherByMail(String teacherEmail) {
+    public void deleteByEmail(String teacherEmail) {
         if (!teacherRepository.isExistByEmail(teacherEmail)) {
             log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
             throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
         }
-        teacherRepository.deleteTeacherByMail(teacherEmail);
+        teacherRepository.deleteByEmail(teacherEmail);
         log.info(teacherSuccessfullyDeleteMsg + "E-MAIL: " + teacherEmail);
     }
 
@@ -125,7 +126,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getTeacherByEmail(String teacherEmail) {
-        Optional<Teacher> teacherOptional = teacherRepository.findTeacherByTeacherEmail(teacherEmail);
+        Optional<Teacher> teacherOptional = teacherRepository.findByEmail(teacherEmail);
         if (!teacherOptional.isPresent()) {
             log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
             throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);

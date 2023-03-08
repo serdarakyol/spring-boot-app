@@ -36,9 +36,9 @@ public class TeacherController {
         return BodyResponses.CREATED;
     }
 
-    @PutMapping(path = "{teacherId}")
-    public String updateTeacherById(@PathVariable("teacherId") int teacherId, @RequestBody Teacher updateTeacher) {
-        teacherServiceImpl.updateTeacherById(teacherId, updateTeacher);
+    @PutMapping(path = "{teacherEmail}")
+    public String updateTeacherById(@PathVariable("teacherEmail") String teacherEmail, @RequestBody Teacher updateTeacher) {
+        teacherServiceImpl.updateTeacherById(teacherEmail, updateTeacher);
         return BodyResponses.UPDATED;
     }
 
@@ -50,7 +50,7 @@ public class TeacherController {
 
     @DeleteMapping(path = "by-email/{teacherEmail}")
     public String deleteTeacher(@PathVariable("teacherEmail") String teacherEmail) {
-        teacherServiceImpl.deleteTeacherByMail(teacherEmail);
+        teacherServiceImpl.deleteByEmail(teacherEmail);
         return BodyResponses.DELETED;
     }
 
