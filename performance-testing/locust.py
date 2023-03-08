@@ -87,21 +87,19 @@ class TeacherProcess(LoadTest):
 
         return request_data
 
-    def _generate_put_data(self):
+    def _generate_put_data(self) -> str:
+        teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
-            "teacherName": "tibjy",
-            "teacherEmail": "asdet%40bedhaxkfv.fndxldvtrkdsjcjiwit",
-            "teacherDOB": "1986-03-01"
+            "teacherName": "Test name",
+            "teacherEmail": teacher_email,
+            "teacherDOB": "1995-03-07"
         }
         if len(self.saved_emails) > 0:
             request_data["teacherName"] = self.generate_random_string()
-            teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-            request_data["teacherEmail"] = teacher_email.replace("@", "%40")
             request_data["teacherDOB"] = self.generate_random_dob()
             teacher_id = str(random.randint(1, len(self.saved_emails)))
-            request_string = f"{self.base_path}/{teacher_id}"
-                
-            return request_string, request_data
+
+            return f"{self.base_path}/{teacher_id}", request_data
         # this is added for handle None returns
         return f"{self.base_path}/1", request_data
 
@@ -139,20 +137,17 @@ class StudentProcess(LoadTest):
         return request_data
     
     def _generate_put_data(self) -> str:
+        student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
-            "studentName": str,
-            "studentEmail": str,
-            "studentDOB": str
+            "studentName": "Test",
+            "studentEmail": student_email,
+            "studentDOB": "1999-03-07"
         }
-
         if len(self.saved_emails) > 0:
             request_data["studentName"] = self.generate_random_string()
-            student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-            request_data["studentEmail"] = student_email.replace("@", "%40")
             request_data["studentDOB"] = self.generate_random_dob()
             student_id = str(random.randint(1, len(self.saved_emails)))
-            request_string = f"{self.base_path}/{student_id}"
 
-            return request_string, request_data
+            return f"{self.base_path}/{student_id}", request_data
         # this is added for handle None returns
         return f"{self.base_path}/1", request_data
