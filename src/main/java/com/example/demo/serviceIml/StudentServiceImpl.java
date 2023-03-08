@@ -57,14 +57,15 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     @Override
-    public void updateStudent(int studentId, final Student updateStudent) {
+    public void updateStudent(String studentEmail, final Student updateStudent) {
+        Optional<Student> student = studentRepository.findByEmail(studentEmail);
         // check if the student is exist
-        if (!studentRepository.existsById(studentId)) {
-            log.error(studentNotExistMsg + "ID: " + studentId);
-            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
+        if (!student.isPresent()) {
+            log.error(studentNotExistMsg + "E-mail: " + studentEmail);
+            throw new NotFoundException(studentNotExistMsg + "E-mail: " + studentEmail);
         }
 
-        Student currentStudent = studentRepository.findById(studentId).get();
+        Student currentStudent = student.get();
 
         // Student name processing
         if (updateStudent.getStudentName().length() < 2) {

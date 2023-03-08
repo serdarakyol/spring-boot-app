@@ -36,9 +36,9 @@ public class StudentController {
         return BodyResponses.CREATED;
     }
 
-    @PutMapping(path = "{studentId}")
-    public String updateStudent(@PathVariable("studentId") int studentId, @RequestBody Student updateStudent) {
-        studentServiceImpl.updateStudent(studentId, updateStudent);
+    @PutMapping(path = "{studentEmail}")
+    public String updateStudent(@PathVariable("studentEmail") String studentEmail, @RequestBody Student updateStudent) {
+        studentServiceImpl.updateStudent(studentEmail, updateStudent);
 
         return BodyResponses.UPDATED;
     }

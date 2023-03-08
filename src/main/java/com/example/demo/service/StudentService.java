@@ -8,7 +8,7 @@ public interface StudentService {
     public void addNewStudent(Student student);
     public void deleteStudentById(int studentId);
     public void deleteStudentByEmail(String studentEmail);
-    public void updateStudent(int studentId, Student updateStudent);
+    public void updateStudent(String studentEmail, Student updateStudent);
     public Student getStudentById(int studentId);
     public Student getStudentByEmail(String email);
     public List<Student> getStudents();
