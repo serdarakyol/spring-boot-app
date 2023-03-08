@@ -65,14 +65,14 @@ class TeacherProcess(LoadTest):
                          json=self._generate_post_data(),
                          headers=h)
     
-    def on_stop(self):
-        time.sleep(1)
-        for email in self.saved_emails:
-            with self.client.delete(url=f"{self.base_path}/by-email/{email}",
-                                    catch_response=True) as response:
-                # delete that after add logging to the API
-                if response.status_code == 404:
-                    response.success()
+    #def on_stop(self):
+    #    time.sleep(1)
+    #    for email in self.saved_emails:
+    #        with self.client.delete(url=f"{self.base_path}/by-email/{email}",
+    #                                catch_response=True) as response:
+    #            # delete that after add logging to the API
+    #            if response.status_code == 404:
+    #                response.success()
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -87,7 +87,7 @@ class TeacherProcess(LoadTest):
 
         return request_data
 
-    def _generate_put_data(self) -> str:
+    def _generate_put_data(self) -> (str | object):
         teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
             "teacherName": "Test name",
@@ -136,7 +136,7 @@ class StudentProcess(LoadTest):
 
         return request_data
     
-    def _generate_put_data(self) -> str:
+    def _generate_put_data(self) -> (str | object):
         student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
             "studentName": "Test",
@@ -146,7 +146,8 @@ class StudentProcess(LoadTest):
         if len(self.saved_emails) > 0:
             request_data["studentName"] = self.generate_random_string()
             request_data["studentDOB"] = self.generate_random_dob()
-            student_id = str(random.randint(1, len(self.saved_emails)))
+            student_id = random.randint(1, len(self.saved_emails))
+            self.saved_emails[student_id - 1] = student_email
 
             return f"{self.base_path}/{student_id}", request_data
         # this is added for handle None returns
