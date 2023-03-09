@@ -19,7 +19,6 @@ class LoadTest(FastHttpUser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.base_path = None
-        self.saved_emails = []
 
     def generate_random_string(self, min_name_size=2, max_name_size=20) -> str:
         letters = string.ascii_lowercase
@@ -35,14 +34,14 @@ class LoadTest(FastHttpUser):
     def get_all(self):
         self.client.get(url=self.base_path)
 
-    @task(1)
-    def get_one_by_id(self):
-        random_id = random.randint(1, len(self.saved_emails))
-        self.client.get(url=f"{self.base_path}/by-id/{random_id}")
+    #@task(1)
+    #def get_one_by_id(self):
+    #    random_id = random.randint(1, len(self.saved_emails))
+    #    self.client.get(url=f"{self.base_path}/by-id/{random_id}")
 
     @task(1)
     def get_one_by_email(self):
-        random_email = random.choice(self.saved_emails)
+        random_email = self.random_user()
         self.client.get(url=f"{self.base_path}/by-email/{random_email}")
 
     @task(20)
@@ -51,22 +50,27 @@ class LoadTest(FastHttpUser):
 
     @task(4)
     def put_request(self):
-        self.client.put(url=self._generate_put_data())
+        request_path, request_data = self._generate_put_data()
+        self.client.put(url=request_path, json=request_data, headers=h)
 
 
 class TeacherProcess(LoadTest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.base_path = "/api/v1/teacher"
+        self.teacher_mails = []
 
     def on_start(self):
         self.client.post(url=self.base_path,
                          json=self._generate_post_data(),
                          headers=h)
     
+    def random_user(self) -> str:
+        return random.choice(self.teacher_mails)
+
     def on_stop(self):
         time.sleep(1)
-        for email in self.saved_emails:
+        for email in self.teacher_mails:
             with self.client.delete(url=f"{self.base_path}/by-email/{email}",
                                     catch_response=True) as response:
                 # delete that after add logging to the API
@@ -82,36 +86,48 @@ class TeacherProcess(LoadTest):
         request_data["teacherName"] = self.generate_random_string()
         request_data["teacherEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["teacherDOB"] = self.generate_random_dob()
-        self.saved_emails.append(request_data["teacherEmail"])
+        self.teacher_mails.append(request_data["teacherEmail"])
 
         return request_data
 
-    def _generate_put_data(self) -> str:
-        if len(self.saved_emails) > 0:
-            teacher_name = self.generate_random_string()
-            teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-            teacher_email = teacher_email.replace("@", "%40")
-            teacher_id = str(random.randint(1, len(self.saved_emails)))
-            request_string = f"{self.base_path}/{teacher_id}?teacherName={teacher_name}&teacherEmail={teacher_email}"
-                
-            return request_string
-        # this is added for handle None returns
-        return f"{self.base_path}/1?teacherName=ibjy&teacherEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
+    def _generate_put_data(self) -> (str | object):
+        teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
+        request_data = {
+            "teacherName": "Test name",
+            "teacherEmail": teacher_email,
+            "teacherDOB": "1995-03-07"
+        }
+
+        request_data["teacherName"] = self.generate_random_string()
+        request_data["teacherDOB"] = self.generate_random_dob()
+
+         # select random email on db
+        random_teacher_mail_on_db = random.choice(self.teacher_mails)
+        # delete randomly selected email from list
+        self.teacher_mails.remove(random_teacher_mail_on_db)
+        # add new email to the list
+        self.teacher_mails.append(teacher_email)
+
+        return f"{self.base_path}/{random_teacher_mail_on_db}", request_data
 
 
 class StudentProcess(LoadTest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.base_path = "/api/v1/student"
+        self.student_mails = []
 
     def on_start(self):
         self.client.post(url=self.base_path,
                          json=self._generate_post_data(),
                          headers=h)
+        
+    def random_user(self) -> str:
+        return random.choice(self.student_mails)
     
     def on_stop(self):
         time.sleep(1)
-        for email in self.saved_emails:
+        for email in self.student_mails:
             with self.client.delete(url=f"{self.base_path}/by-email/{email}",
                                     catch_response=True) as response:
                 # delete that after add logging to the API
@@ -127,18 +143,26 @@ class StudentProcess(LoadTest):
         request_data["studentName"] = self.generate_random_string()
         request_data["studentEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["studentDOB"] = self.generate_random_dob()
-        self.saved_emails.append(request_data["studentEmail"])
+        self.student_mails.append(request_data["studentEmail"])
 
         return request_data
     
-    def _generate_put_data(self) -> str:
-        if len(self.saved_emails) > 0:
-            student_name = self.generate_random_string()
-            student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-            student_email = student_email.replace("@", "%40")
-            student_id = str(random.randint(1, len(self.saved_emails)))
-            request_string = f"{self.base_path}/{student_id}?studentName={student_name}&studentEmail={student_email}"
+    def _generate_put_data(self) -> (str | dict):
+        student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
+        request_data = {
+            "studentName": "Test",
+            "studentEmail": student_email,
+            "studentDOB": "1999-03-07"
+        }
+        
+        request_data["studentName"] = self.generate_random_string()
+        request_data["studentDOB"] = self.generate_random_dob()
 
-            return request_string
-        # this is added for handle None returns
-        return f"{self.base_path}/1?studentName=ibjy&studentEmail=et%40bedhaxkfv.fndxldvtrkdsjcjiwit"
+        # select random email on db
+        random_student_mail_on_db = random.choice(self.student_mails)
+        # delete randomly selected email from list
+        self.student_mails.remove(random_student_mail_on_db)
+        # add new email to the list
+        self.student_mails.append(student_email)
+
+        return f"{self.base_path}/{random_student_mail_on_db}", request_data
