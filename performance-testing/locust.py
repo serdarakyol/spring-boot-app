@@ -34,14 +34,14 @@ class LoadTest(FastHttpUser):
     def get_all(self):
         self.client.get(url=self.base_path)
 
-    #@task(1)
-    #def get_one_by_id(self):
-    #    random_id = random.randint(1, len(self.saved_emails))
-    #    self.client.get(url=f"{self.base_path}/by-id/{random_id}")
+    @task(1)
+    def get_one_by_id(self):
+        random_id = self.random_user_id()
+        self.client.get(url=f"{self.base_path}/by-id/{random_id}")
 
     @task(1)
     def get_one_by_email(self):
-        random_email = self.random_user()
+        random_email = self.random_user_mail()
         self.client.get(url=f"{self.base_path}/by-email/{random_email}")
 
     @task(20)
@@ -59,23 +59,23 @@ class TeacherProcess(LoadTest):
         super().__init__(*args, **kwargs)
         self.base_path = "/api/v1/teacher"
         self.teacher_mails = []
+        self.counter = 0
 
     def on_start(self):
         self.client.post(url=self.base_path,
                          json=self._generate_post_data(),
                          headers=h)
     
-    def random_user(self) -> str:
+    def random_user_mail(self) -> str:
         return random.choice(self.teacher_mails)
+    
+    def random_user_id(self) -> int:
+        return random.randint(1, self.counter)
 
     def on_stop(self):
         time.sleep(1)
         for email in self.teacher_mails:
-            with self.client.delete(url=f"{self.base_path}/by-email/{email}",
-                                    catch_response=True) as response:
-                # delete that after add logging to the API
-                if response.status_code == 404:
-                    response.success()
+            self.client.delete(url=f"{self.base_path}/by-email/{email}")
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -87,10 +87,11 @@ class TeacherProcess(LoadTest):
         request_data["teacherEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["teacherDOB"] = self.generate_random_dob()
         self.teacher_mails.append(request_data["teacherEmail"])
+        self.counter += 1
 
         return request_data
 
-    def _generate_put_data(self) -> (str | object):
+    def _generate_put_data(self) -> (str | dict):
         teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
             "teacherName": "Test name",
@@ -116,23 +117,23 @@ class StudentProcess(LoadTest):
         super().__init__(*args, **kwargs)
         self.base_path = "/api/v1/student"
         self.student_mails = []
+        self.counter = 0
 
     def on_start(self):
         self.client.post(url=self.base_path,
                          json=self._generate_post_data(),
                          headers=h)
         
-    def random_user(self) -> str:
+    def random_user_mail(self) -> str:
         return random.choice(self.student_mails)
+    
+    def random_user_id(self) -> int:
+        return random.randint(1, self.counter)
     
     def on_stop(self):
         time.sleep(1)
         for email in self.student_mails:
-            with self.client.delete(url=f"{self.base_path}/by-email/{email}",
-                                    catch_response=True) as response:
-                # delete that after add logging to the API
-                if response.status_code == 404:
-                    response.success()
+            self.client.delete(url=f"{self.base_path}/by-email/{email}")
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -140,10 +141,12 @@ class StudentProcess(LoadTest):
             "studentEmail": str,
             "studentDOB": str
         }
+
         request_data["studentName"] = self.generate_random_string()
         request_data["studentEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data["studentDOB"] = self.generate_random_dob()
         self.student_mails.append(request_data["studentEmail"])
+        self.counter += 1
 
         return request_data
     
