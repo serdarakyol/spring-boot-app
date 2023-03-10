@@ -1,9 +1,9 @@
 # Spring-boot-app
 
-This application created to learn Spring boot and PostgreSQL. Additionally, I included design pattern, unit testing, performance testing, test coverage report, binary file help to developers, CI, and Docker. I have started to this application from [Spring Boot Tutorial | Full Course [2022] [NEW]](https://www.youtube.com/watch?v=9SGDpanrc8U&ab_channel=Amigoscode) by [Amigoscode](https://www.youtube.com/@amigoscode) and improved. Thanks to him for giving an opinion to start a project.
+I created this application to learn Spring Boot and PostgreSQL. In addition to that, I implemented design patterns, unit testing, performance testing, test coverage reporting, bash script to aid developers/users, continuous integration (CI), and Docker deployment. I started this project by following the [Spring Boot Tutorial | Full Course [2022] [NEW]](https://www.youtube.com/watch?v=9SGDpanrc8U&ab_channel=Amigoscode) by [Amigoscode](https://www.youtube.com/@amigoscode) and improved upon it. I would like to thank the author for inspiring me to start this project.
 
 
-Here you can see the difference between **IMPROVED** and **OLD VERSION** of this application
+Here you can see the difference between the **IMPROVED** and **OLD VERSIONS** of this application.
 ```
 IMPROVED                                                        | OLD VERSION                                  
 ----------------------------------------------------------------|------------------------------------------------
@@ -77,16 +77,16 @@ $ `tree --gitignore`                                            |$ `tree --gitig
 ```
 
 ## Usage
-Docker Desktop must be installed. To run the app use below command.
+Docker Desktop must be installed. To run the app just use the below command.
 
 ```
 $ sudo ./project-dev code-run
 ```
 
-Ready to go. Just click [here](http://localhost:8080/swagger-ui/index.html) and test the API. Do not hesitate to create an issue to improve my skills, please.
-### About `project-dev` file
+Ready to go. Just click [here](http://localhost:8080/swagger-ui/index.html) and test the API.
 
-This bash script created to people can use this API easily. You can just run $`project-dev help` and the output should be as below:
+### About `project-dev` file
+This bash script was created to make it easier for people to use this API. To access the help menu, simply run `$ project-dev help` and the output should be as shown below:
 ```
 Usage: ./project-dev <command>
 <command>:
@@ -103,4 +103,6 @@ Usage: ./project-dev <command>
 ```
 
 ## Test
-[Locust](https://github.com/locustio/locust) have been used for performans testing. To test the API, run `./project-dev performans-test`
+[Locust](https://github.com/locustio/locust) has been used for performance testing. Please ensure that the API is running before executing the performance test command `./project-dev performance-test`.
+
+## Please do not hesitate to create an issue to help me improve my skills.
