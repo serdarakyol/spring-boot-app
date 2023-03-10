@@ -1,6 +1,6 @@
 # Spring-boot-app
 
-I created this application to learn Spring Boot and PostgreSQL. In addition to that, I implemented design patterns, unit testing, performance testing, test coverage reporting, bash script to aid developers/users, continuous integration (CI), and Docker deployment. I started this project by following the [Spring Boot Tutorial | Full Course [2022] [NEW]](https://www.youtube.com/watch?v=9SGDpanrc8U&ab_channel=Amigoscode) by [Amigoscode](https://www.youtube.com/@amigoscode) and improved upon it. I would like to thank the author for inspiring me to start this project.
+I created this application to learn Spring Boot and PostgreSQL. In addition to that, I implemented singleton design pattern, unit testing, performance testing, test coverage reporting, bash script to aid developers/users, continuous integration (CI), and Docker deployment. I started this project by following the [Spring Boot Tutorial | Full Course [2022] [NEW]](https://www.youtube.com/watch?v=9SGDpanrc8U&ab_channel=Amigoscode) from [Amigoscode](https://www.youtube.com/@amigoscode) and improved upon it. I would like to thank the author for inspiring me to start this project.
 
 
 Here you can see the difference between the **IMPROVED** and **OLD VERSIONS** of this application.
