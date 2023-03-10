@@ -103,6 +103,8 @@ Usage: ./project-dev <command>
 ```
 
 ## Test
+To run unit tests, first navigate to the root directory of this project and execute the command $` mvn test`.
+
 [Locust](https://github.com/locustio/locust) has been used for performance testing. Please ensure that the API is running before executing the performance test command `./project-dev performance-test`.
 
 ## Please do not hesitate to create an issue to help me improve my skills.
