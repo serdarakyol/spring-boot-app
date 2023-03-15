@@ -104,7 +104,7 @@ Usage: ./project-dev <command>
 
 ## Test
 To run unit tests, first navigate to the root directory of this project and execute the command $` mvn test`.
-Note: PR #42 improved the test coverage up to 65%
+Note: With the [Add more unit tests](https://github.com/serdarakyol/spring-boot-app/pull/49) improved the test coverage up to 65%
 
 [Locust](https://github.com/locustio/locust) has been used for performance testing. Please ensure that the API is running before executing the performance test command `./project-dev performance-test`.
 
