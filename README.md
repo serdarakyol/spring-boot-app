@@ -104,6 +104,7 @@ Usage: ./project-dev <command>
 
 ## Test
 To run unit tests, first navigate to the root directory of this project and execute the command $` mvn test`.
+Nore: PR #42 improved the test coverage up to 65%
 
 [Locust](https://github.com/locustio/locust) has been used for performance testing. Please ensure that the API is running before executing the performance test command `./project-dev performance-test`.
 
