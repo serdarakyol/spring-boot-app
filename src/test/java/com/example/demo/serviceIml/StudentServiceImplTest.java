@@ -113,7 +113,7 @@ class StudentServiceImplTest {
 
     @Test
     void testUpdateStudent() {
-        // given
+        // Given
         Student updatedStudent = new Student();
         updatedStudent.setStudentName("Jane Doe");
         updatedStudent.setStudentEmail("janedoe@example.com");
@@ -122,18 +122,19 @@ class StudentServiceImplTest {
         when(studentRepository.findByEmail(testStudent.getStudentEmail())).thenReturn(Optional.of(testStudent));
         when(studentRepository.isExistByEmail(updatedStudent.getStudentEmail())).thenReturn(false);
 
-        // when
+        // When
         studentServiceImpl.updateStudent(testStudent.getStudentEmail(), updatedStudent);
 
-        // then
+        // Then
         assertEquals(testStudent.getStudentName(), updatedStudent.getStudentName());
         assertEquals(testStudent.getStudentDOB(), updatedStudent.getStudentDOB());
         assertEquals(testStudent.getStudentEmail(), updatedStudent.getStudentEmail());
+        assertEquals(testStudent.getStudentDOB(), updatedStudent.getStudentDOB());
     }
 
     @Test
     void testUpdateStudentEMailTaken() {
-        // given
+        // Given
         Student updatedStudent = new Student();
         updatedStudent.setStudentName("Jane Doe");
         updatedStudent.setStudentEmail("janedoe@example.com");
@@ -142,12 +143,12 @@ class StudentServiceImplTest {
         when(studentRepository.findByEmail(testStudent.getStudentEmail())).thenReturn(Optional.of(testStudent));
         when(studentRepository.isExistByEmail(updatedStudent.getStudentEmail())).thenReturn(true);
 
-        // when
+        // When
         Throwable exception = assertThrows(BadRequestException.class, () -> {
             studentServiceImpl.updateStudent(testStudent.getStudentEmail(), updatedStudent);
         });
 
-        // then
+        // Then
         assertEquals(CommonResponses.emailTakenMsg, exception.getMessage());
     }
 
@@ -174,6 +175,7 @@ class StudentServiceImplTest {
 
     @Test
     void testUpdateStudentInvalidName() {
+        // Given
         Student updatedStudent = new Student();
         updatedStudent.setStudentName("a");
         updatedStudent.setStudentEmail("janedoe@example.com");
@@ -181,17 +183,19 @@ class StudentServiceImplTest {
 
         when(studentRepository.findByEmail(testStudent.getStudentEmail())).thenReturn(Optional.of(testStudent));
 
+        // When
         Throwable exception = assertThrows(BadRequestException.class, () -> {
             studentServiceImpl.updateStudent(testStudent.getStudentEmail(), updatedStudent);
         });
 
-        // then
+        // Then
         assertEquals(CommonResponses.nameNotValidMsg, exception.getMessage());
 
     }
 
     @Test
     void testUpdateStudentInvalidEmail() {
+        // Given
         Student updatedStudent = new Student();
         updatedStudent.setStudentName("Test");
         updatedStudent.setStudentEmail("t@t.com");
@@ -199,25 +203,25 @@ class StudentServiceImplTest {
 
         when(studentRepository.findByEmail(testStudent.getStudentEmail())).thenReturn(Optional.of(testStudent));
 
+        // When
         Throwable exception = assertThrows(BadRequestException.class, () -> {
             studentServiceImpl.updateStudent(testStudent.getStudentEmail(), updatedStudent);
         });
 
-        // then
+        // Then
         assertEquals(CommonResponses.emailNotValidMsg, exception.getMessage());
-
     }
 
     @Test
     public void testGetStudentById() {
-        // Arrange
+        // Given
         int studentId = 1;
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(testStudent));
 
-        // Act
+        // When
         Student studentInDB = studentServiceImpl.getStudentById(studentId);
 
-        // Assert
+        // Then
         assertNotNull(studentInDB);
         assertEquals("Test One", studentInDB.getStudentName());
         assertEquals("test.one@example.com", studentInDB.getStudentEmail());
@@ -229,11 +233,11 @@ class StudentServiceImplTest {
 
     @Test
     void testGetStudentByIdNotFound() {
-        // Arrange
+        // Given
         int studentId = 1;
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // When & Assert
         assertThrows(NotFoundException.class, () -> studentServiceImpl.getStudentById(studentId));
 
         verify(studentRepository, times(1)).findById(studentId);
@@ -242,13 +246,13 @@ class StudentServiceImplTest {
 
     @Test
     void testGetStudentByEmail() {
-        // Arrange
+        // Given
         when(studentRepository.findByEmail(testStudent.getStudentEmail())).thenReturn(Optional.of(testStudent));
 
-        // Act
+        // When
         Student studentInDB = studentServiceImpl.getStudentByEmail(testStudent.getStudentEmail());
 
-        // Assert
+        // Then
         assertNotNull(studentInDB);
         assertEquals("Test One", studentInDB.getStudentName());
         assertEquals("test.one@example.com", studentInDB.getStudentEmail());
@@ -260,10 +264,10 @@ class StudentServiceImplTest {
 
     @Test
     void testGetStudentByEmailNotFound() {
-        // Arrange
+        // Given
         when(studentRepository.findByEmail(testStudent.getStudentEmail())).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // When & Assert
         assertThrows(NotFoundException.class, () -> studentServiceImpl.getStudentByEmail(testStudent.getStudentEmail()));
 
         verify(studentRepository, times(1)).findByEmail(testStudent.getStudentEmail());
@@ -272,6 +276,7 @@ class StudentServiceImplTest {
 
     @Test
     public void testGetStudents() {
+        // Given
         List<Student> students = new ArrayList<Student>();
         Student test2 = new Student("test2", "test2@example.com", LocalDate.parse("1995-01-01"));
         Student test3 = new Student("test3", "test2@example.com", LocalDate.parse("1990-01-01"));
@@ -281,8 +286,10 @@ class StudentServiceImplTest {
 
         when(studentRepository.findAll()).thenReturn(students);
 
+        // When
         List<Student> result = studentServiceImpl.getStudents();
 
+        // Then
         assertEquals(3, result.size());
         assertEquals(result.get(0), testStudent);
         assertEquals(result.get(1), test2);
@@ -291,14 +298,14 @@ class StudentServiceImplTest {
 
     @Test
     void testDeleteStudentById() {
-        // Arrange
+        // Given
         int existingStudentId = 1;
         when(studentRepository.existsById(existingStudentId)).thenReturn(true);
 
-        // Act
+        // When
         studentServiceImpl.deleteStudentById(existingStudentId);
 
-        // Assert
+        // Then
         verify(studentRepository, times(1)).deleteById(integerCaptor.capture());
         int capturedStudentId = integerCaptor.getValue();
         assertEquals(existingStudentId, capturedStudentId);
@@ -306,30 +313,30 @@ class StudentServiceImplTest {
 
     @Test
     void testDeleteStudentByIdNotFound() {
-        // Arrange
+        // Given
         int studentId = 1;
         when(studentRepository.existsById(studentId)).thenReturn(false);
 
-        // Act
+        // When
         Throwable exception = assertThrows(NotFoundException.class, () -> {
             studentServiceImpl.deleteStudentById(studentId);
         });
 
-        // Assert
+        // Then
         String expectedError = "Student doesn't exist with ID: " + studentId;
         assertEquals(expectedError, exception.getMessage());
     }
 
     @Test
     public void testDeleteStudentByEmail() {
-        // Arrange
+        // Given
         String validEmail = testStudent.getStudentEmail();
         when(studentRepository.isExistByEmail(validEmail)).thenReturn(true);
 
-        // Act
+        // When
         studentServiceImpl.deleteStudentByEmail(validEmail);
 
-        // Assert
+        // Then
         verify(studentRepository, times(1)).deleteByEmail(emailCaptor.capture());
         String capturedEmail = emailCaptor.getValue();
         assert capturedEmail.equals(validEmail);
@@ -337,11 +344,11 @@ class StudentServiceImplTest {
 
     @Test
     public void testDeleteStudentByEmailNotFound() {
-        // Arrange
+        // Given
         String invalidEmail = "a@a.c";
         when(studentRepository.isExistByEmail(invalidEmail)).thenReturn(false);
 
-        // Act and Assert
+        // When and Assert
         assertThrows(NotFoundException.class, () -> studentServiceImpl.deleteStudentByEmail(invalidEmail));
     }
 }
