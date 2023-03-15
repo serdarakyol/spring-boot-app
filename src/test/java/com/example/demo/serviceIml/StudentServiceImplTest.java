@@ -116,7 +116,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void testUpdateStudentSuccess() {
+    void testUpdateStudent() {
         // given
         Student updatedStudent = new Student();
         updatedStudent.setStudentName("Jane Doe");
@@ -325,7 +325,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    public void testDeleteStudentByEmailSuccess() {
+    public void testDeleteStudentByEmail() {
         // Arrange
         String validEmail = testStudent.getStudentEmail();
         when(studentRepository.isExistByEmail(validEmail)).thenReturn(true);
