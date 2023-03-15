@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,8 +44,6 @@ class StudentServiceImplTest {
 
     @Captor
     private ArgumentCaptor<String> emailCaptor;
-
-    static Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
 
     private Student testStudent;
 
