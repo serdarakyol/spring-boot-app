@@ -81,11 +81,13 @@ public class StudentServiceImpl implements StudentService {
         }
 
         // check if e-mail taken
-        if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
-            log.error(CommonResponses.emailTakenMsg);
-            throw new BadRequestException(CommonResponses.emailTakenMsg);
+        if (!studentEmail.equals(updateStudent.getStudentEmail())){
+            if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
+                log.error(CommonResponses.emailTakenMsg);
+                throw new BadRequestException(CommonResponses.emailTakenMsg);
+            }
+            currentStudent.setStudentEmail(updateStudent.getStudentEmail());
         }
-        currentStudent.setStudentEmail(updateStudent.getStudentEmail());
 
         // no need process for the DOB becase it's @NonNull in the entity class
         currentStudent.setStudentDOB(updateStudent.getStudentDOB());

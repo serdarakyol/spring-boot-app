@@ -12,6 +12,7 @@ import jakarta.persistence.Transient;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "Teacher")
 @RequiredArgsConstructor
+@NoArgsConstructor
 @ToString
 public class Teacher {
     @Id
@@ -32,8 +34,6 @@ public class Teacher {
     @Transient
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Setter private Integer teacherAge;
-
-    public Teacher() {}
 
     public Integer getTeacherAge() {
         return Period.between(this.teacherDOB, LocalDate.now()).getYears();

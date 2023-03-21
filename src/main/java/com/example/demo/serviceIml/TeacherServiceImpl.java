@@ -81,11 +81,13 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         // check if e-mail taken
-        if (teacherRepository.isExistByEmail(updatedTeacher.getTeacherEmail())) {
-            log.error(CommonResponses.emailTakenMsg);
-            throw new BadRequestException(CommonResponses.emailTakenMsg);
+        if (!teacherEmail.equals(updatedTeacher.getTeacherEmail())){
+            if (teacherRepository.isExistByEmail(updatedTeacher.getTeacherEmail())) {
+                log.error(CommonResponses.emailTakenMsg);
+                throw new BadRequestException(CommonResponses.emailTakenMsg);
+            }
+            currentTeacher.setTeacherEmail(updatedTeacher.getTeacherEmail());
         }
-        currentTeacher.setTeacherEmail(updatedTeacher.getTeacherEmail());
 
         // no need process for the DOB becase it's @NonNull in the entity class
         currentTeacher.setTeacherDOB(updatedTeacher.getTeacherDOB());
