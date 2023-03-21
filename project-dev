@@ -17,6 +17,8 @@ Usage: $0 <command>
         Stress testing for the API
     test-coverage-report
         Shows unit test coverage reports
+    prepare-report
+        Prepares the report to send the developer for debugging
 "
 }
 
@@ -101,6 +103,19 @@ function testCoverageReport() {
     fi
 }
 
+function prepareReport() {
+    local LOG_DIR=/tmp/demo
+    local TAR_FILENAME=demo-report.tar.gz
+    local DIST_FOLDER=${ROOT_DIR}/dist
+    cd ${LOG_DIR}
+    tar -cvzf ${TAR_FILENAME} demo.log
+    if ! [ -d "${DIST_FOLDER}" ]; then
+        mkdir ${DIST_FOLDER}
+    fi
+    mv ${LOG_DIR}/${TAR_FILENAME} ${DIST_FOLDER}
+    costumized_success_message "The report genereted successfully: ${DIST_FOLDER}/${TAR_FILENAME}"
+}
+
 function main() {
     case "${1-notset}" in
         help)
@@ -117,6 +132,9 @@ function main() {
             ;;
         test-coverage-report)
             testCoverageReport "${@}"
+            ;;
+        prepare-report)
+            prepareReport "${@}"
             ;;
         *)
             >&2 echo "Error: Unknown command: '${1-}'"
