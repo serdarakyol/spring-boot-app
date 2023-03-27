@@ -17,7 +17,6 @@
 	<properties>
 		<java.version>17</java.version>
 		<org.projectlombok.version>1.18.26</org.projectlombok.version>
-		<org.springdoc.version>2.0.2</org.springdoc.version>
 		<org.jacoco.version>0.8.7</org.jacoco.version>
 		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
 	</properties>
@@ -54,11 +53,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>${org.springdoc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
