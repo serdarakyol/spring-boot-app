@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +25,11 @@ import lombok.ToString;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private int studentId;
     @NonNull @Getter @Setter private String studentName;
     @NonNull @Getter @Setter private String studentEmail;
     @NonNull @Getter @Setter private LocalDate studentDOB;
     @Transient
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Integer studentAge;
 
     public Integer getStudentAge() {
