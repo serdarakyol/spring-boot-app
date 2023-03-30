@@ -6,4 +6,5 @@ public interface CourseService {
 
     public void addNewCourse(final Course course);
     public void updateCourse(String courseId, final Course course);
+    public void deleteCourseById(String courseId);
 }

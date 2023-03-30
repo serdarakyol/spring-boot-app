@@ -20,6 +20,7 @@ public class CourseServiceIml implements CourseService {
     private final String courseNotExist = "Course is not exist with ID: ";
     private final String courseNameNotValid = "courseName can not be null, empty or only whitespace";
     private final String creditNotValid = "courseCredit must be equal or greater than 0";
+    private final String courseDeleted = "Course successfully deleted with ID: ";
 
     private final CourseRepository courseRepository;
 
@@ -43,8 +44,8 @@ public class CourseServiceIml implements CourseService {
     @Transactional
     @Override
     public void updateCourse(String courseId, final Course updateCourse) {
-        Optional<Course> optionalCourse = courseRepository.findById(courseNameNotValid);
-        if (optionalCourse.isPresent()) {
+        Optional<Course> optionalCourse = courseRepository.findById(courseId);
+        if (!optionalCourse.isPresent()) {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
         }
@@ -53,19 +54,33 @@ public class CourseServiceIml implements CourseService {
 
         // Check course name
         String courseName = updateCourse.getCourseName();
-        if (courseName == null || courseName.trim().length() == 0) {
-            log.error("CourseName can not be blank");
-            throw new BadRequestException("CourseName can not be blank");
+        if (!courseName.equals(currentCourse.getCourseName())) {
+            if (courseName == null || courseName.trim().length() == 0) {
+                log.error(courseNameNotValid);
+                throw new BadRequestException(courseNameNotValid);
+            }
+            currentCourse.setCourseName(updateCourse.getCourseName());
         }
-        currentCourse.setCourseName(updateCourse.getCourseName());
 
         // Check course credit
-        if (updateCourse.getCourseCredit() < 0 || updateCourse.getCourseCredit().equals(null)) {
-            log.error("CourseCredit can not be lover than zero");
-            throw new BadRequestException("CourseCredit can not be lover than zero");
+        if (updateCourse.getCourseCredit() != currentCourse.getCourseCredit()) {
+            if (updateCourse.getCourseCredit() < 0 || updateCourse.getCourseCredit().equals(null)) {
+                log.error(creditNotValid);
+                throw new BadRequestException(creditNotValid);
+            }
+            currentCourse.setCourseCredit(updateCourse.getCourseCredit());
         }
-        currentCourse.setCourseCredit(updateCourse.getCourseCredit());
 
         log.info("Course updated: {}", updateCourse.toString());
+    }
+
+    @Override
+    public void deleteCourseById(String courseId) {
+        if (!courseRepository.existsById(courseId)){
+            log.error(courseNotExist + courseId);
+            throw new BadRequestException(courseNotExist + courseId);
+        }
+        courseRepository.deleteById(courseId);
+        log.info(courseDeleted + courseId);
     }
 }

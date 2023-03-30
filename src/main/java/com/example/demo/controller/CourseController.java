@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,9 +30,15 @@ public class CourseController {
     }
 
     @PutMapping(path = "{courseId}")
-    public String updateStudent(@PathVariable("courseId") String courseId, @RequestBody Course updateCourse) {
+    public String updateCourse(@PathVariable("courseId") String courseId, @RequestBody Course updateCourse) {
         courseServiceImpl.updateCourse(courseId, updateCourse);
 
         return BodyResponses.UPDATED;
+    }
+
+    @DeleteMapping(path = "{courseId}")
+    public String deleteCourseById(@PathVariable("courseId") String courseId){
+        courseServiceImpl.deleteCourseById(courseId);
+        return BodyResponses.DELETED;
     }
 }
