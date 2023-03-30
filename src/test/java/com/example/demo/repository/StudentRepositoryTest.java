@@ -34,7 +34,7 @@ class StudentRepositoryTest {
     }
 
     @Test
-    void findByEmail_ShouldReturnOptionalOfStudent_WhenStudentExists() {
+    void testFindByEmailShouldReturnOptionalOfStudentWhenStudentExists() {
         when(studentRepository.findByEmail(studentEmail)).thenReturn(Optional.of(student));
 
         Optional<Student> foundStudent = studentRepository.findByEmail(studentEmail);
@@ -43,7 +43,7 @@ class StudentRepositoryTest {
     }
 
     @Test
-    void findByEmail_ShouldReturnEmptyOptional_WhenStudentDoesNotExist() {
+    void testFindByEmailShouldReturnEmptyOptionalWhenStudentDoesNotExist() {
         when(studentRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         Optional<Student> foundStudent = studentRepository.findByEmail(studentEmail);
@@ -52,14 +52,14 @@ class StudentRepositoryTest {
     }
 
     @Test
-    void deleteByEmail_ShouldDeleteStudent_WhenStudentExists() {
+    void testDeleteByEmailShouldDeleteStudentWhenStudentExists() {
         studentRepository.deleteByEmail(studentEmail);
 
         assertThat(studentRepository.findByEmail(studentEmail)).isEmpty();
     }
 
     @Test
-    void isExistByEmail_ShouldReturnTrue_WhenStudentExists() {
+    void testIsExistByEmailShouldReturnTrueWhenStudentExists() {
         when(studentRepository.isExistByEmail(studentEmail)).thenReturn(true);
 
         boolean exists = studentRepository.isExistByEmail(studentEmail);
@@ -68,7 +68,7 @@ class StudentRepositoryTest {
     }
 
     @Test
-    void isExistByEmail_ShouldReturnFalse_WhenStudentDoesNotExist() {
+    void testIsExistByEmailShouldReturnFalseWhenStudentDoesNotExist() {
         when(studentRepository.isExistByEmail(anyString())).thenReturn(false);
 
         boolean exists = studentRepository.isExistByEmail(studentEmail);

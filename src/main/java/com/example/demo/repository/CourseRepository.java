@@ -10,6 +10,6 @@ import com.example.demo.entity.Course;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, String>{
-    @Query("SELECT c FROM c WHERE c.courseId = ?1")
+    @Query("SELECT c FROM Course c WHERE c.courseId = ?1")
     Optional<Course> findById(String courseId);
 }
