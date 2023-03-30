@@ -24,7 +24,7 @@ public class CourseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String registerNewStudent(@RequestBody Course course) {
+    public String registerNewCourse(@RequestBody Course course) {
         courseServiceImpl.addNewCourse(course);
         return BodyResponses.CREATED;
     }
