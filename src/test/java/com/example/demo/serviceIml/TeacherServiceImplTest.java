@@ -295,7 +295,7 @@ public class TeacherServiceImplTest {
         // Then
         verify(teacherRepository, times(1)).deleteByEmail(emailCaptor.capture());
         String capturedEmail = emailCaptor.getValue();
-        assert capturedEmail.equals(validEmail);
+        assertEquals(validEmail, capturedEmail);
     }
 
     @Test
