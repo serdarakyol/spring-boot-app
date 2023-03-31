@@ -40,7 +40,7 @@ public class CourseServiceImlTest {
     @Captor
     private ArgumentCaptor<String> idCaptor;
 
-    String nonExistId = "61a4acb0-123b-4641-a722-448fd3a15b60";
+    private String nonExistId = "61a4acb0-123b-4641-a722-448fd3a15b60";
 
     // Given
     @BeforeEach
