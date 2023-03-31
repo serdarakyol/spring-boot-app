@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -10,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.entity.Course;
+import com.example.demo.mapper.CourseMapper;
 import com.example.demo.serviceIml.CourseServiceIml;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +26,8 @@ import lombok.AllArgsConstructor;
 public class CourseController {
 
     private final CourseServiceIml courseServiceImpl;
+
+    private final CourseMapper courseMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -40,5 +47,17 @@ public class CourseController {
     public String deleteCourseById(@PathVariable("courseId") String courseId){
         courseServiceImpl.deleteCourseById(courseId);
         return BodyResponses.DELETED;
+    }
+
+    @GetMapping(path = "{courseId}")
+    public CourseDTO getCourseById(@PathVariable("courseId") String courseId){
+        Course course = courseServiceImpl.getCourseById(courseId);
+        return courseMapper.courseToDto(course);
+    }
+
+    @GetMapping
+    public List<CourseDTO> getCourses(){
+        List<Course> courses = courseServiceImpl.getCourses();
+        return courseMapper.courseToDto(courses);
     }
 }

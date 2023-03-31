@@ -1,5 +1,6 @@
 package com.example.demo.serviceIml;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class CourseServiceIml implements CourseService {
     private final String courseNameNotValid = "courseName can not be null, empty or only whitespace";
     private final String creditNotValid = "courseCredit must be equal or greater than 0";
     private final String courseDeleted = "Course successfully deleted with ID: ";
+    private final String courseFound = "Course successfully found: ";
 
     private final CourseRepository courseRepository;
 
@@ -76,11 +78,30 @@ public class CourseServiceIml implements CourseService {
 
     @Override
     public void deleteCourseById(String courseId) {
-        if (!courseRepository.existsById(courseId)){
+        if (!courseRepository.existsById(courseId)) {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
         }
         courseRepository.deleteById(courseId);
         log.info(courseDeleted + courseId);
+    }
+
+    @Override
+    public Course getCourseById(String courseId) {
+        Optional<Course> courseOpt = courseRepository.findById(courseId);
+        if (!courseOpt.isPresent()) {
+            log.error(courseNotExist + courseId);
+            throw new BadRequestException(courseNotExist + courseId);
+        }
+
+        Course course = courseOpt.get();
+        log.info(courseFound + course.toString());
+        return course;
+    }
+
+    @Override
+    public List<Course> getCourses() {
+        log.info("All courses are called.");
+        return courseRepository.findAll();
     }
 }
