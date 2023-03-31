@@ -14,5 +14,5 @@ public interface TeacherMapper {
 
     TeacherDTO teacherToDto(Teacher teacher);
 
-    List<TeacherDTO> teacherToDto(List<Teacher> students);
+    List<TeacherDTO> teacherToDto(List<Teacher> teachers);
 }

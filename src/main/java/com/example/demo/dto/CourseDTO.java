@@ -7,8 +7,7 @@ import lombok.Setter;
 @NonNull
 @Getter
 @Setter
-public class StudentDTO {
-    private String studentName;
-    private String studentEmail;
-    private Integer studentAge;
+public class CourseDTO {
+    private String courseName;
+    private Integer courseCredit;
 }
