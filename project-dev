@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -e
 SOURCE="${BASH_SOURCE[0]}"
 ROOT_DIR="$(dirname "$(realpath ${SOURCE})")"
 
@@ -38,7 +38,7 @@ function buildJar() {
 function costumized_error_message () {
     local COLOR_RED="$(tput setaf 9 2>/dev/null || :)"
     local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
-    echo "${COLOR_RED}ERROR: "$@"${COLOR_RESET}" 1>&2;
+    echo "${COLOR_RED}ERROR: "$@" ${SOURCE} line ${BASH_LINENO[0]} ${COLOR_RESET}" 1>&2;
     exit 1
 }
 
@@ -73,6 +73,10 @@ function codeRun() {
 function performanceTesting() {
     # check if locust installed
     if ! [ -x "$(command -v locust -V)" ]; then
+        if ! [ -x "$(command -v pip3 -V)" ]; then
+            costumized_warning_message "pip3 is not installed. Installing..."
+            apt install python3-pip
+        fi
         costumized_warning_message "Locust is not installed. Installing..."
         pip3 install locust
     fi
@@ -109,11 +113,12 @@ function prepareReport() {
     local DIST_FOLDER=${ROOT_DIR}/dist
     cd ${LOG_DIR}
     tar -cvzf ${TAR_FILENAME} demo.log
-    if ! [ -d "${DIST_FOLDER}" ]; then
+    if [ ! -d "${DIST_FOLDER}" ]; then
         mkdir ${DIST_FOLDER}
     fi
     mv ${LOG_DIR}/${TAR_FILENAME} ${DIST_FOLDER}
-    costumized_success_message "The report genereted successfully: ${DIST_FOLDER}/${TAR_FILENAME}"
+    # check if the file exist and has a size
+    [ -s ${DIST_FOLDER}/${TAR_FILENAME} ] && costumized_success_message "The report genereted successfully: ${DIST_FOLDER}/${TAR_FILENAME}" || costumized_error_message "Report could not generated!"
 }
 
 function main() {

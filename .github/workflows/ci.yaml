@@ -41,3 +41,7 @@ jobs:
           retention-days: 1
       - name: Run unit tests
         run: mvn test
+      - name: Generate report file
+        run: ./project-dev prepare-report
+      - name: Generate coverage report
+        run: ./project-dev test-coverage-report
