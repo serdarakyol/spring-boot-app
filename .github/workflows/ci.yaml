@@ -52,7 +52,7 @@ jobs:
       - name: Save coverage report
         uses: actions/upload-artifact@v3
         with:
-          name: coverage-report
+          name: unit-test-coverage-report
           path: target/site/jacoco/index.html
           retention-days: 1
       - name: Run unit tests

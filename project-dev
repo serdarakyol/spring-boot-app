@@ -2,6 +2,7 @@
 set -e
 SOURCE="${BASH_SOURCE[0]}"
 ROOT_DIR="$(dirname "$(realpath ${SOURCE})")"
+DIST_FOLDER=${ROOT_DIR}/dist
 
 function displayUsage() {
     echo "
@@ -91,6 +92,8 @@ function testCoverageReport() {
     checkMaven
     # mvn generates test coverage in this file by default
     local REPORT_FILE=${ROOT_DIR}/target/site/jacoco/index.html
+    local REPORT_FOLDER=${ROOT_DIR}/target/site/jacoco
+    local OUT_FILE=${DIST_FOLDER}/unit-test-coverage.tar.gz
     local REPORT_SUCCESS_MSG="The report visualized successfully. Generated file: ${REPORT_FILE}"
     local REPORT_ERR="Report could not visualized but file generated on: ${REPORT_FILE}"
     cd ${ROOT_DIR}
@@ -104,12 +107,14 @@ function testCoverageReport() {
     else
         warn_msg "The report generated but couldn't visualize. Generated file: ${REPORT_FILE}"
     fi
+    cd ${REPORT_FOLDER}
+    tar -cvzf ${OUT_FILE} ${REPORT_FOLDER}
+    info_msg "Report compressed successfully on: ${OUT_FILE}"
 }
 
 function prepareReport() {
     local LOG_DIR=/tmp/demo
     local TAR_FILENAME=demo-report.tar.gz
-    local DIST_FOLDER=${ROOT_DIR}/dist
     local TAR_FILE=${DIST_FOLDER}/${TAR_FILENAME}
     cd ${LOG_DIR}
     tar -cvzf ${TAR_FILENAME} demo.log
