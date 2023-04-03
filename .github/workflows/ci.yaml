@@ -43,5 +43,15 @@ jobs:
         run: mvn test
       - name: Generate report file
         run: ./project-dev prepare-report
+        uses: actions/upload-artifact@v3
+        with:
+          name: report-file
+          path: dist/demo-report.tar.gz
+          retention-days: 1
       - name: Generate coverage report
         run: ./project-dev test-coverage-report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: target/site/jacoco/index.html
+          retention-days: 1
