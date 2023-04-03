@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: unit-test-coverage-report
-          path: target/site/jacoco/index.html
+          path: dist/unit-test-coverage.tar.gz
           retention-days: 1
       - name: Run unit tests
         run: mvn test
