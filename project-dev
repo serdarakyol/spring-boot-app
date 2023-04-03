@@ -96,6 +96,7 @@ function testCoverageReport() {
     local OUT_FILE=${DIST_FOLDER}/unit-test-coverage.tar.gz
     local REPORT_SUCCESS_MSG="The report visualized successfully. Generated file: ${REPORT_FILE}"
     local REPORT_ERR="Report could not visualized but file generated on: ${REPORT_FILE}"
+    local TMP_DIR=$(mktemp -d)
     cd ${ROOT_DIR}
     # run test coverage
     mvn clean test jacoco:report
@@ -107,9 +108,14 @@ function testCoverageReport() {
     else
         warn_msg "The report generated but couldn't visualize. Generated file: ${REPORT_FILE}"
     fi
-    cd ${REPORT_FOLDER}
-    tar -cvzf ${OUT_FILE} .
+    cp -r ${REPORT_FOLDER} ${TMP_DIR}
+    cd ${TMP_DIR}
+    # rename file
+    mv jacoco report
+    tar -cvzf ${OUT_FILE} report/
+    # check if the file exist and has a size
     [ -s ${OUT_FILE} ] && info_msg "${OUT_FILE} generated successfully" || error_msg "File could not generated"
+    rm -rf ${TMP_DIR}
 }
 
 function prepareReport() {
