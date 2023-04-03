@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-
+set -e
 SOURCE="${BASH_SOURCE[0]}"
 ROOT_DIR="$(dirname "$(realpath ${SOURCE})")"
+DIST_FOLDER=${ROOT_DIR}/dist
 
 function displayUsage() {
     echo "
@@ -32,23 +33,23 @@ function checkMaven() {
 
 function buildJar() {
     checkMaven
-    mvn clean package && costumized_success_message "Jar file built succesfully" || costumized_error_message "Jar file could not build"
+    mvn clean package && info_msg "Jar file built succesfully" || error_msg "Jar file could not build"
 }
 
-function costumized_error_message () {
+function error_msg () {
     local COLOR_RED="$(tput setaf 9 2>/dev/null || :)"
     local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
-    echo "${COLOR_RED}ERROR: "$@"${COLOR_RESET}" 1>&2;
+    echo "${COLOR_RED}ERROR: "$@" ${SOURCE} line ${BASH_LINENO[0]} ${COLOR_RESET}" 1>&2;
     exit 1
 }
 
-function costumized_success_message () {
+function info_msg () {
     local COLOR_GREEN="$(tput setaf 10 2>/dev/null || :)"
     local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
     echo "${COLOR_GREEN}INFO: "$@"${COLOR_RESET}" 1>&2;
 }
 
-function costumized_warning_message () {
+function warn_msg () {
     local COLOR_YELLOW="$(tput setaf 3 2>/dev/null || :)"
     local COLOR_RESET="$(tput sgr0 2>/dev/null || :)"
     echo "${COLOR_YELLOW}WARNING: "$@"${COLOR_RESET}" 1>&2;
@@ -57,12 +58,12 @@ function costumized_warning_message () {
 function codeRun() {
     # check if script run with sudo
     if [ "$EUID" -ne 0 ]; then 
-        costumized_error_message "code-run must run with sudo privileges."
+        error_msg "code-run must run with sudo privileges."
     fi
 
     # check if docker installed
     if ! [ -x "$(command -v docker --version)" ]; then
-        costumized_error_message "Docker Desktop is not installed. 
+        error_msg "Docker Desktop is not installed. 
         Please install Docker Desktop from https://docs.docker.com/get-docker/"
     fi
 
@@ -73,7 +74,11 @@ function codeRun() {
 function performanceTesting() {
     # check if locust installed
     if ! [ -x "$(command -v locust -V)" ]; then
-        costumized_warning_message "Locust is not installed. Installing..."
+        if ! [ -x "$(command -v pip3 -V)" ]; then
+            warn_msg "pip3 is not installed. Installing..."
+            apt install python3-pip
+        fi
+        warn_msg "Locust is not installed. Installing..."
         pip3 install locust
     fi
     local HOST=http://localhost:8080
@@ -87,33 +92,44 @@ function testCoverageReport() {
     checkMaven
     # mvn generates test coverage in this file by default
     local REPORT_FILE=${ROOT_DIR}/target/site/jacoco/index.html
+    local REPORT_FOLDER=${ROOT_DIR}/target/site/jacoco
+    local OUT_FILE=${DIST_FOLDER}/unit-test-coverage.tar.gz
     local REPORT_SUCCESS_MSG="The report visualized successfully. Generated file: ${REPORT_FILE}"
+    local REPORT_ERR="Report could not visualized but file generated on: ${REPORT_FILE}"
+    local TMP_DIR=$(mktemp -d)
     cd ${ROOT_DIR}
     # run test coverage
     mvn clean test jacoco:report
     # show reports
     if [ -x "$(command -v firefox -V)" ]; then
-        firefox --new-window ${REPORT_FILE}
-        costumized_success_message ${REPORT_SUCCESS_MSG}
-    elif [ -x "$(command -v firefox -V)" ]; then
-        google-chrome --new-window ${REPORT_FILE}
-        costumized_success_message ${REPORT_SUCCESS_MSG}
+        firefox --new-window ${REPORT_FILE} && info_msg ${REPORT_SUCCESS_MSG} || warn_msg ${REPORT_ERR}
+    elif [ -x "$(command -v google-chrome --version)" ]; then
+        google-chrome --new-window ${REPORT_FILE} && info_msg ${REPORT_SUCCESS_MSG} || warn_msg ${REPORT_ERR}
     else
-        costumized_warning_message "The report generated but couldn't visualize. Generated file: ${REPORT_FILE}"
+        warn_msg "The report generated but couldn't visualize. Generated file: ${REPORT_FILE}"
     fi
+    cp -r ${REPORT_FOLDER} ${TMP_DIR}
+    cd ${TMP_DIR}
+    # rename file
+    mv jacoco report
+    tar -cvzf ${OUT_FILE} report/
+    # check if the file exist and has a size
+    [ -s ${OUT_FILE} ] && info_msg "${OUT_FILE} generated successfully" || error_msg "File could not generated"
+    rm -rf ${TMP_DIR}
 }
 
 function prepareReport() {
     local LOG_DIR=/tmp/demo
     local TAR_FILENAME=demo-report.tar.gz
-    local DIST_FOLDER=${ROOT_DIR}/dist
+    local TAR_FILE=${DIST_FOLDER}/${TAR_FILENAME}
     cd ${LOG_DIR}
     tar -cvzf ${TAR_FILENAME} demo.log
-    if ! [ -d "${DIST_FOLDER}" ]; then
+    if [ ! -d "${DIST_FOLDER}" ]; then
         mkdir ${DIST_FOLDER}
     fi
     mv ${LOG_DIR}/${TAR_FILENAME} ${DIST_FOLDER}
-    costumized_success_message "The report genereted successfully: ${DIST_FOLDER}/${TAR_FILENAME}"
+    # check if the file exist and has a size
+    [ -s ${TAR_FILE} ] && info_msg "The report genereted successfully: ${TAR_FILE}" || error_msg "Report could not generated!"
 }
 
 function main() {
