@@ -39,10 +39,9 @@ jobs:
           name: demo-0.0.1-SNAPSHOT
           path: target/demo-0.0.1-SNAPSHOT.jar
           retention-days: 1
-      - name: Run unit tests
-        run: mvn test
       - name: Generate report file
         run: ./project-dev prepare-report
+      - name: Save generated report file
         uses: actions/upload-artifact@v3
         with:
           name: report-file
@@ -50,8 +49,11 @@ jobs:
           retention-days: 1
       - name: Generate coverage report
         run: ./project-dev test-coverage-report
+      - name: Save coverage report
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
           path: target/site/jacoco/index.html
           retention-days: 1
+      - name: Run unit tests
+        run: mvn test
