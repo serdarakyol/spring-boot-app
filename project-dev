@@ -108,8 +108,8 @@ function testCoverageReport() {
         warn_msg "The report generated but couldn't visualize. Generated file: ${REPORT_FILE}"
     fi
     cd ${REPORT_FOLDER}
-    tar -cvzf ${OUT_FILE} ${REPORT_FOLDER}
-    info_msg "Report compressed successfully on: ${OUT_FILE}"
+    tar -cvzf ${OUT_FILE} .
+    [ -s ${OUT_FILE} ] && info_msg "${OUT_FILE} generated successfully" || error_msg "File could not generated"
 }
 
 function prepareReport() {
