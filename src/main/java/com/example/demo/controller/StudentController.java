@@ -72,4 +72,12 @@ public class StudentController {
         List<Student> students = studentServiceImpl.getStudents();
         return studentMapper.studentToDto(students);
     }
+
+    @PostMapping("{studentId}/enroll/{courseId}")
+    public String enrollToCourse(
+            @PathVariable("studentId") int studentId,
+            @PathVariable("courseId") String courseId) {
+        studentServiceImpl.enrollToCourse(studentId, courseId);
+        return BodyResponses.ENROLLED;
+    }
 }

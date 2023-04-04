@@ -143,6 +143,11 @@ public class StudentServiceImpl implements StudentService {
         log.info("getStudents: All students are called.");
         return studentRepository.findAll();
     }
+
+    @Override
+    public void enrollToCourse(int studentId, String courseId){
+        studentRepository.enrollCourse(studentId, courseId);
+    }
 }
 
 /*

@@ -24,4 +24,9 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     @Query("SELECT COUNT(s.studentEmail) = 1 FROM Student s WHERE s.studentEmail = :studentEmail")
     boolean isExistByEmail(@Param("studentEmail") String studentEmail);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO Enrolled (student_id, course_id) VALUES (:studentId, :courseId)", nativeQuery = true)
+    void enrollCourse(@Param("studentId") int studentId, @Param("courseId") String courseId);
 }
