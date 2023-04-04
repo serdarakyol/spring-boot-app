@@ -2,11 +2,13 @@ package com.example.demo.entity;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
@@ -35,4 +37,8 @@ public class Student {
     public Integer getStudentAge() {
         return Period.between(this.studentDOB, LocalDate.now()).getYears();
     }
+
+    @ManyToMany(mappedBy = "enrolledStudents")
+    @Getter
+    private Set<Course> courses;
 }
