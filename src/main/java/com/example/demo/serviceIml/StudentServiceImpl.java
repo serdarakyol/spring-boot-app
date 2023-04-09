@@ -170,5 +170,6 @@ public class StudentServiceImpl implements StudentService {
         enrolledCourses = student.getEnrolledCourses();
         enrolledCourses.add(course);
         student.setEnrolledCourses(enrolledCourses);
+        log.info(student.toString() + " enrolled to " + course.toString());
     }
 }
