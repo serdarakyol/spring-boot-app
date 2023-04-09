@@ -15,5 +15,5 @@ public class StudentDTO {
     private String studentName;
     private String studentEmail;
     private Integer studentAge;
-    private Set<Course> courses;
+    private Set<Course> enrolledCourses;
 }
