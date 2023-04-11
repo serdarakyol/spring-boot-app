@@ -12,4 +12,5 @@ public interface StudentService {
     public Student getStudentById(int studentId);
     public Student getStudentByEmail(String email);
     public List<Student> getStudents();
+    public void enrollToCourse(int studentId, String courseId);
 }

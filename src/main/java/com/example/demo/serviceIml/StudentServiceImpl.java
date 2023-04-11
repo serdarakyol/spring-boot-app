@@ -2,6 +2,7 @@ package com.example.demo.serviceIml;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.controller.CommonResponses;
+import com.example.demo.entity.Course;
 import com.example.demo.entity.Student;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
+import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.StudentService;
 import com.example.demo.utils.Utils;
@@ -31,6 +34,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private final StudentRepository studentRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Override
     public void addNewStudent(final Student student) {
@@ -81,7 +87,7 @@ public class StudentServiceImpl implements StudentService {
         }
 
         // check if e-mail taken
-        if (!studentEmail.equals(updateStudent.getStudentEmail())){
+        if (!studentEmail.equals(updateStudent.getStudentEmail())) {
             if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
                 log.error(CommonResponses.emailTakenMsg);
                 throw new BadRequestException(CommonResponses.emailTakenMsg);
@@ -143,15 +149,27 @@ public class StudentServiceImpl implements StudentService {
         log.info("getStudents: All students are called.");
         return studentRepository.findAll();
     }
-}
 
-/*
- * Note to me!!!
- * 
- * @RequiredArgsConstructor does the same thing like below code
- * 
- * @Autowired
- * public StudentService(StudentRepository studentRepository) {
- * this.studentRepository = studentRepository;
- * }
- */
+    @Override
+    @Transactional
+    public void enrollToCourse(int studentId, String courseId) {
+        Set<Course> enrolledCourses = null;
+        Optional<Student> optStudent = studentRepository.findById(studentId);
+        if (!optStudent.isPresent()) {
+            log.error(studentNotExistMsg + "ID: " + studentId);
+            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
+        }
+        Student student = optStudent.get();
+
+        Optional<Course> optCourse = courseRepository.findById(courseId);
+        if (!optCourse.isPresent()) {
+            log.error("COURSE NOT EXIST ID: " + courseId);
+            throw new NotFoundException(" COURSE NOT EXIST ID: " + courseId);
+        }
+        Course course = optCourse.get();
+        enrolledCourses = student.getEnrolledCourses();
+        enrolledCourses.add(course);
+        student.setEnrolledCourses(enrolledCourses);
+        log.info(student.toString() + " enrolled to " + course.toString());
+    }
+}
