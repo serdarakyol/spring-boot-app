@@ -8,7 +8,8 @@ WAIT_TIME_MIN = 0.1
 WAIT_TIME_MAX = 0.5
 
 h = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Authorization": "Basic YWRtaW46YWRtaW4="
 }
 
 random.seed()
@@ -32,17 +33,17 @@ class LoadTest(FastHttpUser):
 
     @task(1)
     def get_all(self):
-        self.client.get(url=self.base_path)
+        self.client.get(url=self.base_path, headers=h)
 
     @task(1)
     def get_one_by_id(self):
         random_id = self.random_user_id()
-        self.client.get(url=f"{self.base_path}/by-id/{random_id}")
+        self.client.get(url=f"{self.base_path}/by-id/{random_id}", headers=h)
 
     @task(1)
     def get_one_by_email(self):
         random_email = self.random_user_mail()
-        self.client.get(url=f"{self.base_path}/by-email/{random_email}")
+        self.client.get(url=f"{self.base_path}/by-email/{random_email}", headers=h)
 
     @task(20)
     def post_request(self):
@@ -75,7 +76,7 @@ class TeacherProcess(LoadTest):
     def on_stop(self):
         time.sleep(1)
         for email in self.teacher_mails:
-            self.client.delete(url=f"{self.base_path}/by-email/{email}")
+            self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -133,7 +134,7 @@ class StudentProcess(LoadTest):
     def on_stop(self):
         time.sleep(1)
         for email in self.student_mails:
-            self.client.delete(url=f"{self.base_path}/by-email/{email}")
+            self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
 
     def _generate_post_data(self) -> dict:
         request_data = {
