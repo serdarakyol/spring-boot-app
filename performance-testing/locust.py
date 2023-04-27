@@ -74,7 +74,6 @@ class TeacherProcess(LoadTest):
         return random.randint(1, self.counter)
 
     def on_stop(self):
-        time.sleep(1)
         for email in self.teacher_mails:
             self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
 
@@ -132,7 +131,6 @@ class StudentProcess(LoadTest):
         return random.randint(1, self.counter)
     
     def on_stop(self):
-        time.sleep(1)
         for email in self.student_mails:
             self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
 
