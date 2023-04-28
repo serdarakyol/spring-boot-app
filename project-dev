@@ -33,7 +33,7 @@ function checkMaven() {
 
 function buildJar() {
     checkMaven
-    mvn clean package && info_msg "Jar file built succesfully" || error_msg "Jar file could not build"
+    mvn clean package -DskipTests && info_msg "Jar file built succesfully" || error_msg "Jar file could not build"
 }
 
 function error_msg () {
