@@ -56,10 +56,6 @@ function warn_msg () {
 }
 
 function codeRun() {
-    # check if script run with sudo
-    if [ "$EUID" -ne 0 ]; then 
-        error_msg "code-run must run with sudo privileges."
-    fi
 
     # check if docker installed
     if ! [ -x "$(command -v docker --version)" ]; then
@@ -85,7 +81,14 @@ function performanceTesting() {
     local CONCURRENT=500
     local RATE=500
     local DURATION=10
-    locust -f ${ROOT_DIR}/performance-testing/locust.py --host ${HOST} --headless --users=${CONCURRENT} --spawn-rate=${RATE} --run-time=${DURATION}s --reset-stats --only-summary
+    locust -f ${ROOT_DIR}/performance-testing/locust.py \
+                                --host ${HOST}          \
+                                --headless              \
+                                --users=${CONCURRENT}   \
+                                --spawn-rate=${RATE}    \
+                                --run-time=${DURATION}s \
+                                --reset-stats           \
+                                --only-summary
 }
 
 function testCoverageReport() {
@@ -122,14 +125,10 @@ function prepareReport() {
     local LOG_DIR=/tmp/demo
     local TAR_FILENAME=demo-report.tar.gz
     local TAR_FILE=${DIST_FOLDER}/${TAR_FILENAME}
-    if [ ! -d "${LOG_DIR}" ]; then
-        mkdir -p ${LOG_DIR}
-    fi
+    mkdir -p ${LOG_DIR}
     cd ${LOG_DIR}
     tar -cvzf ${TAR_FILENAME} demo.log
-    if [ ! -d "${DIST_FOLDER}" ]; then
-        mkdir ${DIST_FOLDER}
-    fi
+    mkdir -p ${DIST_FOLDER}
     mv ${LOG_DIR}/${TAR_FILENAME} ${DIST_FOLDER}
     # check if the file exist and has a size
     [ -s ${TAR_FILE} ] && info_msg "The report genereted successfully: ${TAR_FILE}" || error_msg "Report could not generated!"
