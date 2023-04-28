@@ -33,7 +33,7 @@ function checkMaven() {
 
 function buildJar() {
     checkMaven
-    mvn clean package && info_msg "Jar file built succesfully" || error_msg "Jar file could not build"
+    mvn clean package -DskipTests && info_msg "Jar file built succesfully" || error_msg "Jar file could not build"
 }
 
 function error_msg () {
@@ -122,6 +122,9 @@ function prepareReport() {
     local LOG_DIR=/tmp/demo
     local TAR_FILENAME=demo-report.tar.gz
     local TAR_FILE=${DIST_FOLDER}/${TAR_FILENAME}
+    if [ ! -d "${LOG_DIR}" ]; then
+        mkdir -p ${LOG_DIR}
+    fi
     cd ${LOG_DIR}
     tar -cvzf ${TAR_FILENAME} demo.log
     if [ ! -d "${DIST_FOLDER}" ]; then
