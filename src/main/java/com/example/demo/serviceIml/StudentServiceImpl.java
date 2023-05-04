@@ -40,19 +40,19 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void addNewStudent(final Student student) {
-        String studentEmail = student.getStudentEmail();
+        String studentEmail = student.getEmail();
         if (studentRepository.isExistByEmail(studentEmail)) {
             log.error(studentExist + "E-MAIL: " + studentEmail);
             throw new BadRequestException(studentExist + "E-MAIL: " + studentEmail);
         }
 
         // check if mail is valid
-        if (!Utils.isMailValid(student.getStudentEmail())) {
+        if (!Utils.isMailValid(student.getEmail())) {
             log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
-        if (student.getStudentName().length() < 2) {
+        if (student.getName().length() < 2) {
             log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
@@ -74,29 +74,29 @@ public class StudentServiceImpl implements StudentService {
         Student currentStudent = student.get();
 
         // Student name processing
-        if (updateStudent.getStudentName().length() < 2) {
+        if (updateStudent.getName().length() < 2) {
             log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
-        currentStudent.setStudentName(updateStudent.getStudentName());
+        currentStudent.setName(updateStudent.getName());
 
         // Check student email if valid
-        if (!Utils.isMailValid(updateStudent.getStudentEmail())) {
+        if (!Utils.isMailValid(updateStudent.getEmail())) {
             log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         // check if e-mail taken
-        if (!studentEmail.equals(updateStudent.getStudentEmail())) {
-            if (studentRepository.isExistByEmail(updateStudent.getStudentEmail())) {
+        if (!studentEmail.equals(updateStudent.getEmail())) {
+            if (studentRepository.isExistByEmail(updateStudent.getEmail())) {
                 log.error(CommonResponses.emailTakenMsg);
                 throw new BadRequestException(CommonResponses.emailTakenMsg);
             }
-            currentStudent.setStudentEmail(updateStudent.getStudentEmail());
+            currentStudent.setEmail(updateStudent.getEmail());
         }
 
         // no need process for the DOB becase it's @NonNull in the entity class
-        currentStudent.setStudentDOB(updateStudent.getStudentDOB());
+        currentStudent.setDob(updateStudent.getDob());
         log.info("Student updated: {} ", currentStudent.toString());
     }
 
