@@ -9,12 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,10 +23,6 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class Student extends User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-
     public Student(String name, String email, LocalDate dob) {
         setName(name);
         setEmail(email);
