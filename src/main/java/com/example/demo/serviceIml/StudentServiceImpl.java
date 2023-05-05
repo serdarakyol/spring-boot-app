@@ -25,10 +25,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
-    private final String studentNotExistMsg = "Student doesn't exist with ";
-    private final String studentSuccessfullyDeleteMsg = "Student successfully deleted with ";
-    private final String studentSuccessfullyFoundMsg = "Student successfully found: ";
-    private final String studentExist = "Student already exist with ";
 
     static Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
 

@@ -22,10 +22,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
-    private final String teacherNotExistMsg = "Teacher does not exist with ";
-    private final String teacherExistMsg = "Teacher already exist with ";
-    private final String teacherSuccessfullyDeleteMsg = "Teacher successfully deleted with ";
-    private final String teacherSuccessfullyFound = "Teacher successfully found: ";
 
     static Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class);
 
@@ -82,7 +78,7 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         // check if e-mail taken
-        if (!teacherEmail.equals(updatedTeacher.getEmail())){
+        if (!teacherEmail.equals(updatedTeacher.getEmail())) {
             if (teacherRepository.isExistByEmail(updatedTeacher.getEmail())) {
                 log.error(CommonResponses.emailTakenMsg);
                 throw new BadRequestException(CommonResponses.emailTakenMsg);
