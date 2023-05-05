@@ -8,7 +8,6 @@ import java.util.Set;
 import com.example.demo.entity.factory.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;

@@ -3,36 +3,35 @@ package com.example.demo.entity;
 import java.time.LocalDate;
 import java.time.Period;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import com.example.demo.entity.factory.User;
 
-import lombok.Getter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "Teacher")
-@RequiredArgsConstructor
 @NoArgsConstructor
-@ToString
-public class Teacher {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int teacherId;
-    @NonNull @Getter @Setter private String teacherName;
-    @NonNull @Getter @Setter private String teacherEmail;
-    @NonNull @Getter @Setter private LocalDate teacherDOB;
-    @Transient
-    @Setter private Integer teacherAge;
+public class Teacher extends User{
+    public Teacher(String name, String email, LocalDate dob) {
+        setName(name);
+        setEmail(email);
+        setDob(dob);
+    }
 
-    public Integer getTeacherAge() {
-        return Period.between(this.teacherDOB, LocalDate.now()).getYears();
+    @Override
+    public Integer getAge() {
+        return Period.between(getDob(), LocalDate.now()).getYears();
+    }
+
+    @Override
+    public String toString() {
+        return "Student(id=" + getId() +
+               ", name="  + getName() + 
+               ", email=" + getEmail() + 
+               ", dob=" + getDob() + 
+               ", age=" + getAge() + 
+               ")";
     }
 }
