@@ -39,7 +39,7 @@ public class Student extends User {
     private Set<Course> enrolledCourses = new HashSet<>();
 
     @Override
-    public Integer getStudentAge() {
+    public Integer getAge() {
         return Period.between(getDob(), LocalDate.now()).getYears();
     }
 
@@ -49,7 +49,7 @@ public class Student extends User {
                ", name="  + getName() + 
                ", email=" + getEmail() + 
                ", dob=" + getDob() + 
-               ", age=" + getStudentAge() + 
+               ", age=" + getAge() + 
                ")";
     }
 }

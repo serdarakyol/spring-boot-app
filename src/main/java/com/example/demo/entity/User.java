@@ -23,5 +23,5 @@ public abstract class User {
     @Transient
     private Integer age;
 
-    public abstract Integer getStudentAge();
+    public abstract Integer getAge();
 }
