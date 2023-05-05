@@ -31,7 +31,6 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public void addNewTeacher(Teacher teacher) {
         String teacherEmail = teacher.getEmail();
-        System.out.println(teacher.toString());
         if (teacherRepository.isExistByEmail(teacherEmail)) {
             log.error(teacherExistMsg + "E-MAIL: " + teacherEmail);
             throw new BadRequestException(teacherExistMsg + "E-MAIL: " + teacherEmail);
