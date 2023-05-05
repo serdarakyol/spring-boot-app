@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,14 +17,12 @@ import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "Student")
-@ToString
 @NoArgsConstructor
 public class Student extends User {
-    public Student(String name, String email, LocalDate dob) {
+    public Student (String name, String email, LocalDate dob) {
         setName(name);
         setEmail(email);
         setDob(dob);
@@ -38,4 +37,19 @@ public class Student extends User {
     @Getter @Setter 
     @JsonIgnore
     private Set<Course> enrolledCourses = new HashSet<>();
+
+    @Override
+    public Integer getStudentAge() {
+        return Period.between(getDob(), LocalDate.now()).getYears();
+    }
+
+    @Override
+    public String toString() {
+        return "Student(id=" + getId() +
+               ", name="  + getName() + 
+               ", email=" + getEmail() + 
+               ", dob=" + getDob() + 
+               ", age=" + getStudentAge() + 
+               ")";
+    }
 }
