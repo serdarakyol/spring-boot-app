@@ -50,6 +50,7 @@ public class Student extends User {
                ", email=" + getEmail() + 
                ", dob=" + getDob() + 
                ", age=" + getAge() + 
+               ", enrolledCourses=" + getEnrolledCourses() +
                ")";
     }
 }
