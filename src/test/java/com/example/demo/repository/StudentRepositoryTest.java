@@ -32,7 +32,7 @@ class StudentRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        student.setStudentEmail(studentEmail);
+        student.setEmail(studentEmail);
     }
 
     @Test

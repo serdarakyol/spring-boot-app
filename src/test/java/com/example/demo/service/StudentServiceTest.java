@@ -45,6 +45,6 @@ public class StudentServiceTest {
         verify(studentRepository).save(studentArgumentCaptor.capture());
         Student studentRecord = studentArgumentCaptor.getValue();
         assertThat(studentRecord).isEqualTo(student);
-        assertThat(student.getStudentAge()).isEqualTo(23);
+        assertThat(student.getAge()).isEqualTo(23);
     }
 }

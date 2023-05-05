@@ -22,10 +22,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
-    private final String teacherNotExistMsg = "Teacher does not exist with ";
-    private final String teacherExistMsg = "Teacher already exist with ";
-    private final String teacherSuccessfullyDeleteMsg = "Teacher successfully deleted with ";
-    private final String teacherSuccessfullyFound = "Teacher successfully found: ";
 
     static Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class);
 
@@ -34,19 +30,19 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void addNewTeacher(Teacher teacher) {
-        String teacherEmail = teacher.getTeacherEmail();
+        String teacherEmail = teacher.getEmail();
         if (teacherRepository.isExistByEmail(teacherEmail)) {
             log.error(teacherExistMsg + "E-MAIL: " + teacherEmail);
             throw new BadRequestException(teacherExistMsg + "E-MAIL: " + teacherEmail);
         }
 
         // check if mail is valid
-        if (!Utils.isMailValid(teacher.getTeacherEmail())) {
+        if (!Utils.isMailValid(teacher.getEmail())) {
             log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
-        if (teacher.getTeacherName().length() < 2) {
+        if (teacher.getName().length() < 2) {
             log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
@@ -68,29 +64,29 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher currentTeacher = teacher.get();
 
         // Teacher name processing
-        if (updatedTeacher.getTeacherName().length() < 2) {
+        if (updatedTeacher.getName().length() < 2) {
             log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
-        currentTeacher.setTeacherName(updatedTeacher.getTeacherName());
+        currentTeacher.setName(updatedTeacher.getName());
 
         // Check teacher email if valid
-        if (!Utils.isMailValid(updatedTeacher.getTeacherEmail())) {
+        if (!Utils.isMailValid(updatedTeacher.getEmail())) {
             log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         // check if e-mail taken
-        if (!teacherEmail.equals(updatedTeacher.getTeacherEmail())){
-            if (teacherRepository.isExistByEmail(updatedTeacher.getTeacherEmail())) {
+        if (!teacherEmail.equals(updatedTeacher.getEmail())) {
+            if (teacherRepository.isExistByEmail(updatedTeacher.getEmail())) {
                 log.error(CommonResponses.emailTakenMsg);
                 throw new BadRequestException(CommonResponses.emailTakenMsg);
             }
-            currentTeacher.setTeacherEmail(updatedTeacher.getTeacherEmail());
+            currentTeacher.setEmail(updatedTeacher.getEmail());
         }
 
         // no need process for the DOB becase it's @NonNull in the entity class
-        currentTeacher.setTeacherDOB(updatedTeacher.getTeacherDOB());
+        currentTeacher.setDob(updatedTeacher.getDob());
         log.info("Teacher updated: {}", currentTeacher.toString());
     }
 

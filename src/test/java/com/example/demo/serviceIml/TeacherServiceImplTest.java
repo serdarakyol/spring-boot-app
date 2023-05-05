@@ -50,15 +50,15 @@ public class TeacherServiceImplTest {
     @BeforeEach
     void setUp() {
         testTeacher = new Teacher();
-        testTeacher.setTeacherName("Test Teacher");
-        testTeacher.setTeacherEmail("testteacher@example.com");
-        testTeacher.setTeacherDOB(LocalDate.parse("1990-01-01"));
+        testTeacher.setName("Test Teacher");
+        testTeacher.setEmail("testteacher@example.com");
+        testTeacher.setDob(LocalDate.parse("1990-01-01"));
     }
 
     @Test
     void testAddNewTeacher() {
         // Given
-        when(teacherRepository.isExistByEmail(testTeacher.getTeacherEmail())).thenReturn(false);
+        when(teacherRepository.isExistByEmail(testTeacher.getEmail())).thenReturn(false);
 
         // When
         teacherServiceImpl.addNewTeacher(testTeacher);
@@ -69,13 +69,13 @@ public class TeacherServiceImplTest {
         verify(teacherRepository).save(teacherArgumentCaptor.capture());
         Teacher teacherRecord = teacherArgumentCaptor.getValue();
         assertEquals(teacherRecord, testTeacher);
-        assertEquals(testTeacher.getTeacherAge(), 33);
+        assertEquals(testTeacher.getAge(), 33);
     }
 
     @Test
     void testAddNewTeacherAlreadyExists() {
         // Given
-        String teacherMail = testTeacher.getTeacherEmail();
+        String teacherMail = testTeacher.getEmail();
         when(teacherRepository.isExistByEmail(teacherMail)).thenReturn(true);
 
         // When
@@ -91,7 +91,7 @@ public class TeacherServiceImplTest {
     @Test
     void testAddNewTeacherInvalidName() {
         // Given
-        testTeacher.setTeacherName("T");
+        testTeacher.setName("T");
 
         // When
         assertThrows(BadRequestException.class, () -> {
@@ -105,7 +105,7 @@ public class TeacherServiceImplTest {
     @Test
     void testAddNewTeacherInvalidEmail() {
         // Given
-        testTeacher.setTeacherEmail("invalid_email");
+        testTeacher.setEmail("invalid_email");
 
         // When
         assertThrows(BadRequestException.class, () -> {
@@ -121,17 +121,17 @@ public class TeacherServiceImplTest {
         // Given
         Teacher updatedTeacher = new Teacher("Updated Name", "update@test.com", LocalDate.parse("2000-01-01"));
 
-        when(teacherRepository.findByEmail(testTeacher.getTeacherEmail())).thenReturn(Optional.of(testTeacher));
-        when(teacherRepository.isExistByEmail(updatedTeacher.getTeacherEmail())).thenReturn(false);
+        when(teacherRepository.findByEmail(testTeacher.getEmail())).thenReturn(Optional.of(testTeacher));
+        when(teacherRepository.isExistByEmail(updatedTeacher.getEmail())).thenReturn(false);
 
         // When
-        teacherServiceImpl.updateTeacherById(testTeacher.getTeacherEmail(), updatedTeacher);
+        teacherServiceImpl.updateTeacherById(testTeacher.getEmail(), updatedTeacher);
 
         // Then
-        assertEquals(testTeacher.getTeacherName(), updatedTeacher.getTeacherName());
-        assertEquals(testTeacher.getTeacherEmail(), updatedTeacher.getTeacherEmail());
-        assertEquals(testTeacher.getTeacherAge(), updatedTeacher.getTeacherAge());
-        assertEquals(testTeacher.getTeacherDOB(), updatedTeacher.getTeacherDOB());
+        assertEquals(testTeacher.getName(), updatedTeacher.getName());
+        assertEquals(testTeacher.getEmail(), updatedTeacher.getEmail());
+        assertEquals(testTeacher.getAge(), updatedTeacher.getAge());
+        assertEquals(testTeacher.getDob(), updatedTeacher.getDob());
     }
 
     @Test
@@ -139,12 +139,12 @@ public class TeacherServiceImplTest {
         // given
         Teacher updatedTeacher = new Teacher("Updated Name", "update@test.com", LocalDate.parse("2000-01-01"));
 
-        when(teacherRepository.findByEmail(testTeacher.getTeacherEmail())).thenReturn(Optional.of(testTeacher));
-        when(teacherRepository.isExistByEmail(updatedTeacher.getTeacherEmail())).thenReturn(true);
+        when(teacherRepository.findByEmail(testTeacher.getEmail())).thenReturn(Optional.of(testTeacher));
+        when(teacherRepository.isExistByEmail(updatedTeacher.getEmail())).thenReturn(true);
 
         // when
         Throwable exception = assertThrows(BadRequestException.class, () -> {
-            teacherServiceImpl.updateTeacherById(testTeacher.getTeacherEmail(), updatedTeacher);
+            teacherServiceImpl.updateTeacherById(testTeacher.getEmail(), updatedTeacher);
         });
 
         // then
@@ -156,15 +156,15 @@ public class TeacherServiceImplTest {
         // Given
         Teacher updatedTeacher = new Teacher("Updated Name", "update@test.com", LocalDate.parse("2000-01-01"));
 
-        when(teacherRepository.findByEmail(testTeacher.getTeacherEmail())).thenReturn(Optional.empty());
+        when(teacherRepository.findByEmail(testTeacher.getEmail())).thenReturn(Optional.empty());
 
         // When
         Throwable exception = assertThrows(NotFoundException.class, () -> {
-            teacherServiceImpl.updateTeacherById(testTeacher.getTeacherEmail(), updatedTeacher);
+            teacherServiceImpl.updateTeacherById(testTeacher.getEmail(), updatedTeacher);
         });
 
         // Then
-        String expectedMessage = "Teacher does not exist with E-MAIL: " + testTeacher.getTeacherEmail();
+        String expectedMessage = "Teacher does not exist with E-MAIL: " + testTeacher.getEmail();
 
         assertEquals(expectedMessage, exception.getMessage());
     }
@@ -174,11 +174,11 @@ public class TeacherServiceImplTest {
         // Given
         Teacher updatedTeacher = new Teacher("x", "update@test.com", LocalDate.parse("2000-01-01"));
 
-        when(teacherRepository.findByEmail(testTeacher.getTeacherEmail())).thenReturn(Optional.of(testTeacher));
+        when(teacherRepository.findByEmail(testTeacher.getEmail())).thenReturn(Optional.of(testTeacher));
 
         // When
         Throwable exception = assertThrows(BadRequestException.class, () -> {
-            teacherServiceImpl.updateTeacherById(testTeacher.getTeacherEmail(), updatedTeacher);
+            teacherServiceImpl.updateTeacherById(testTeacher.getEmail(), updatedTeacher);
         });
 
         // Then
@@ -191,10 +191,10 @@ public class TeacherServiceImplTest {
         // Given
         Teacher updatedTeacher = new Teacher("Test", "test@a.com", LocalDate.parse("2000-01-01"));
 
-        when(teacherRepository.findByEmail(testTeacher.getTeacherEmail())).thenReturn(Optional.of(testTeacher));
+        when(teacherRepository.findByEmail(testTeacher.getEmail())).thenReturn(Optional.of(testTeacher));
 
         Throwable exception = assertThrows(BadRequestException.class, () -> {
-            teacherServiceImpl.updateTeacherById(testTeacher.getTeacherEmail(), updatedTeacher);
+            teacherServiceImpl.updateTeacherById(testTeacher.getEmail(), updatedTeacher);
         });
 
         // then
@@ -213,9 +213,9 @@ public class TeacherServiceImplTest {
 
         // Then
         assertNotNull(teacherInDB);
-        assertEquals("Test Teacher", teacherInDB.getTeacherName());
-        assertEquals("testteacher@example.com", teacherInDB.getTeacherEmail());
-        assertEquals(LocalDate.parse("1990-01-01"), teacherInDB.getTeacherDOB());
+        assertEquals("Test Teacher", teacherInDB.getName());
+        assertEquals("testteacher@example.com", teacherInDB.getEmail());
+        assertEquals(LocalDate.parse("1990-01-01"), teacherInDB.getDob());
 
         verify(teacherRepository, times(1)).findById(teacherID);
         verifyNoMoreInteractions(teacherRepository);
@@ -237,30 +237,30 @@ public class TeacherServiceImplTest {
     @Test
     void testGetTeacherByEmail() {
         // Given
-        when(teacherRepository.findByEmail(testTeacher.getTeacherEmail())).thenReturn(Optional.of(testTeacher));
+        when(teacherRepository.findByEmail(testTeacher.getEmail())).thenReturn(Optional.of(testTeacher));
 
         // When
-        Teacher teacherInDB = teacherServiceImpl.getTeacherByEmail(testTeacher.getTeacherEmail());
+        Teacher teacherInDB = teacherServiceImpl.getTeacherByEmail(testTeacher.getEmail());
 
         // Then
         assertNotNull(teacherInDB);
-        assertEquals("Test Teacher", teacherInDB.getTeacherName());
-        assertEquals("testteacher@example.com", teacherInDB.getTeacherEmail());
-        assertEquals(LocalDate.parse("1990-01-01"), teacherInDB.getTeacherDOB());
+        assertEquals("Test Teacher", teacherInDB.getName());
+        assertEquals("testteacher@example.com", teacherInDB.getEmail());
+        assertEquals(LocalDate.parse("1990-01-01"), teacherInDB.getDob());
 
-        verify(teacherRepository, times(1)).findByEmail(testTeacher.getTeacherEmail());
+        verify(teacherRepository, times(1)).findByEmail(testTeacher.getEmail());
         verifyNoMoreInteractions(teacherRepository);
     }
 
     @Test
     void testGetTeacherByEmailNotFound() {
         // Given
-        when(teacherRepository.findByEmail(testTeacher.getTeacherEmail())).thenReturn(Optional.empty());
+        when(teacherRepository.findByEmail(testTeacher.getEmail())).thenReturn(Optional.empty());
 
         // When & Assert
-        assertThrows(NotFoundException.class, () -> teacherServiceImpl.getTeacherByEmail(testTeacher.getTeacherEmail()));
+        assertThrows(NotFoundException.class, () -> teacherServiceImpl.getTeacherByEmail(testTeacher.getEmail()));
 
-        verify(teacherRepository, times(1)).findByEmail(testTeacher.getTeacherEmail());
+        verify(teacherRepository, times(1)).findByEmail(testTeacher.getEmail());
         verifyNoMoreInteractions(teacherRepository);
     }
 
@@ -286,7 +286,7 @@ public class TeacherServiceImplTest {
     @Test
     void testDeleteTeacherByEmail() {
         // Given
-        String validEmail = testTeacher.getTeacherEmail();
+        String validEmail = testTeacher.getEmail();
         when(teacherRepository.isExistByEmail(validEmail)).thenReturn(true);
 
         // When
