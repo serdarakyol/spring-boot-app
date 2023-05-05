@@ -12,8 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StudentDTO {
-    private String studentName;
-    private String studentEmail;
-    private Integer studentAge;
+    private String name;
+    private String email;
+    private Integer age;
     private Set<Course> enrolledCourses;
 }

@@ -5,45 +5,27 @@ import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.example.demo.entity.factory.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "Student")
-@RequiredArgsConstructor
 @NoArgsConstructor
-@ToString
-public class Student {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int studentId;
-    @NonNull @Getter @Setter
-    private String studentName;
-    @NonNull @Getter @Setter
-    private String studentEmail;
-    @NonNull @Getter @Setter
-    private LocalDate studentDOB;
-    @Transient
-    private Integer studentAge;
-
-    public Integer getStudentAge() {
-        return Period.between(this.studentDOB, LocalDate.now()).getYears();
+public class Student extends User {
+    public Student (String name, String email, LocalDate dob) {
+        setName(name);
+        setEmail(email);
+        setDob(dob);
     }
 
     @ManyToMany
@@ -55,4 +37,20 @@ public class Student {
     @Getter @Setter 
     @JsonIgnore
     private Set<Course> enrolledCourses = new HashSet<>();
+
+    @Override
+    public Integer getAge() {
+        return Period.between(getDob(), LocalDate.now()).getYears();
+    }
+
+    @Override
+    public String toString() {
+        return "Student(id=" + getId() +
+               ", name="  + getName() + 
+               ", email=" + getEmail() + 
+               ", dob=" + getDob() + 
+               ", age=" + getAge() + 
+               ", enrolledCourses=" + getEnrolledCourses() +
+               ")";
+    }
 }
