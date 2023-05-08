@@ -1,80 +1,10 @@
 # Spring-boot-app
 
-I created this application to learn Spring Boot and PostgreSQL. In addition, I implemented the singleton design pattern, unit testing, performance testing, test coverage reporting, bash script to aid developers/users, continuous integration (CI), and Docker deployment. Furthermore, I migrated the application from Spring Boot 2.x to 3.x. I started this project by following the [Spring Boot Tutorial | Full Course [2022] [NEW]](https://www.youtube.com/watch?v=9SGDpanrc8U&ab_channel=Amigoscode) from [Amigoscode](https://www.youtube.com/@amigoscode) and improved upon it. I would like to thank the author for inspiring me to start this project.
+I created this application to learn Spring Boot and PostgreSQL. In addition, I implemented the design pattern, unit testing, performance testing, test coverage reporting, bash script to aid developers/users, continuous integration (CI), and Docker deployment. Furthermore, I migrated the application from Spring Boot 2.x to 3.x. I started this project by following the [Spring Boot Tutorial | Full Course [2022] [NEW]](https://www.youtube.com/watch?v=9SGDpanrc8U&ab_channel=Amigoscode) from [Amigoscode](https://www.youtube.com/@amigoscode) and improved upon it. I would like to thank the author for inspiring me to start this project.
 
+Here you can see the difference between the **LATEST VERSION** and **OLD VERSIONS** of this application.
 
-Here you can see the difference between the **IMPROVED** and **OLD VERSIONS** of this application.
-```
-IMPROVED                                                        | OLD VERSION                                  
-----------------------------------------------------------------|------------------------------------------------
-$ `tree --gitignore`                                            |$ `tree --gitignore`
-.                                                               |.
-├── docker-compose.yml                                          |├── mvnw
-├── Dockerfile                                                  |├── mvnw.cmd
-├── mvnw                                                        |├── pom.xml
-├── mvnw.cmd                                                    |├── README.md
-├── performance-testing                                         |└── src
-│   └── locust.py                                               |    ├── main
-├── pom.xml                                                     |    │   ├── java
-├── project-dev                                                 |    │   │   └── com
-├── README.md                                                   |    │   │       └── example
-└── src                                                         |    │   │           └── demo
-    ├── main                                                    |    │   │               ├── DemoApplication.java
-    │   ├── java                                                |    │   │               └── Student
-    │   │   └── com                                             |    │   │                   ├── StudentConfig.java
-    │   │       └── example                                     |    │   │                   ├── StudentController.java
-    │   │           └── demo                                    |    │   │                   ├── Student.java
-    │   │               ├── controller                          |    │   │                   ├── StudentRepository.java
-    │   │               │   ├── BodyResponses.java              |    │   │                   └── StudentService.java
-    │   │               │   ├── CommonResponses.java            |    │   └── resources
-    │   │               │   ├── StudentController.java          |    │       └── application.properties
-    │   │               │   └── TeacherController.java          |    └── test
-    │   │               ├── DemoApplication.java                |        └── java
-    │   │               ├── dto                                 |            └── com
-    │   │               │   ├── StudentDTO.java                 |                └── example
-    │   │               │   └── TeacherDTO.java                 |                    └── demo
-    │   │               ├── entity                              |                        └── DemoApplicationTests.java
-    │   │               │   ├── Student.java                    |
-    │   │               │   └── Teacher.java                    |
-    │   │               ├── exception                           |
-    │   │               │   ├── BadRequestException.java        |
-    │   │               │   └── NotFoundException.java          |                                                 
-    │   │               ├── mapper                              |
-    │   │               │   ├── StudentMapper.java              |
-    │   │               │   └── TeacherMapper.java              |
-    │   │               ├── repository                          |
-    │   │               │   ├── StudentRepository.java          |
-    │   │               │   └── TeacherRepository.java          |
-    │   │               ├── service                             |
-    │   │               │   ├── StudentService.java             |
-    │   │               │   └── TeacherService.java             |
-    │   │               ├── serviceIml                          |
-    │   │               │   ├── StudentServiceImpl.java         |
-    │   │               │   └── TeacherServiceImpl.java         |
-    │   │               └── utils                               |
-    │   │                   └── Utils.java                      |
-    │   └── resources                                           |
-    │       ├── application.properties                          |
-    │       ├── log4j2.xml                                      |
-    │       ├── static                                          |
-    │       └── templates                                       |
-    └── test                                                    |
-        └── java                                                |
-            ├── com                                             |
-            │   └── example                                     |
-            │       └── demo                                    |
-            │           ├── DemoApplicationTests.java           |
-            │           ├── repository                          |
-            │           │   └── StudentRepositoryTest.java      |
-            │           ├── service                             |
-            │           │   └── StudentServiceTest.java         |
-            │           └── utils                               |
-            │               └── UtilsTest.java                  |
-            └── resources                                       |
-                └── application.properties                      |
-                                                                |
-28 directories, 35 files                                        |13 directories, 12 files
-```
+![Difference](./img/difference.png)
 
 ## Usage
 Docker Desktop must be installed. To run the app just use the below command.
@@ -83,7 +13,17 @@ Docker Desktop must be installed. To run the app just use the below command.
 $ sudo ./project-dev code-run
 ```
 
-Ready to go. Just click [here](http://localhost:8080/swagger-ui/index.html) and test the API.
+Ready to go. you can test the API with the below example.
+```bash
+curl --location 'http://localhost:8080/api/v1/student' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic YWRtaW46YWRtaW4=' \
+--data-raw '{
+  "name": "Serdar AKYOL",
+  "email": "serdarakyol@asd.com",
+  "dob": "2000-02-23"
+}'
+```
 
 ### About `project-dev` file
 This bash script was created to make it easier for people to use this API. To access the help menu, simply run `$ project-dev help` and the output should be as shown below:
@@ -100,6 +40,8 @@ Usage: ./project-dev <command>
         Stress testing for the API
     test-coverage-report
         Shows unit test coverage reports
+    prepare-report
+        Prepares the report to send the developer for debugging
 ```
 
 ## Test
