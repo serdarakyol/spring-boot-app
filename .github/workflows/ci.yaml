@@ -43,12 +43,6 @@ jobs:
           retention-days: 1
       - name: Generate report file
         run: ./project-dev prepare-report
-      - name: Save generated report file
-        uses: actions/upload-artifact@v3
-        with:
-          name: report-file
-          path: dist/demo-report.tar.gz
-          retention-days: 1
       - name: Generate coverage report
         run: ./project-dev test-coverage-report
       - name: Save coverage report
@@ -61,5 +55,11 @@ jobs:
         run: mvn spring-boot:run --quiet &
       - name: Wait for API to start
         run: sleep 5
-      - name: Run locust
+      - name: Run the performance test
         run: ./project-dev performance-test
+      - name: Save generated report file
+        uses: actions/upload-artifact@v3
+        with:
+          name: report-file
+          path: dist/demo-report.tar.gz
+          retention-days: 1
