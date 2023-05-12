@@ -79,14 +79,14 @@ class TeacherProcess(LoadTest):
 
     def _generate_post_data(self) -> dict:
         request_data = {
-            "teacherName": str,
-            "teacherEmail": str,
-            "teacherDOB": str
+            "name": str,
+            "email": str,
+            "dob": str
         }
-        request_data["teacherName"] = self.generate_random_string()
-        request_data["teacherEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-        request_data["teacherDOB"] = self.generate_random_dob()
-        self.teacher_mails.append(request_data["teacherEmail"])
+        request_data["name"] = self.generate_random_string()
+        request_data["email"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
+        request_data["dob"] = self.generate_random_dob()
+        self.teacher_mails.append(request_data["email"])
         self.counter += 1
 
         return request_data
@@ -94,13 +94,13 @@ class TeacherProcess(LoadTest):
     def _generate_put_data(self) -> (str | dict):
         teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
-            "teacherName": "Test name",
-            "teacherEmail": teacher_email,
-            "teacherDOB": "1995-03-07"
+            "name": "Test name",
+            "email": teacher_email,
+            "dob": "1995-03-07"
         }
 
-        request_data["teacherName"] = self.generate_random_string()
-        request_data["teacherDOB"] = self.generate_random_dob()
+        request_data["name"] = self.generate_random_string()
+        request_data["dob"] = self.generate_random_dob()
 
          # select random email on db
         random_teacher_mail_on_db = random.choice(self.teacher_mails)
@@ -136,15 +136,15 @@ class StudentProcess(LoadTest):
 
     def _generate_post_data(self) -> dict:
         request_data = {
-            "studentName": str,
-            "studentEmail": str,
-            "studentDOB": str
+            "name": str,
+            "email": str,
+            "dob": str
         }
 
-        request_data["studentName"] = self.generate_random_string()
-        request_data["studentEmail"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-        request_data["studentDOB"] = self.generate_random_dob()
-        self.student_mails.append(request_data["studentEmail"])
+        request_data["name"] = self.generate_random_string()
+        request_data["email"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
+        request_data["dob"] = self.generate_random_dob()
+        self.student_mails.append(request_data["email"])
         self.counter += 1
 
         return request_data
@@ -152,13 +152,13 @@ class StudentProcess(LoadTest):
     def _generate_put_data(self) -> (str | dict):
         student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
-            "studentName": "Test",
-            "studentEmail": student_email,
-            "studentDOB": "1999-03-07"
+            "name": "Test",
+            "email": student_email,
+            "dob": "1999-03-07"
         }
         
-        request_data["studentName"] = self.generate_random_string()
-        request_data["studentDOB"] = self.generate_random_dob()
+        request_data["name"] = self.generate_random_string()
+        request_data["dob"] = self.generate_random_dob()
 
         # select random email on db
         random_student_mail_on_db = random.choice(self.student_mails)
