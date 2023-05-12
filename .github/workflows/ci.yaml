@@ -57,3 +57,9 @@ jobs:
           name: unit-test-coverage-report
           path: dist/unit-test-coverage.tar.gz
           retention-days: 1
+      - name: Run API
+        run: mvn spring-boot:run --quiet &
+      - name: Wait for API to start
+        run: sleep 5
+      - name: Run locust
+        run: ./project-dev performance-test
