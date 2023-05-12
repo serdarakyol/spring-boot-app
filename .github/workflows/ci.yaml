@@ -31,8 +31,6 @@ jobs:
         run: mvn test
       - name: Build with Maven
         run: mvn clean install -DskipTests
-      - name: Update dependency graph
-        uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
       - name: Build Jar file
         run: ./project-dev build-jar
       - name: Save Jar file
@@ -41,8 +39,7 @@ jobs:
           name: demo-0.0.1-SNAPSHOT
           path: target/demo-0.0.1-SNAPSHOT.jar
           retention-days: 1
-      - name: Generate report file
-        run: ./project-dev prepare-report
+      
       - name: Generate coverage report
         run: ./project-dev test-coverage-report
       - name: Save coverage report
@@ -57,6 +54,8 @@ jobs:
         run: sleep 5
       - name: Run the performance test
         run: ./project-dev performance-test
+      - name: Generate report file
+        run: ./project-dev prepare-report
       - name: Save generated report file
         uses: actions/upload-artifact@v3
         with:
