@@ -77,7 +77,7 @@ function performanceTesting() {
         warn_msg "Locust is not installed. Installing..."
         pip3 install locust
     fi
-    local HOST=http://localhost:8080
+    local HOST=http://127.0.0.1:8080
     local CONCURRENT=500
     local RATE=500
     local DURATION=10

@@ -119,7 +119,6 @@ jobs:
           retention-days: 1
   
   generate-coverage-report:
-    needs: run-unit-tests
     runs-on: ubuntu-latest
     steps:
       - name: Setup DB
