@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#set -e
+set -e
 SOURCE="${BASH_SOURCE[0]}"
 ROOT_DIR="$(dirname "$(realpath ${SOURCE})")"
 DIST_FOLDER=${ROOT_DIR}/dist
