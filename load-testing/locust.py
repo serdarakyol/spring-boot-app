@@ -3,6 +3,7 @@ import string
 import random
 import time
 import datetime
+import logging
 
 WAIT_TIME_MIN = 0.1
 WAIT_TIME_MAX = 0.5
@@ -63,9 +64,13 @@ class TeacherProcess(LoadTest):
         self.counter = 0
 
     def on_start(self):
-        self.client.post(url=self.base_path,
-                         json=self._generate_post_data(),
-                         headers=h)
+        request_data = self._generate_post_data()
+        with self.client.post(url=self.base_path,
+                         json=request_data,
+                         headers=h,
+                         catch_response=True) as response:
+            if response.status_code != 200:
+                logging.info(f"Teacher Fails: {request_data}")
     
     def random_user_mail(self) -> str:
         return random.choice(self.teacher_mails)
@@ -113,9 +118,13 @@ class StudentProcess(LoadTest):
         self.counter = 0
 
     def on_start(self):
-        self.client.post(url=self.base_path,
-                         json=self._generate_post_data(),
-                         headers=h)
+        request_data = self._generate_post_data()
+        with self.client.post(url=self.base_path,
+                         json=request_data,
+                         headers=h,
+                         catch_response=True) as response:
+            if response.status_code != 200:
+                logging.info(f"Student Fails: {request_data}")
         
     def random_user_mail(self) -> str:
         return random.choice(self.student_mails)
