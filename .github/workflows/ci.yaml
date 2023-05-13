@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  default:
+  run-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Setup DB
@@ -29,6 +29,24 @@ jobs:
           distribution: 'temurin'
       - name: Run unit tests
         run: mvn test
+
+  build-and-performance-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup DB
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: '15.1'
+          postgresql db: school_management
+          postgresql user: learning
+          postgresql password: sa123456
+      - name: Pull repository
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
       - name: Build with Maven
         run: mvn clean install -DskipTests
       - name: Run API
