@@ -132,7 +132,7 @@ class StudentProcess(LoadTest):
             with self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h, catch_response=True) as response:
                 if response.status_code == 404:
                     logging.info(f"Teacher Fails: {self.base_path}/by-email/{email}")
-        logging.info(f"Remaning mails: {len(self.teacher_mails)}")
+        logging.info(f"Remaning mails: {len(self.student_mails)}")
 
     def _generate_post_data(self) -> dict:
         request_data = {
