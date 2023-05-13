@@ -14,7 +14,7 @@ Usage: $0 <command>
         Build jar file
     code-run
         Runs containerized app
-    performance-test
+    load-test
         Stress testing for the API
     test-coverage-report
         Shows unit test coverage reports
@@ -67,7 +67,7 @@ function codeRun() {
     docker compose up --build
 }
 
-function performanceTesting() {
+function loadTesting() {
     # check if locust installed
     if ! [ -x "$(command -v locust -V)" ]; then
         if ! [ -x "$(command -v pip3 -V)" ]; then
@@ -81,14 +81,14 @@ function performanceTesting() {
     local CONCURRENT=500
     local RATE=500
     local DURATION=10
-    locust -f ${ROOT_DIR}/performance-testing/locust.py \
-                                --host ${HOST}          \
-                                --headless              \
-                                --users=${CONCURRENT}   \
-                                --spawn-rate=${RATE}    \
-                                --run-time=${DURATION}s \
-                                --reset-stats           \
-                                --only-summary
+    locust -f ${ROOT_DIR}/load-testing/locust.py \
+                         --host ${HOST}          \
+                         --headless              \
+                         --users=${CONCURRENT}   \
+                         --spawn-rate=${RATE}    \
+                         --run-time=${DURATION}s \
+                         --reset-stats           \
+                         --only-summary
 }
 
 function testCoverageReport() {
@@ -146,8 +146,8 @@ function main() {
         code-run)
             codeRun "${@}"
             ;;
-        performance-test)
-            performanceTesting "${@}"
+        load-test)
+            loadTesting "${@}"
             ;;
         test-coverage-report)
             testCoverageReport "${@}"
