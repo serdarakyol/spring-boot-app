@@ -103,7 +103,6 @@ function testCoverageReport() {
     cd ${ROOT_DIR}
     # run test coverage
     mvn clean test jacoco:report
-    echo "until here all well"
     # show reports
     if [ -x "$(command -v firefox -V)" ]; then
         firefox --new-window ${REPORT_FILE} && info_msg ${REPORT_SUCCESS_MSG} || warn_msg ${REPORT_ERR}
@@ -116,6 +115,7 @@ function testCoverageReport() {
     cd ${TMP_DIR}
     # rename file
     mv jacoco report
+    mkdir -p ${DIST_FOLDER}
     tar -cvzf ${OUT_FILE} report/
     # check if the file exist and has a size
     [ -s ${OUT_FILE} ] && info_msg "${OUT_FILE} generated successfully" || error_msg "File could not generated"
