@@ -79,35 +79,28 @@ class TeacherProcess(LoadTest):
 
     def _generate_post_data(self) -> dict:
         request_data = {
-            "name": str,
-            "email": str,
-            "dob": str
+            "name" : self.generate_random_string(),
+            "email": f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}",
+            "dob": self.generate_random_dob()
         }
-        request_data["name"] = self.generate_random_string()
-        request_data["email"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-        request_data["dob"] = self.generate_random_dob()
         self.teacher_mails.append(request_data["email"])
         self.counter += 1
 
         return request_data
 
     def _generate_put_data(self) -> (str | dict):
-        teacher_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
-            "name": "Test name",
-            "email": teacher_email,
-            "dob": "1995-03-07"
+            "name": self.generate_random_string(),
+            "email": f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}",
+            "dob": self.generate_random_dob()
         }
-
-        request_data["name"] = self.generate_random_string()
-        request_data["dob"] = self.generate_random_dob()
 
          # select random email on db
         random_teacher_mail_on_db = random.choice(self.teacher_mails)
         # delete randomly selected email from list
         self.teacher_mails.remove(random_teacher_mail_on_db)
         # add new email to the list
-        self.teacher_mails.append(teacher_email)
+        self.teacher_mails.append(request_data["email"])
 
         return f"{self.base_path}/{random_teacher_mail_on_db}", request_data
 
@@ -136,35 +129,28 @@ class StudentProcess(LoadTest):
 
     def _generate_post_data(self) -> dict:
         request_data = {
-            "name": str,
-            "email": str,
-            "dob": str
+            "name": self.generate_random_string(),
+            "email": f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}",
+            "dob": self.generate_random_dob()
         }
 
-        request_data["name"] = self.generate_random_string()
-        request_data["email"] = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
-        request_data["dob"] = self.generate_random_dob()
         self.student_mails.append(request_data["email"])
         self.counter += 1
 
         return request_data
     
     def _generate_put_data(self) -> (str | dict):
-        student_email = f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}"
         request_data = {
-            "name": "Test",
-            "email": student_email,
-            "dob": "1999-03-07"
+            "name": self.generate_random_string(),
+            "email": f"{self.generate_random_string()}@{self.generate_random_string()}.{self.generate_random_string()}",
+            "dob": self.generate_random_dob()
         }
-        
-        request_data["name"] = self.generate_random_string()
-        request_data["dob"] = self.generate_random_dob()
 
         # select random email on db
         random_student_mail_on_db = random.choice(self.student_mails)
         # delete randomly selected email from list
         self.student_mails.remove(random_student_mail_on_db)
         # add new email to the list
-        self.student_mails.append(student_email)
+        self.student_mails.append(request_data["email"])
 
         return f"{self.base_path}/{random_student_mail_on_db}", request_data

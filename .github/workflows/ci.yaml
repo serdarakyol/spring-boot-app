@@ -43,6 +43,8 @@ jobs:
           retention-days: 1
       - name: Generate coverage report
         run: ./project-dev test-coverage-report
+      - name: Wait for API to start
+        run: sleep 1
       - name: Save coverage report
         uses: actions/upload-artifact@v3
         with:
@@ -52,7 +54,7 @@ jobs:
       - name: Run API
         run: mvn spring-boot:run --quiet &
       - name: Wait for API to start
-        run: sleep 5
+        run: sleep 3
       - name: Run the performance test
         run: ./project-dev performance-test
       - name: Generate report file

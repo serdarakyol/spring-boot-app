@@ -103,6 +103,7 @@ function testCoverageReport() {
     cd ${ROOT_DIR}
     # run test coverage
     mvn clean test jacoco:report
+    echo "until here all well"
     # show reports
     if [ -x "$(command -v firefox -V)" ]; then
         firefox --new-window ${REPORT_FILE} && info_msg ${REPORT_SUCCESS_MSG} || warn_msg ${REPORT_ERR}
