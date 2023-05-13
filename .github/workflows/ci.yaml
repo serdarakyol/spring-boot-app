@@ -68,7 +68,7 @@ jobs:
           retention-days: 1
 
   run-unit-tests:
-  needs: build-maven
+    needs: build-maven
     runs-on: ubuntu-latest
     steps:
       - name: Setup DB
