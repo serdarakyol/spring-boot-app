@@ -65,6 +65,13 @@ jobs:
   build-jar:
     runs-on: ubuntu-latest
     steps:
+      - name: Pull repository
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
       - run: ./project-dev build-jar
       - name: Save Jar file
         uses: actions/upload-artifact@v3
@@ -76,6 +83,13 @@ jobs:
   generate-coverage-report:
     runs-on: ubuntu-latest
     steps:
+      - name: Pull repository
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
       - run: ./project-dev test-coverage-report
       - name: Save coverage report
         uses: actions/upload-artifact@v3
