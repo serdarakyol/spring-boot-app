@@ -1,9 +1,8 @@
-from locust import task, between, FastHttpUser, HttpUser
+from locust import task, between, FastHttpUser
 import string
 import random
 import time
 import datetime
-import logging
 
 WAIT_TIME_MIN = 0.1
 WAIT_TIME_MAX = 0.5
@@ -15,7 +14,7 @@ h = {
 
 random.seed()
 
-class LoadTest(HttpUser):
+class LoadTest(FastHttpUser):
     wait_time = between(WAIT_TIME_MIN, WAIT_TIME_MAX)
     abstract = True
     def __init__(self, *args, **kwargs):
@@ -76,10 +75,7 @@ class TeacherProcess(LoadTest):
 
     def on_stop(self):
         for email in self.teacher_mails:
-            with self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h, catch_response=True) as response:
-                if response.status_code == 404:
-                    logging.info(f"Teacher Fails: {self.base_path}/by-email/{email}")
-        logging.info(f"Remaning mails: {len(self.teacher_mails)}")
+            self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -129,10 +125,7 @@ class StudentProcess(LoadTest):
 
     def on_stop(self):
         for email in self.student_mails:
-            with self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h, catch_response=True) as response:
-                if response.status_code == 404:
-                    logging.info(f"Teacher Fails: {self.base_path}/by-email/{email}")
-        logging.info(f"Remaning mails: {len(self.student_mails)}")
+            self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
 
     def _generate_post_data(self) -> dict:
         request_data = {
