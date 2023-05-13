@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  default:
+  setup-db:
     runs-on: ubuntu-latest
     steps:
       - name: Setup DB
@@ -20,6 +20,11 @@ jobs:
           postgresql db: school_management
           postgresql user: learning
           postgresql password: sa123456
+
+  default:
+    needs: setup-db
+    runs-on: ubuntu-latest
+    steps:
       - name: Pull repository
         uses: actions/checkout@v3
       - name: Set up JDK
@@ -81,7 +86,7 @@ jobs:
           distribution: 'temurin'
       - name: Run unit tests
         run: mvn test
-  
+
   build-maven:
     runs-on: ubuntu-latest
     steps:
@@ -150,7 +155,7 @@ jobs:
       - name: Run API
         run: mvn spring-boot:run --quiet &
       - run: ./project-dev performance-test
-    
+
   generate-report-file:
     runs-on: ubuntu-latest
     needs: build-maven
