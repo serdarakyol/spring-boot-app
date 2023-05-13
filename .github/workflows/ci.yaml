@@ -51,8 +51,8 @@ jobs:
         run: mvn clean install -DskipTests
       - name: Run API
         run: mvn spring-boot:run --quiet &
-      - name: Run the performance test
-        run: ./project-dev performance-test
+      - name: Run the load test
+        run: ./project-dev load-test
       - name: Generate report file
         run: ./project-dev prepare-report
       - name: Save generated report file
