@@ -1,4 +1,4 @@
-from locust import task, between, FastHttpUser
+from locust import task, between, FastHttpUser, HttpUser
 import string
 import random
 import time
@@ -15,7 +15,7 @@ h = {
 
 random.seed()
 
-class LoadTest(FastHttpUser):
+class LoadTest(HttpUser):
     wait_time = between(WAIT_TIME_MIN, WAIT_TIME_MAX)
     abstract = True
     def __init__(self, *args, **kwargs):
@@ -64,23 +64,22 @@ class TeacherProcess(LoadTest):
         self.counter = 0
 
     def on_start(self):
-        request_data = self._generate_post_data()
-        with self.client.post(url=self.base_path,
-                         json=request_data,
-                         headers=h,
-                         catch_response=True) as response:
-            if response.status_code != 200:
-                logging.info(f"Teacher Fails: {request_data}")
-    
+        self.client.post(url=self.base_path,
+                         json=self._generate_post_data(),
+                         headers=h)
+
     def random_user_mail(self) -> str:
         return random.choice(self.teacher_mails)
-    
+
     def random_user_id(self) -> int:
         return random.randint(1, self.counter)
 
     def on_stop(self):
         for email in self.teacher_mails:
-            self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
+            with self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h, catch_response=True) as response:
+                if response.status_code == 404:
+                    logging.info(f"Teacher Fails: {self.base_path}/by-email/{email}")
+        logging.info(f"Remaning mails: {len(self.teacher_mails)}")
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -118,23 +117,22 @@ class StudentProcess(LoadTest):
         self.counter = 0
 
     def on_start(self):
-        request_data = self._generate_post_data()
-        with self.client.post(url=self.base_path,
-                         json=request_data,
-                         headers=h,
-                         catch_response=True) as response:
-            if response.status_code != 200:
-                logging.info(f"Student Fails: {request_data}")
+        self.client.post(url=self.base_path,
+                         json=self._generate_post_data(),
+                         headers=h)
         
     def random_user_mail(self) -> str:
         return random.choice(self.student_mails)
-    
+
     def random_user_id(self) -> int:
         return random.randint(1, self.counter)
-    
+
     def on_stop(self):
         for email in self.student_mails:
-            self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h)
+            with self.client.delete(url=f"{self.base_path}/by-email/{email}", headers=h, catch_response=True) as response:
+                if response.status_code == 404:
+                    logging.info(f"Teacher Fails: {self.base_path}/by-email/{email}")
+        logging.info(f"Remaning mails: {len(self.teacher_mails)}")
 
     def _generate_post_data(self) -> dict:
         request_data = {
@@ -147,7 +145,7 @@ class StudentProcess(LoadTest):
         self.counter += 1
 
         return request_data
-    
+
     def _generate_put_data(self) -> (str | dict):
         request_data = {
             "name": self.generate_random_string(),
