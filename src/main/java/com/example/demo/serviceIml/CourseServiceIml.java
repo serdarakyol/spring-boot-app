@@ -21,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class CourseServiceIml implements CourseService {
     private final String courseNotExist = "Course is not exist with ID: ";
-    private final String courseNameNotValid = "courseName can not be null, empty or only whitespace";
-    private final String creditNotValid = "courseCredit must be equal or greater than 0";
+    private final String courseNameNotValid = "course_ame can not be null, empty or only whitespace";
+    private final String creditNotValid = "course_credit must be greater than 0";
     private final String courseDeleted = "Course successfully deleted with ID: ";
     private final String courseFound = "Course successfully found: ";
 
@@ -32,62 +32,57 @@ public class CourseServiceIml implements CourseService {
 
     @Override
     public void addNewCourse(CourseDTO courseDTO) {
-        Course course = courseMapper.toEntity(courseDTO);
-        String courseName = course.getCourseName();
-        if (courseName == null || courseName.trim().length() == 0) {
+        if (!isValidCourseName(courseDTO.getCourseName())) {
             log.error(courseNameNotValid);
             throw new BadRequestException(courseNameNotValid);
         }
 
-        if (course.getCourseCredit() < 0) {
+        if (courseDTO.getCourseCredit() < 1) {
             log.error(creditNotValid);
             throw new BadRequestException(creditNotValid);
         }
-
+        Course course = courseMapper.toEntity(courseDTO);
+        course.setIsActive(true);
         courseRepository.save(course);
         log.info("New course saved with ID: ".concat(course.getId()));
     }
 
     @Transactional
     @Override
-    public void updateCourse(String courseId, final Course updateCourse) {
-        Optional<Course> optionalCourse = courseRepository.findById(courseId);
-        if (!optionalCourse.isPresent()) {
+    public void updateCourse(String courseId, CourseDTO courseDTO) {
+        Course currentCourse = courseRepository.findById(courseId).orElseThrow(() -> {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
-        }
-
-        Course currentCourse = optionalCourse.get();
+        });
 
         // Check course name
-        String courseName = updateCourse.getCourseName();
-        if (!courseName.equals(currentCourse.getCourseName())) {
-            if (courseName == null || courseName.trim().length() == 0) {
-                log.error(courseNameNotValid);
-                throw new BadRequestException(courseNameNotValid);
-            }
-            currentCourse.setCourseName(updateCourse.getCourseName());
+        String courseName = courseDTO.getCourseName();
+        if (!courseName.equals(currentCourse.getCourseName()) && !isValidCourseName(courseName)) {
+            log.error(courseNameNotValid);
+            throw new BadRequestException(courseNameNotValid);
         }
+        currentCourse.setCourseName(courseDTO.getCourseName());
 
         // Check course credit
-        if (updateCourse.getCourseCredit() != currentCourse.getCourseCredit()) {
-            if (updateCourse.getCourseCredit() < 0 || updateCourse.getCourseCredit().equals(null)) {
+        if (courseDTO.getCourseCredit() != currentCourse.getCourseCredit()) {
+            if (courseDTO.getCourseCredit() < 0 || courseDTO.getCourseCredit() == null) {
                 log.error(creditNotValid);
                 throw new BadRequestException(creditNotValid);
             }
-            currentCourse.setCourseCredit(updateCourse.getCourseCredit());
+            currentCourse.setCourseCredit(courseDTO.getCourseCredit());
         }
 
-        log.info("Course updated: {}", updateCourse.toString());
+        log.info("Course successfully updated with ID: {}", currentCourse.getId());
     }
 
     @Override
     public void deleteCourseById(String courseId) {
-        if (!courseRepository.existsById(courseId)) {
+        Course course = courseRepository.findByIdAndIsActiveTrue(courseId).orElseThrow(() -> {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
-        }
-        courseRepository.deleteById(courseId);
+        });
+        course.setIsActive(Boolean.FALSE);
+        courseRepository.save(course);
         log.info(courseDeleted + courseId);
     }
 
@@ -109,4 +104,10 @@ public class CourseServiceIml implements CourseService {
         log.info("All courses are called.");
         return courseRepository.findAll();
     }
+
+    private boolean isValidCourseName(String courseName) {
+        return courseName.isBlank() || courseName == null ? false : true;
+    }
+
+    
 }

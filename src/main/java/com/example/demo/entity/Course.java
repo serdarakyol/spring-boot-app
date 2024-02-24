@@ -29,7 +29,10 @@ public class Course {
     @Column(name = "course_name", length = 50)
     private String courseName;
 
-    @Column(name = "course_credit")
+    @Column(name = "course_credit", length = 2)
     private Integer courseCredit;
+
+    @Column(name = "is_active", length = 1)
+    private Boolean isActive;
 
 }

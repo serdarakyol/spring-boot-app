@@ -8,7 +8,7 @@ import com.example.demo.entity.Course;
 public interface CourseService {
 
     public void addNewCourse(CourseDTO course);
-    public void updateCourse(String courseId, final Course course);
+    public void updateCourse(String courseId, CourseDTO course);
     public void deleteCourseById(String courseId);
     public Course getCourseById(String courseId);
     public List<Course> getCourses();

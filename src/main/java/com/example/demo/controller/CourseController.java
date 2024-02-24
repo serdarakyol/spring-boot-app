@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.CourseDTO;
 import com.example.demo.entity.Course;
 import com.example.demo.mapper.CourseMapper;
-import com.example.demo.serviceIml.CourseServiceIml;
+import com.example.demo.response.Response;
+import com.example.demo.response.ResponseEnum;
+import com.example.demo.service.CourseService;
 
 import lombok.AllArgsConstructor;
 
@@ -26,39 +29,47 @@ import lombok.AllArgsConstructor;
 @RequestMapping(path = "api/v1/course")
 public class CourseController {
 
-    private final CourseServiceIml courseServiceImpl;
+    private final CourseService courseService;
 
     private final CourseMapper courseMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String registerNewCourse(@RequestBody CourseDTO course) {
-        courseServiceImpl.addNewCourse(course);
-        return BodyResponses.CREATED;
+    public Response<String> registerNewCourse(@RequestBody CourseDTO course) {
+        courseService.addNewCourse(course);
+        return Response.<String>builder()
+                .data(BodyResponses.CREATED)
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @PatchMapping(path = "{courseId}")
-    public String updateCourse(@PathVariable("courseId") String courseId, @RequestBody Course updateCourse) {
-        courseServiceImpl.updateCourse(courseId, updateCourse);
+    public Response<String> updateCourse(@PathVariable("courseId") String courseId, @RequestBody CourseDTO courseDTO) {
+        courseService.updateCourse(courseId, courseDTO);
 
-        return BodyResponses.UPDATED;
+        return Response.<String>builder()
+                .data(BodyResponses.UPDATED)
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @DeleteMapping(path = "{courseId}")
-    public String deleteCourseById(@PathVariable("courseId") String courseId){
-        courseServiceImpl.deleteCourseById(courseId);
+    public String deleteCourseById(@PathVariable("courseId") String courseId) {
+        courseService.deleteCourseById(courseId);
         return BodyResponses.DELETED;
     }
 
     @GetMapping(path = "{courseId}")
-    public CourseDTO getCourseById(@PathVariable("courseId") String courseId){
-        Course course = courseServiceImpl.getCourseById(courseId);
+    public CourseDTO getCourseById(@PathVariable("courseId") String courseId) {
+        Course course = courseService.getCourseById(courseId);
         return courseMapper.toDTO(course);
     }
 
     @GetMapping
-    public List<CourseDTO> getCourses(){
-        List<Course> courses = courseServiceImpl.getCourses();
+    public List<CourseDTO> getCourses() {
+        List<Course> courses = courseService.getCourses();
         return courses.stream().map(c -> courseMapper.toDTO(c)).collect(Collectors.toList());
     }
 }
