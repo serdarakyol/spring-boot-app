@@ -162,10 +162,10 @@ public class StudentServiceImpl implements StudentService {
             log.error("COURSE NOT EXIST ID: " + courseId);
             throw new NotFoundException(" COURSE NOT EXIST ID: " + courseId);
         }
-        Course course = optCourse.get();
-        enrolledCourses = student.getEnrolledCourses();
-        enrolledCourses.add(course);
-        student.setEnrolledCourses(enrolledCourses);
-        log.info(student.toString() + " enrolled to " + course.toString());
+        //Course course = optCourse.get();
+        //enrolledCourses = student.getEnrolledCourses();
+        //enrolledCourses.add(course);
+        //student.setEnrolledCourses(enrolledCourses);
+        //log.info(student.toString() + " enrolled to " + course.toString());
     }
 }

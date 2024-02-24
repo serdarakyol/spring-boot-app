@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,7 +32,7 @@ public class CourseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String registerNewCourse(@RequestBody Course course) {
+    public String registerNewCourse(@RequestBody CourseDTO course) {
         courseServiceImpl.addNewCourse(course);
         return BodyResponses.CREATED;
     }
@@ -52,12 +53,12 @@ public class CourseController {
     @GetMapping(path = "{courseId}")
     public CourseDTO getCourseById(@PathVariable("courseId") String courseId){
         Course course = courseServiceImpl.getCourseById(courseId);
-        return courseMapper.courseToDto(course);
+        return courseMapper.toDTO(course);
     }
 
     @GetMapping
     public List<CourseDTO> getCourses(){
         List<Course> courses = courseServiceImpl.getCourses();
-        return courseMapper.courseToDto(courses);
+        return courses.stream().map(c -> courseMapper.toDTO(c)).collect(Collectors.toList());
     }
 }

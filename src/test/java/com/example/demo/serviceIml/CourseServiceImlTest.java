@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.entity.Course;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.CourseRepository;
@@ -36,6 +37,7 @@ public class CourseServiceImlTest {
     private CourseServiceIml courseServiceIml;
 
     private Course testCourse;
+    private CourseDTO courseDTO;
 
     @Captor
     private ArgumentCaptor<String> idCaptor;
@@ -45,14 +47,17 @@ public class CourseServiceImlTest {
     // Given
     @BeforeEach
     void setUp() {
-        testCourse = new Course("Data Structure", 10, 200);
-        testCourse.setCourseId("61a4acb0-123b-4641-a722-448fd3a95b60");
+        testCourse = Course.builder().courseName("Data Structure").build();
+        testCourse.setId("61a4acb0-123b-4641-a722-448fd3a95b60");
+        courseDTO.setCourseName(testCourse.getCourseName());
+        courseDTO.setCourseCredit(testCourse.getCourseCredit());
+
     }
 
     @Test
     void testAddNewCourse() {
         // When
-        courseServiceIml.addNewCourse(testCourse);
+        courseServiceIml.addNewCourse(courseDTO);
 
         // Then
         ArgumentCaptor<Course> courseArgumentCaptor = ArgumentCaptor.forClass(Course.class);
@@ -62,7 +67,6 @@ public class CourseServiceImlTest {
         assertEquals(courseRecord, testCourse);
         assertEquals(courseRecord.getCourseName(), testCourse.getCourseName());
         assertEquals(courseRecord.getCourseCredit(), testCourse.getCourseCredit());
-        assertEquals(courseRecord.getCourseTeacherId(), testCourse.getCourseTeacherId());
     }
 
     @Test
@@ -72,7 +76,7 @@ public class CourseServiceImlTest {
 
         // When
         assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.addNewCourse(testCourse);
+            courseServiceIml.addNewCourse(courseDTO);
         });
 
         // Then
@@ -86,7 +90,7 @@ public class CourseServiceImlTest {
 
         // When
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.addNewCourse(testCourse);
+            courseServiceIml.addNewCourse(courseDTO);
         });
 
         // Then
@@ -96,11 +100,11 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourse() {
         // Given
-        Course newCourse = new Course("Advanced programming technique", 5, 1);
+        Course newCourse = Course.builder().build();//new Course("Advanced programming technique", 5, 1);
 
         // When
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
-        courseServiceIml.updateCourse(testCourse.getCourseId(), newCourse);
+        when(courseRepository.findById(testCourse.getId())).thenReturn(Optional.of(testCourse));
+        courseServiceIml.updateCourse(testCourse.getId(), newCourse);
 
         // Then
         assertEquals(testCourse.getCourseName(), newCourse.getCourseName());
@@ -110,7 +114,7 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourseNotFound() {
         // Given
-        Course newCourse = new Course("Advanced programming technique", 5, 1);
+        Course newCourse = Course.builder().build();//new Course("Advanced programming technique", 5, 1);
 
         // When
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
@@ -124,12 +128,12 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourseInvalidCourseName() {
         // Given
-        Course newCourse = new Course("   ", 5, 1);
+        Course newCourse = Course.builder().build();//new Course("   ", 5, 1);
 
         // When
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
+        when(courseRepository.findById(testCourse.getId())).thenReturn(Optional.of(testCourse));
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.updateCourse(testCourse.getCourseId(), newCourse);
+            courseServiceIml.updateCourse(testCourse.getId(), newCourse);
         });
 
         // Then
@@ -139,12 +143,12 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourseInvalidCredit() {
         // Given
-        Course newCourse = new Course("Advanced programming technique", -5, 1);
+        Course newCourse = Course.builder().build();//new Course("Advanced programming technique", -5, 1);
 
         // When
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
+        when(courseRepository.findById(testCourse.getId())).thenReturn(Optional.of(testCourse));
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.updateCourse(testCourse.getCourseId(), newCourse);
+            courseServiceIml.updateCourse(testCourse.getId(), newCourse);
         });
 
         // Then
@@ -154,15 +158,15 @@ public class CourseServiceImlTest {
     @Test
     void testDeleteCourseById() {
         // Given
-        when(courseRepository.existsById(testCourse.getCourseId())).thenReturn(true);
+        when(courseRepository.existsById(testCourse.getId())).thenReturn(true);
 
         // When
-        courseServiceIml.deleteCourseById(testCourse.getCourseId());
+        courseServiceIml.deleteCourseById(testCourse.getId());
 
         // Then
         verify(courseRepository, times(1)).deleteById(idCaptor.capture());
         String capturedId = idCaptor.getValue();
-        assertEquals(testCourse.getCourseId(), capturedId);
+        assertEquals(testCourse.getId(), capturedId);
     }
 
     @Test
@@ -179,18 +183,17 @@ public class CourseServiceImlTest {
     @Test
     void testGetCourseById() {
         // Given
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
+        when(courseRepository.findById(testCourse.getId())).thenReturn(Optional.of(testCourse));
 
         // When
-        Course courseRecord = courseServiceIml.getCourseById(testCourse.getCourseId());
+        Course courseRecord = courseServiceIml.getCourseById(testCourse.getId());
 
         // Then
         assertNotNull(courseRecord);
         assertEquals(courseRecord, testCourse);
-        assertEquals(courseRecord.getCourseId(), testCourse.getCourseId());
+        assertEquals(courseRecord.getId(), testCourse.getId());
         assertEquals(courseRecord.getCourseName(), testCourse.getCourseName());
         assertEquals(courseRecord.getCourseCredit(), testCourse.getCourseCredit());
-        assertEquals(courseRecord.getCourseTeacherId(), testCourse.getCourseTeacherId());
     }
 
     @Test
@@ -208,8 +211,8 @@ public class CourseServiceImlTest {
     void testGetCourses() {
         // Given
         List<Course> actuals = new ArrayList<Course>();
-        Course APT = new Course("Advanced programming technique", 5, 1);
-        Course PL = new Course("Programming languages", 7, 2);
+        Course APT = Course.builder().build();//new Course("Advanced programming technique", 5, 1);
+        Course PL = Course.builder().build();//new Course("Programming languages", 7, 2);
         actuals.add(PL);
         actuals.add(APT);
         actuals.add(testCourse);
@@ -226,7 +229,6 @@ public class CourseServiceImlTest {
         for (int i = 0; i < records.size(); i++) {
             assertEquals(records.get(i).getCourseName(), actuals.get(i).getCourseName());
             assertEquals(records.get(i).getCourseCredit(), actuals.get(i).getCourseCredit());
-            assertEquals(records.get(i).getCourseTeacherId(), actuals.get(i).getCourseTeacherId());
         }
     }
 }

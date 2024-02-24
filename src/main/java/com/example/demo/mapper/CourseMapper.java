@@ -1,7 +1,5 @@
 package com.example.demo.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -12,7 +10,8 @@ import com.example.demo.entity.Course;
 public interface CourseMapper {
     CourseMapper INSTANCE = Mappers.getMapper(CourseMapper.class);
 
-    CourseDTO courseToDto(Course course);
+    CourseDTO toDTO(Course course);
 
-    List<CourseDTO> courseToDto(List<Course> courses);
+    Course toEntity(CourseDTO course);
+
 }

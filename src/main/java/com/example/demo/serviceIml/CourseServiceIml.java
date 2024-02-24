@@ -6,17 +6,19 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.entity.Course;
 import com.example.demo.exception.BadRequestException;
+import com.example.demo.mapper.CourseMapper;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.service.CourseService;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Log4j2
-@RequiredArgsConstructor
+@Slf4j
+@AllArgsConstructor
 public class CourseServiceIml implements CourseService {
     private final String courseNotExist = "Course is not exist with ID: ";
     private final String courseNameNotValid = "courseName can not be null, empty or only whitespace";
@@ -26,8 +28,11 @@ public class CourseServiceIml implements CourseService {
 
     private final CourseRepository courseRepository;
 
+    private CourseMapper courseMapper;
+
     @Override
-    public void addNewCourse(Course course) {
+    public void addNewCourse(CourseDTO courseDTO) {
+        Course course = courseMapper.toEntity(courseDTO);
         String courseName = course.getCourseName();
         if (courseName == null || courseName.trim().length() == 0) {
             log.error(courseNameNotValid);
@@ -40,7 +45,7 @@ public class CourseServiceIml implements CourseService {
         }
 
         courseRepository.save(course);
-        log.info("New course saved: {}", course.toString());
+        log.info("New course saved with ID: ".concat(course.getId()));
     }
 
     @Transactional
