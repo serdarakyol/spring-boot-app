@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CourseDTO;
-import com.example.demo.entity.Course;
-import com.example.demo.mapper.CourseMapper;
 import com.example.demo.response.Response;
 import com.example.demo.response.ResponseEnum;
 import com.example.demo.service.CourseService;
@@ -30,8 +27,6 @@ import lombok.AllArgsConstructor;
 public class CourseController {
 
     private final CourseService courseService;
-
-    private final CourseMapper courseMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -62,14 +57,21 @@ public class CourseController {
     }
 
     @GetMapping(path = "{courseId}")
-    public CourseDTO getCourseById(@PathVariable("courseId") String courseId) {
-        Course course = courseService.getCourseById(courseId);
-        return courseMapper.toDTO(course);
+    public Response<CourseDTO> getCourseById(@PathVariable("courseId") String courseId) {
+        return Response.<CourseDTO>builder()
+                .data(courseService.getCourseById(courseId))
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @GetMapping
-    public List<CourseDTO> getCourses() {
-        List<Course> courses = courseService.getCourses();
-        return courses.stream().map(c -> courseMapper.toDTO(c)).collect(Collectors.toList());
+    public Response<List<CourseDTO>> getCourses() {
+        return Response.<List<CourseDTO>>builder()
+                .data(courseService.getCourses())
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString())
+                .build();
     }
 }
