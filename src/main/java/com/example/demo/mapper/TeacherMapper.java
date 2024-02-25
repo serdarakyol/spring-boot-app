@@ -12,7 +12,9 @@ import com.example.demo.entity.Teacher;
 public interface TeacherMapper {
     TeacherMapper INSTANCE = Mappers.getMapper(TeacherMapper.class);
 
-    TeacherDTO teacherToDto(Teacher teacher);
+    TeacherDTO toDTO(Teacher teacher);
+
+    Teacher toEntity(TeacherDTO teacherDTO);
 
     List<TeacherDTO> teacherToDto(List<Teacher> teachers);
 }

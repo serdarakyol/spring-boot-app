@@ -9,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.controller.BodyResponses;
 import com.example.demo.controller.CommonResponses;
+import com.example.demo.dto.TeacherDTO;
 import com.example.demo.entity.Teacher;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
+import com.example.demo.mapper.TeacherMapper;
 import com.example.demo.repository.TeacherRepository;
 import com.example.demo.service.TeacherService;
 import com.example.demo.utils.Utils;
@@ -28,32 +31,37 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private final TeacherRepository teacherRepository;
 
+    @Autowired
+    private final TeacherMapper teacherMapper;
+
     @Override
-    public void addNewTeacher(Teacher teacher) {
-        String teacherEmail = teacher.getEmail();
+    public String addNewTeacher(TeacherDTO teacherDTO) {
+        String teacherEmail = teacherDTO.getEmail();
         if (teacherRepository.isExistByEmail(teacherEmail)) {
             log.error(teacherExistMsg + "E-MAIL: " + teacherEmail);
             throw new BadRequestException(teacherExistMsg + "E-MAIL: " + teacherEmail);
         }
 
         // check if mail is valid
-        if (!Utils.isMailValid(teacher.getEmail())) {
+        if (!Utils.isMailValid(teacherDTO.getEmail())) {
             log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
-        if (teacher.getName().length() < 2) {
+        if (teacherDTO.getName().length() < 2) {
             log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
-
+        Teacher teacher = teacherMapper.toEntity(teacherDTO);
         teacherRepository.save(teacher);
-        log.info("New teacher saved: {}", teacher.toString());
+        log.info("New teacher saved: {}", teacher.getId());
+
+        return BodyResponses.CREATED;
     }
 
     @Transactional
     @Override
-    public void updateTeacherById(String teacherEmail, Teacher updatedTeacher) {
+    public String updateTeacherById(String teacherEmail, TeacherDTO teacherDTO) {
         Optional<Teacher> teacher = teacherRepository.findByEmail(teacherEmail);
         // check if the teacher is exist
         if (!teacher.isPresent()) {
@@ -64,54 +72,57 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher currentTeacher = teacher.get();
 
         // Teacher name processing
-        if (updatedTeacher.getName().length() < 2) {
+        if (teacherDTO.getName().length() < 2) {
             log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
-        currentTeacher.setName(updatedTeacher.getName());
+        currentTeacher.setName(teacherDTO.getName());
 
         // Check teacher email if valid
-        if (!Utils.isMailValid(updatedTeacher.getEmail())) {
+        if (!Utils.isMailValid(teacherDTO.getEmail())) {
             log.error(CommonResponses.emailNotValidMsg);
             throw new BadRequestException(CommonResponses.emailNotValidMsg);
         }
 
         // check if e-mail taken
-        if (!teacherEmail.equals(updatedTeacher.getEmail())) {
-            if (teacherRepository.isExistByEmail(updatedTeacher.getEmail())) {
+        if (!teacherEmail.equals(teacherDTO.getEmail())) {
+            if (teacherRepository.isExistByEmail(teacherDTO.getEmail())) {
                 log.error(CommonResponses.emailTakenMsg);
                 throw new BadRequestException(CommonResponses.emailTakenMsg);
             }
-            currentTeacher.setEmail(updatedTeacher.getEmail());
+            currentTeacher.setEmail(teacherDTO.getEmail());
         }
 
         // no need process for the DOB becase it's @NonNull in the entity class
-        currentTeacher.setDob(updatedTeacher.getDob());
+        currentTeacher.setDob(teacherDTO.getDob());
         log.info("Teacher updated: {}", currentTeacher.toString());
+        return BodyResponses.UPDATED;
     }
 
     @Override
-    public void deleteTeacherById(int teacherId) {
+    public String deleteTeacherById(int teacherId) {
         if (!teacherRepository.existsById(teacherId)) {
             log.error(teacherNotExistMsg + "ID: " + teacherId);
             throw new NotFoundException(teacherNotExistMsg + "ID: " + teacherId);
         }
         teacherRepository.deleteById(teacherId);
         log.info(teacherSuccessfullyDeleteMsg + "ID: " + teacherId);
+        return BodyResponses.DELETED;
     }
 
     @Override
-    public void deleteByEmail(String teacherEmail) {
+    public String deleteByEmail(String teacherEmail) {
         if (!teacherRepository.isExistByEmail(teacherEmail)) {
             log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
             throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
         }
         teacherRepository.deleteByEmail(teacherEmail);
         log.info(teacherSuccessfullyDeleteMsg + "E-MAIL: " + teacherEmail);
+        return BodyResponses.DELETED;
     }
 
     @Override
-    public Teacher getTeacherById(int teacherId) {
+    public TeacherDTO getTeacherById(int teacherId) {
         Optional<Teacher> teacherRecord = teacherRepository.findById(teacherId);
         if (!teacherRecord.isPresent()) {
             log.error(teacherNotExistMsg + "ID: " + teacherId);
@@ -119,11 +130,11 @@ public class TeacherServiceImpl implements TeacherService {
         }
         Teacher teacher = teacherRecord.get();
         log.info(teacherSuccessfullyFound + teacher.toString());
-        return teacher;
+        return teacherMapper.toDTO(teacher);
     }
 
     @Override
-    public Teacher getTeacherByEmail(String teacherEmail) {
+    public TeacherDTO getTeacherByEmail(String teacherEmail) {
         Optional<Teacher> teacherOptional = teacherRepository.findByEmail(teacherEmail);
         if (!teacherOptional.isPresent()) {
             log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
@@ -131,12 +142,12 @@ public class TeacherServiceImpl implements TeacherService {
         }
         Teacher teacher = teacherOptional.get();
         log.info(teacherSuccessfullyFound + teacher.toString());
-        return teacher;
+        return teacherMapper.toDTO(teacher);
     }
 
     @Override
-    public List<Teacher> getTeachers() {
+    public List<TeacherDTO> getTeachers() {
         log.info("getTeachers: All teachers are called.");
-        return teacherRepository.findAll();
+        return teacherRepository.findAll().stream().map(t -> teacherMapper.toDTO(t)).toList();
     }
 }

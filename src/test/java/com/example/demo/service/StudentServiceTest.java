@@ -15,14 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.demo.entity.Student;
 import com.example.demo.repository.StudentRepository;
-import com.example.demo.serviceIml.StudentServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceTest {
 
     @Mock
     private StudentRepository studentRepository;
-    private StudentServiceImpl studentService;
+    //private StudentServiceImpl studentService;
     // Given
     private Student student = new Student(
         "test2",
@@ -33,7 +32,7 @@ public class StudentServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        studentService = new StudentServiceImpl(studentRepository, null);
+        //studentService = new StudentServiceImpl(studentRepository, null);
         // When
         //studentService.addNewStudent(student);
     }

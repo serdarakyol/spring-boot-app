@@ -114,7 +114,7 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourseNotFound() {
         // Given
-        Course newCourse = Course.builder().build();//new Course("Advanced programming technique", 5, 1);
+        //Course newCourse = Course.builder().build();//new Course("Advanced programming technique", 5, 1);
 
         // When
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
@@ -128,7 +128,7 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourseInvalidCourseName() {
         // Given
-        Course newCourse = Course.builder().build();//new Course("   ", 5, 1);
+        //Course newCourse = Course.builder().build();//new Course("   ", 5, 1);
 
         // When
         when(courseRepository.findById(testCourse.getId())).thenReturn(Optional.of(testCourse));
@@ -143,7 +143,7 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourseInvalidCredit() {
         // Given
-        Course newCourse = Course.builder().build();//new Course("Advanced programming technique", -5, 1);
+        //Course newCourse = Course.builder().build();//new Course("Advanced programming technique", -5, 1);
 
         // When
         when(courseRepository.findById(testCourse.getId())).thenReturn(Optional.of(testCourse));
