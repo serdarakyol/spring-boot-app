@@ -10,13 +10,14 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Teacher")
 @NoArgsConstructor
 public class Teacher extends User{
+    @Builder
     public Teacher(String name, String email, LocalDate dob) {
         setName(name);
         setEmail(email);

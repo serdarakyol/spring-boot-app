@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.controller.BodyResponses;
 import com.example.demo.controller.CommonResponses;
@@ -59,7 +58,6 @@ public class TeacherServiceImpl implements TeacherService {
         return BodyResponses.CREATED;
     }
 
-    @Transactional
     @Override
     public String updateTeacherById(String teacherEmail, TeacherDTO teacherDTO) {
         Optional<Teacher> teacher = teacherRepository.findByEmail(teacherEmail);
@@ -95,6 +93,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         // no need process for the DOB becase it's @NonNull in the entity class
         currentTeacher.setDob(teacherDTO.getDob());
+        teacherRepository.save(currentTeacher);
         log.info("Teacher updated: {}", currentTeacher.toString());
         return BodyResponses.UPDATED;
     }
