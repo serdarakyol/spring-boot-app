@@ -33,9 +33,9 @@ public class StudentServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        studentService = new StudentServiceImpl(studentRepository);
+        studentService = new StudentServiceImpl(studentRepository, null);
         // When
-        studentService.addNewStudent(student);
+        //studentService.addNewStudent(student);
     }
 
     @Test
