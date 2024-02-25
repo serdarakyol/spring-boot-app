@@ -19,8 +19,10 @@ import com.example.demo.response.Response;
 import com.example.demo.response.ResponseEnum;
 import com.example.demo.service.CourseService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
+@Tag(name = "Course", description = "Course module")
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/course")
@@ -31,9 +33,8 @@ public class CourseController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Response<String> registerNewCourse(@RequestBody CourseDTO course) {
-        courseService.addNewCourse(course);
         return Response.<String>builder()
-                .data(BodyResponses.CREATED)
+                .data(courseService.addNewCourse(course))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
                 .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
                 .timestamp(Instant.now().toString()).build();
@@ -41,19 +42,20 @@ public class CourseController {
 
     @PatchMapping(path = "{courseId}")
     public Response<String> updateCourse(@PathVariable("courseId") String courseId, @RequestBody CourseDTO courseDTO) {
-        courseService.updateCourse(courseId, courseDTO);
-
         return Response.<String>builder()
-                .data(BodyResponses.UPDATED)
+                .data(courseService.updateCourse(courseId, courseDTO))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
                 .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
                 .timestamp(Instant.now().toString()).build();
     }
 
     @DeleteMapping(path = "{courseId}")
-    public String deleteCourseById(@PathVariable("courseId") String courseId) {
-        courseService.deleteCourseById(courseId);
-        return BodyResponses.DELETED;
+    public Response<String> deleteCourseById(@PathVariable("courseId") String courseId) {
+        return Response.<String>builder()
+                .data(courseService.deleteCourseById(courseId))
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @GetMapping(path = "{courseId}")

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.controller.BodyResponses;
 import com.example.demo.dto.CourseDTO;
 import com.example.demo.entity.Course;
 import com.example.demo.exception.BadRequestException;
@@ -29,7 +30,7 @@ public class CourseServiceIml implements CourseService {
     private CourseMapper courseMapper;
 
     @Override
-    public void addNewCourse(CourseDTO courseDTO) {
+    public String addNewCourse(CourseDTO courseDTO) {
         if (!isValidCourseName(courseDTO.getCourseName())) {
             log.error(courseNameNotValid);
             throw new BadRequestException(courseNameNotValid);
@@ -43,11 +44,12 @@ public class CourseServiceIml implements CourseService {
         course.setIsActive(true);
         courseRepository.save(course);
         log.info("New course saved with ID: ".concat(course.getId()));
+        return BodyResponses.CREATED;
     }
 
     @Transactional
     @Override
-    public void updateCourse(String courseId, CourseDTO courseDTO) {
+    public String updateCourse(String courseId, CourseDTO courseDTO) {
         Course currentCourse = courseRepository.findById(courseId).orElseThrow(() -> {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
@@ -71,10 +73,11 @@ public class CourseServiceIml implements CourseService {
         }
 
         log.info("Course successfully updated with ID: {}", currentCourse.getId());
+        return BodyResponses.UPDATED;
     }
 
     @Override
-    public void deleteCourseById(String courseId) {
+    public String deleteCourseById(String courseId) {
         Course course = courseRepository.findByIdAndIsActiveTrue(courseId).orElseThrow(() -> {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
@@ -82,6 +85,7 @@ public class CourseServiceIml implements CourseService {
         course.setIsActive(Boolean.FALSE);
         courseRepository.save(course);
         log.info(courseDeleted + courseId);
+        return BodyResponses.DELETED;
     }
 
     @Override

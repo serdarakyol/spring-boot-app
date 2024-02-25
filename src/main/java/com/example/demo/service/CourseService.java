@@ -6,9 +6,9 @@ import com.example.demo.dto.CourseDTO;
 
 public interface CourseService {
 
-    public void addNewCourse(CourseDTO course);
-    public void updateCourse(String courseId, CourseDTO course);
-    public void deleteCourseById(String courseId);
+    public String addNewCourse(CourseDTO course);
+    public String updateCourse(String courseId, CourseDTO course);
+    public String deleteCourseById(String courseId);
     public CourseDTO getCourseById(String courseId);
     public List<CourseDTO> getCourses();
 }
