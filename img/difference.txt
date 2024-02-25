@@ -1,0 +1,80 @@
+.                                                                      |    .
+├── docker-compose.yml                                                 |    ├── mvnw
+├── Dockerfile                                                         |    ├── mvnw.cmd
+├── img                                                                |    ├── pom.xml
+│   └── difference.png                                                 |    ├── README.md
+├── load-testing                                                       |    ├── src
+│   └── locust.py                                                      |        ├── main
+├── mvnw                                                               |        │   └── java
+├── mvnw.cmd                                                           |        │   │   └── com
+├── pom.xml                                                            |        │   │        └── example
+├── project-dev                                                        |        │   │            └── demo
+├── README.md                                                          |        |   |               └── DemoApplication
+└── src                                                                |        |   |               └── Student
+    ├── main                                                           |        |   |                   ├── StudentController.java
+    │   ├── java                                                       |        |   |                   ├── Student.java
+    │   │   └── com                                                    |        |   |                   ├── StudentRepository.java
+    │   │       └── example                                            |        |   |                   ├── StudentService.java
+    │   │           └── demo                                           |        |   |                   └── StudentConfig.java
+    │   │               ├── config                                     |        |   └── resources
+    │   │               │   └── SecurityConfig.java                    |        |       └── application.properties
+    │   │               ├── controller                                 |        └── test
+    │   │               │   ├── BodyResponses.java                     |            └── java
+    │   │               │   ├── CommonResponses.java                   |                └── com
+    │   │               │   ├── CourseController.java                  |                    └── example
+    │   │               │   ├── StudentController.java                 |                        └── demo
+    │   │               │   └── TeacherController.java                 |                            └── DemoApplication.java
+    │   │               ├── DemoApplication.java                       |    13 directories, 12 files
+    │   │               ├── dto                                        |    
+    │   │               │   ├── CourseDTO.java                         |    
+    │   │               │   ├── StudentDTO.java                        |    
+    │   │               │   └── TeacherDTO.java                        |    
+    │   │               ├── entity                                     |    
+    │   │               │   ├── Course.java                            |    
+    │   │               │   ├── Enrolled.java                          |    
+    │   │               │   ├── factory                                |    
+    │   │               │   │   └── User.java                          |    
+    │   │               │   ├── Student.java                           |    
+    │   │               │   └── Teacher.java                           |    
+    │   │               ├── exception                                  |    
+    │   │               │   ├── BadRequestException.java               |    
+    │   │               │   └── NotFoundException.java                 |    
+    │   │               ├── mapper                                     |    
+    │   │               │   ├── CourseMapper.java                      |    
+    │   │               │   ├── StudentMapper.java                     |    
+    │   │               │   └── TeacherMapper.java                     |    
+    │   │               ├── repository                                 |    
+    │   │               │   ├── CourseRepository.java                  |    
+    │   │               │   ├── StudentRepository.java                 |    
+    │   │               │   └── TeacherRepository.java                 |    
+    │   │               ├── response                                   |    
+    │   │               │   ├── ResponseEnum.java                      |    
+    │   │               │   └── Response.java                          |    
+    │   │               ├── service                                    |    
+    │   │               │   ├── CourseService.java                     |    
+    │   │               │   ├── StudentService.java                    |    
+    │   │               │   └── TeacherService.java                    |    
+    │   │               ├── serviceIml                                 |    
+    │   │               │   ├── CourseServiceIml.java                  |    
+    │   │               │   ├── StudentServiceImpl.java                |    
+    │   │               │   └── TeacherServiceImpl.java                |    
+    │   │               └── utils                                      |    
+    │   │                   └── Utils.java                             |    
+    │   └── resources                                                  |    
+    │       ├── application.properties                                 |    
+    │       └── log4j2.xml                                             |    
+    └── test                                                           |    
+        └── java                                                       |    
+            ├── com                                                    |    
+            │   └── example                                            |    
+            │       └── demo                                           |    
+            │           ├── DemoApplicationTests.java                  |    
+            │           ├── serviceIml                                 |    
+            │           │   ├── CourseServiceImlTest.java              |    
+            │           │   ├── StudentServiceImplTest.java            |    
+            │           │   └── TeacherServiceImplTest.java            |    
+            │           └── utils                                      |    
+            │               └── UtilsTest.java                         |    
+            └── resources                                              |    
+                └── application.properties                             |    
+29 directories, 49 files
