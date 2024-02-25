@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class CourseServiceIml implements CourseService {
     private final String courseNotExist = "Course is not exist with ID: ";
-    private final String courseNameNotValid = "course_ame can not be null, empty or only whitespace";
+    private final String courseNameNotValid = "course_name can not be null, empty or only whitespace";
     private final String creditNotValid = "course_credit must be greater than 0";
     private final String courseDeleted = "Course successfully deleted with ID: ";
 
@@ -43,7 +43,7 @@ public class CourseServiceIml implements CourseService {
         Course course = courseMapper.toEntity(courseDTO);
         course.setIsActive(true);
         courseRepository.save(course);
-        log.info("New course saved with ID: ".concat(course.getId()));
+        log.info("New course successfully saved.");
         return BodyResponses.CREATED;
     }
 
