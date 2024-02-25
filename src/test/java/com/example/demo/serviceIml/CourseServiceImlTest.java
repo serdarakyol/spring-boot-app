@@ -41,9 +41,6 @@ public class CourseServiceImlTest {
     @InjectMocks
     private CourseMapper courseMapper = spy(CourseMapper.INSTANCE);
 
-    @Mock
-    private Course courseMocked;
-
     private Course course;
     private CourseDTO courseDTO;
 
