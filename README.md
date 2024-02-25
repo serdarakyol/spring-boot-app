@@ -47,7 +47,7 @@ Usage: ./project-dev <command>
 ## Test
 To run unit tests, first navigate to the root directory of this project and execute the command $` mvn test`.
 
-Note: With the PR of [Add more unit tests](https://github.com/serdarakyol/spring-boot-app/pull/49) improved the test coverage up to 65%. If you want to see current test coverage report, you need to run below command.
+Note: With the PR of [Add more unit tests](https://github.com/serdarakyol/spring-boot-app/pull/64) improved the test coverage up to %99 on service. If you want to see current test coverage report, you need to run below command.
 
 `$ ./project-dev test-coverage-report`
 
