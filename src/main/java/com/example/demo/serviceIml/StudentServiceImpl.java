@@ -1,36 +1,38 @@
 package com.example.demo.serviceIml;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.controller.BodyResponses;
 import com.example.demo.controller.CommonResponses;
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.dto.StudentDTO;
+import com.example.demo.entity.Course;
 import com.example.demo.entity.Student;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.StudentMapper;
+import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.StudentService;
 import com.example.demo.utils.Utils;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
     static Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
 
-    @Autowired
     private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
 
-    @Autowired
     private final StudentMapper studentMapper;
 
     @Override
@@ -127,7 +129,7 @@ public class StudentServiceImpl implements StudentService {
             throw new NotFoundException(errorMsg);
         });
 
-        log.info(studentSuccessfullyFoundMsg, String.valueOf(studentId));
+        log.info(Utils.stringMerger(studentSuccessfullyFoundMsg, String.valueOf(studentId)));
         return studentMapper.toDTO(student);
     }
 
@@ -147,6 +149,28 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentDTO> getStudents() {
         log.info("getStudents: All students are called.");
         return studentRepository.findAll().stream().map(s -> studentMapper.toDTO(s)).toList();
+    }
+
+    @Override
+    public String enrollCourse(int studentId, Set<CourseDTO> courses) {
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(studentNotExistMsg, "ID: ", String.valueOf(studentId));
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
+
+        for (CourseDTO courseDTO : courses) {
+            Course course = courseRepository.findByCourseNameAndIsActiveTrue(courseDTO.getCourseName())
+                    .orElseThrow(() -> {
+                        String errorMsg = "Course is not exist: ".concat(courseDTO.getCourseName());
+                        log.error(errorMsg);
+                        throw new NotFoundException(errorMsg);
+                    });
+            student.getEnrolledCourses().add(course);
+        }
+
+        studentRepository.save(student);
+        return BodyResponses.ENROLLED;
     }
 
 }

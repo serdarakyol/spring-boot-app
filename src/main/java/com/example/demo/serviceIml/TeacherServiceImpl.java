@@ -1,35 +1,37 @@
 package com.example.demo.serviceIml;
 
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.controller.BodyResponses;
 import com.example.demo.controller.CommonResponses;
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.dto.TeacherDTO;
+import com.example.demo.entity.Course;
 import com.example.demo.entity.Teacher;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.TeacherMapper;
+import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.TeacherRepository;
 import com.example.demo.service.TeacherService;
 import com.example.demo.utils.Utils;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
 
     static Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class);
 
-    @Autowired
     private final TeacherRepository teacherRepository;
+    private final CourseRepository courseRepository;
 
-    @Autowired
     private final TeacherMapper teacherMapper;
 
     @Override
@@ -127,7 +129,7 @@ public class TeacherServiceImpl implements TeacherService {
             throw new NotFoundException(errorMsg);
         });
 
-        log.info(teacherSuccessfullyFound, teacher.getId());
+        log.info(Utils.stringMerger(teacherSuccessfullyFound, String.valueOf(teacherId)));
         return teacherMapper.toDTO(teacher);
     }
 
@@ -139,7 +141,7 @@ public class TeacherServiceImpl implements TeacherService {
             throw new NotFoundException(errorMsg);
         });
 
-        log.info(teacherSuccessfullyFound, teacher.getId());
+        log.info(Utils.stringMerger(teacherSuccessfullyFound, teacherEmail));
         return teacherMapper.toDTO(teacher);
     }
 
@@ -148,4 +150,27 @@ public class TeacherServiceImpl implements TeacherService {
         log.info("getTeachers: All teachers are called.");
         return teacherRepository.findAll().stream().map(t -> teacherMapper.toDTO(t)).toList();
     }
+
+    @Override
+    public String enrollCourse(int teacherId, Set<CourseDTO> courses) {
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(teacherNotExistMsg, "ID: ", String.valueOf(teacherId));
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
+
+        for (CourseDTO courseDTO : courses) {
+            Course course = courseRepository.findByCourseNameAndIsActiveTrue(courseDTO.getCourseName())
+                    .orElseThrow(() -> {
+                        String errorMsg = "Course is not exist: ".concat(courseDTO.getCourseName());
+                        log.error(errorMsg);
+                        throw new NotFoundException(errorMsg);
+                    });
+            teacher.getTeachingCourses().add(course);
+        }
+
+        teacherRepository.save(teacher);
+        return BodyResponses.ENROLLED;
+    }
+
 }

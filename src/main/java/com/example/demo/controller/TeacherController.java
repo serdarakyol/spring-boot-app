@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.dto.TeacherDTO;
 import com.example.demo.response.Response;
 import com.example.demo.response.ResponseEnum;
@@ -87,6 +89,16 @@ public class TeacherController {
     public Response<List<TeacherDTO>> getTeachers() {
         return Response.<List<TeacherDTO>>builder()
                 .data(teacherService.getTeachers())
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
+    }
+
+    @PostMapping("{teacherId}/enroll")
+    public Response<String> postMethodName(@PathVariable int teacherId, @RequestBody Set<CourseDTO> courseDTO) {
+
+        return Response.<String>builder()
+                .data(teacherService.enrollCourse(teacherId, courseDTO))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
                 .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
                 .timestamp(Instant.now().toString()).build();

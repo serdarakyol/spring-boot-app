@@ -3,7 +3,6 @@ package com.example.demo.dto;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.example.demo.entity.Course;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +27,6 @@ public class TeacherDTO {
     @JsonProperty("dob")
     private LocalDate dob;
 
-    @JsonProperty("enrolled_courses")
-    private Set<Course> enrolledCourses;
+    @JsonProperty("teaching_courses")
+    private Set<CourseDTO> enrolledCourses;
 }

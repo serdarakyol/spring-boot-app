@@ -26,10 +26,10 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "course_name", length = 50)
+    @Column(name = "course_name", length = 50, nullable = false)
     private String courseName;
 
-    @Column(name = "course_credit", length = 2)
+    @Column(name = "course_credit", length = 2, nullable = false)
     private Integer courseCredit;
 
     @Column(name = "is_active", length = 1)
