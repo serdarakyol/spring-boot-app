@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,10 +23,9 @@ public interface TeacherMapper {
 
     Teacher toEntity(TeacherDTO teacherDTO);
 
-    default Set<CourseDTO> mapCourses(Set<Course> courses) {
-        return courses.stream()
-                      .map(course -> CourseMapper.INSTANCE.toDTO(course))
-                      .collect(Collectors.toSet());
+    default Set<CourseDTO> coursesToDTOS(Set<Course> courses) {
+        return courses == null || courses.size() == 0 ? new HashSet<>()
+                : courses.stream().map(course -> CourseMapper.INSTANCE.toDTO(course)).collect(Collectors.toSet());
     }
 
 }
