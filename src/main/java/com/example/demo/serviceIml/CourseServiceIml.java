@@ -12,6 +12,7 @@ import com.example.demo.exception.BadRequestException;
 import com.example.demo.mapper.CourseMapper;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.service.CourseService;
+import com.example.demo.utils.Utils;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +52,9 @@ public class CourseServiceIml implements CourseService {
     @Override
     public String updateCourse(String courseId, CourseDTO courseDTO) {
         Course currentCourse = courseRepository.findById(courseId).orElseThrow(() -> {
-            log.error(courseNotExist + courseId);
-            throw new BadRequestException(courseNotExist + courseId);
+            String errorMsg = Utils.stringMerger(courseNotExist, courseId);
+            log.error(errorMsg);
+            throw new BadRequestException(errorMsg);
         });
 
         // Check course name
@@ -79,20 +81,22 @@ public class CourseServiceIml implements CourseService {
     @Override
     public String deleteCourseById(String courseId) {
         Course course = courseRepository.findByIdAndIsActiveTrue(courseId).orElseThrow(() -> {
-            log.error(courseNotExist + courseId);
-            throw new BadRequestException(courseNotExist + courseId);
+            String errorMsg = Utils.stringMerger(courseNotExist, courseId);
+            log.error(errorMsg);
+            throw new BadRequestException(errorMsg);
         });
         course.setIsActive(Boolean.FALSE);
         courseRepository.save(course);
-        log.info(courseDeleted + courseId);
+        log.info(courseDeleted, courseId);
         return BodyResponses.DELETED;
     }
 
     @Override
     public CourseDTO getCourseById(String courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> {
-            log.error(courseNotExist + courseId);
-            throw new BadRequestException(courseNotExist + courseId);
+            String errorMsg = Utils.stringMerger(courseNotExist, courseId);
+            log.error(errorMsg);
+            throw new BadRequestException(errorMsg);
         });
 
         return courseMapper.toDTO(course);

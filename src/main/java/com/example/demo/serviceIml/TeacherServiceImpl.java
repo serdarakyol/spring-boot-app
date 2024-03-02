@@ -1,44 +1,46 @@
 package com.example.demo.serviceIml;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.controller.BodyResponses;
 import com.example.demo.controller.CommonResponses;
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.dto.TeacherDTO;
+import com.example.demo.entity.Course;
 import com.example.demo.entity.Teacher;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.TeacherMapper;
+import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.TeacherRepository;
 import com.example.demo.service.TeacherService;
 import com.example.demo.utils.Utils;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
 
     static Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class);
 
-    @Autowired
     private final TeacherRepository teacherRepository;
+    private final CourseRepository courseRepository;
 
-    @Autowired
     private final TeacherMapper teacherMapper;
 
     @Override
     public String addNewTeacher(TeacherDTO teacherDTO) {
         String teacherEmail = teacherDTO.getEmail();
         if (teacherRepository.isExistByEmail(teacherEmail)) {
-            log.error(teacherExistMsg + "E-MAIL: " + teacherEmail);
-            throw new BadRequestException(teacherExistMsg + "E-MAIL: " + teacherEmail);
+            String errorMsg = Utils.stringMerger(teacherExistMsg, "E-MAIL: ", teacherEmail);
+            log.error(errorMsg);
+            throw new BadRequestException(errorMsg);
         }
 
         // check if mail is valid
@@ -60,14 +62,11 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public String updateTeacherById(String teacherEmail, TeacherDTO teacherDTO) {
-        Optional<Teacher> teacher = teacherRepository.findByEmail(teacherEmail);
-        // check if the teacher is exist
-        if (!teacher.isPresent()) {
-            log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
-            throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
-        }
-
-        Teacher currentTeacher = teacher.get();
+        Teacher currentTeacher = teacherRepository.findByEmail(teacherEmail).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(teacherNotExistMsg, "E-MAIL: ", teacherEmail);
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
 
         // Teacher name processing
         if (teacherDTO.getName().length() < 2) {
@@ -101,46 +100,48 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public String deleteTeacherById(int teacherId) {
         if (!teacherRepository.existsById(teacherId)) {
-            log.error(teacherNotExistMsg + "ID: " + teacherId);
-            throw new NotFoundException(teacherNotExistMsg + "ID: " + teacherId);
+            String errorMsg = Utils.stringMerger(teacherNotExistMsg, "ID: ", String.valueOf(teacherId));
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
         }
         teacherRepository.deleteById(teacherId);
-        log.info(teacherSuccessfullyDeleteMsg + "ID: " + teacherId);
+        log.info(teacherSuccessfullyDeleteMsg, "ID: ", String.valueOf(teacherId));
         return BodyResponses.DELETED;
     }
 
     @Override
     public String deleteByEmail(String teacherEmail) {
         if (!teacherRepository.isExistByEmail(teacherEmail)) {
-            log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
-            throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
+            String errorMsg = Utils.stringMerger(teacherNotExistMsg, "E-MAIL: ", teacherEmail);
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
         }
         teacherRepository.deleteByEmail(teacherEmail);
-        log.info(teacherSuccessfullyDeleteMsg + "E-MAIL: " + teacherEmail);
+        log.info(teacherSuccessfullyDeleteMsg, "E-MAIL: ", teacherEmail);
         return BodyResponses.DELETED;
     }
 
     @Override
     public TeacherDTO getTeacherById(int teacherId) {
-        Optional<Teacher> teacherRecord = teacherRepository.findById(teacherId);
-        if (!teacherRecord.isPresent()) {
-            log.error(teacherNotExistMsg + "ID: " + teacherId);
-            throw new NotFoundException(teacherNotExistMsg + "ID: " + teacherId);
-        }
-        Teacher teacher = teacherRecord.get();
-        log.info(teacherSuccessfullyFound + teacher.toString());
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(teacherNotExistMsg, "ID: ", String.valueOf(teacherId));
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
+
+        log.info(Utils.stringMerger(teacherSuccessfullyFound, String.valueOf(teacherId)));
         return teacherMapper.toDTO(teacher);
     }
 
     @Override
     public TeacherDTO getTeacherByEmail(String teacherEmail) {
-        Optional<Teacher> teacherOptional = teacherRepository.findByEmail(teacherEmail);
-        if (!teacherOptional.isPresent()) {
-            log.error(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
-            throw new NotFoundException(teacherNotExistMsg + "E-MAIL: " + teacherEmail);
-        }
-        Teacher teacher = teacherOptional.get();
-        log.info(teacherSuccessfullyFound + teacher.toString());
+        Teacher teacher = teacherRepository.findByEmail(teacherEmail).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(teacherNotExistMsg, "E-MAIL: ", teacherEmail);
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
+
+        log.info(Utils.stringMerger(teacherSuccessfullyFound, teacherEmail));
         return teacherMapper.toDTO(teacher);
     }
 
@@ -149,4 +150,27 @@ public class TeacherServiceImpl implements TeacherService {
         log.info("getTeachers: All teachers are called.");
         return teacherRepository.findAll().stream().map(t -> teacherMapper.toDTO(t)).toList();
     }
+
+    @Override
+    public String enrollCourse(int teacherId, Set<CourseDTO> courses) {
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(teacherNotExistMsg, "ID: ", String.valueOf(teacherId));
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
+
+        for (CourseDTO courseDTO : courses) {
+            Course course = courseRepository.findByCourseNameAndIsActiveTrue(courseDTO.getCourseName())
+                    .orElseThrow(() -> {
+                        String errorMsg = "Course is not exist: ".concat(courseDTO.getCourseName());
+                        log.error(errorMsg);
+                        throw new NotFoundException(errorMsg);
+                    });
+            teacher.getTeachingCourses().add(course);
+        }
+
+        teacherRepository.save(teacher);
+        return BodyResponses.ENROLLED;
+    }
+
 }

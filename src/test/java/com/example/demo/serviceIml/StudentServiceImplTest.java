@@ -118,7 +118,7 @@ class StudentServiceImplTest {
     @Test
     void testUpdateStudent() {
         // Given
-        Student updatedStudent = new Student();
+        StudentDTO updatedStudent = new StudentDTO();
         updatedStudent.setName("Jane Doe");
         updatedStudent.setEmail("janedoe@example.com");
         updatedStudent.setDob(LocalDate.parse("2001-01-01"));
@@ -139,7 +139,7 @@ class StudentServiceImplTest {
     @Test
     void testUpdateStudentEMailTaken() {
         // Given
-        Student updatedStudent = new Student();
+        StudentDTO updatedStudent = new StudentDTO();
         updatedStudent.setName("Jane Doe");
         updatedStudent.setEmail("janedoe@example.com");
         updatedStudent.setDob(LocalDate.of(2001, 1, 1));
@@ -159,7 +159,7 @@ class StudentServiceImplTest {
     @Test
     void testUpdateStudentAlreadyExist() {
         // Given
-        Student updatedStudent = new Student();
+        StudentDTO updatedStudent = new StudentDTO();
         updatedStudent.setName("Jane Doe");
         updatedStudent.setEmail("janedoe@example.com");
         updatedStudent.setDob(LocalDate.of(2001, 1, 1));
@@ -180,7 +180,7 @@ class StudentServiceImplTest {
     @Test
     void testUpdateStudentInvalidName() {
         // Given
-        Student updatedStudent = new Student();
+        StudentDTO updatedStudent = new StudentDTO();
         updatedStudent.setName("a");
         updatedStudent.setEmail("janedoe@example.com");
         updatedStudent.setDob(LocalDate.of(2001, 1, 1));
@@ -200,7 +200,7 @@ class StudentServiceImplTest {
     @Test
     void testUpdateStudentInvalidEmail() {
         // Given
-        Student updatedStudent = new Student();
+        StudentDTO updatedStudent = new StudentDTO();
         updatedStudent.setName("Test");
         updatedStudent.setEmail("t@t.com");
         updatedStudent.setDob(LocalDate.of(2001, 1, 1));

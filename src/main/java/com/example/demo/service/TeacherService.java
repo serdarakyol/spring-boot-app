@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Set;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.dto.TeacherDTO;
 
 public interface TeacherService {
@@ -17,4 +19,5 @@ public interface TeacherService {
     public TeacherDTO getTeacherById(int teacherId);
     public TeacherDTO getTeacherByEmail(String teacherId);
     public List<TeacherDTO> getTeachers();
+    public String enrollCourse(int teacherId, Set<CourseDTO> courses);
 }

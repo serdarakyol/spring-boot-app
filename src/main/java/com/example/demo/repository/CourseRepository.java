@@ -11,4 +11,6 @@ import com.example.demo.entity.Course;
 public interface CourseRepository extends JpaRepository<Course, String>{
 
     Optional<Course> findByIdAndIsActiveTrue(String id);
+
+    Optional<Course> findByCourseNameAndIsActiveTrue(String courseName);
 }

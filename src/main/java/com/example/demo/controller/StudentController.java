@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.dto.StudentDTO;
-import com.example.demo.entity.Student;
 import com.example.demo.response.Response;
 import com.example.demo.response.ResponseEnum;
 import com.example.demo.service.StudentService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @Tag(name = "Student", description = "Student module")
@@ -30,7 +32,7 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping
-    public Response<String> registerNewStudent(@RequestBody StudentDTO student) {
+    public Response<String> registerNewStudent(@RequestBody @Valid StudentDTO student) {
         return Response.<String>builder()
                 .data(studentService.addNewStudent(student))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
@@ -39,7 +41,8 @@ public class StudentController {
     }
 
     @PutMapping(path = "{studentEmail}")
-    public Response<String> updateStudent(@PathVariable("studentEmail") String studentEmail, @RequestBody Student updateStudent) {
+    public Response<String> updateStudent(@PathVariable("studentEmail") String studentEmail,
+            @RequestBody StudentDTO updateStudent) {
         return Response.<String>builder()
                 .data(studentService.updateStudent(studentEmail, updateStudent))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
@@ -87,6 +90,16 @@ public class StudentController {
     public Response<List<StudentDTO>> getStudents() {
         return Response.<List<StudentDTO>>builder()
                 .data(studentService.getStudents())
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
+    }
+
+    @PostMapping("{studentId}/enroll")
+    public Response<String> postMethodName(@PathVariable int studentId, @RequestBody Set<CourseDTO> courseDTO) {
+
+        return Response.<String>builder()
+                .data(studentService.enrollCourse(studentId, courseDTO))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
                 .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
                 .timestamp(Instant.now().toString()).build();

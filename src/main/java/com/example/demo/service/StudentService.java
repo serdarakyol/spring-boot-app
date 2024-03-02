@@ -1,9 +1,10 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Set;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.dto.StudentDTO;
-import com.example.demo.entity.Student;
 
 public interface StudentService {
 
@@ -15,9 +16,10 @@ public interface StudentService {
     public String addNewStudent(StudentDTO student);
     public String deleteStudentById(int studentId);
     public String deleteStudentByEmail(String studentEmail);
-    public String updateStudent(String studentEmail, Student updateStudent);
+    public String updateStudent(String studentEmail, StudentDTO updateStudent);
     public StudentDTO getStudentById(int studentId);
     public StudentDTO getStudentByEmail(String email);
     public List<StudentDTO> getStudents();
+    public String enrollCourse(int studentId, Set<CourseDTO> courses);
 
 }
