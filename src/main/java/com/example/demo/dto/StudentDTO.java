@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class StudentDTO {
     private String name;
 
     @JsonProperty("email")
+    @NotBlank
     private String email;
 
     @JsonProperty("age")

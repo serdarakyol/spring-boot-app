@@ -18,6 +18,7 @@ import com.example.demo.response.ResponseEnum;
 import com.example.demo.service.StudentService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @Tag(name = "Student", description = "Student module")
@@ -29,7 +30,7 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping
-    public Response<String> registerNewStudent(@RequestBody StudentDTO student) {
+    public Response<String> registerNewStudent(@RequestBody @Valid StudentDTO student) {
         return Response.<String>builder()
                 .data(studentService.addNewStudent(student))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
