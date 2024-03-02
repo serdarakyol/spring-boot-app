@@ -1,7 +1,6 @@
 package com.example.demo.serviceIml;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,9 @@ public class StudentServiceImpl implements StudentService {
     public String addNewStudent(StudentDTO studentDTO) {
         String studentEmail = studentDTO.getEmail();
         if (studentRepository.isExistByEmail(studentEmail)) {
-            log.error(studentExist + "E-MAIL: " + studentEmail);
-            throw new BadRequestException(studentExist + "E-MAIL: " + studentEmail);
+            String errorMsg = Utils.stringMerger(studentExist, "E-MAIL: ", studentEmail);
+            log.error(errorMsg);
+            throw new BadRequestException(errorMsg);
         }
 
         // check if mail is valid
@@ -54,28 +54,25 @@ public class StudentServiceImpl implements StudentService {
         }
         Student student = studentMapper.toEntity(studentDTO);
         studentRepository.save(student);
-        log.info("New student saved with ID: {}", student.getId());
+        log.info("New student saved with ID: {}", studentDTO.toString());
         return BodyResponses.CREATED;
     }
 
     @Transactional
     @Override
-    public String updateStudent(String studentEmail, final Student updateStudent) {
-        Optional<Student> student = studentRepository.findByEmail(studentEmail);
-        // check if the student is exist
-        if (!student.isPresent()) {
-            log.error(studentNotExistMsg + "E-mail: " + studentEmail);
-            throw new NotFoundException(studentNotExistMsg + "E-mail: " + studentEmail);
-        }
-
-        Student currentStudent = student.get();
+    public String updateStudent(String studentEmail, StudentDTO updateStudent) {
+        Student studentDB = studentRepository.findByEmail(studentEmail).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(studentNotExistMsg, "E-mail: ", studentEmail);
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
 
         // Student name processing
         if (updateStudent.getName().length() < 2) {
             log.error(CommonResponses.nameNotValidMsg);
             throw new BadRequestException(CommonResponses.nameNotValidMsg);
         }
-        currentStudent.setName(updateStudent.getName());
+        studentDB.setName(updateStudent.getName());
 
         // Check student email if valid
         if (!Utils.isMailValid(updateStudent.getEmail())) {
@@ -89,58 +86,60 @@ public class StudentServiceImpl implements StudentService {
                 log.error(CommonResponses.emailTakenMsg);
                 throw new BadRequestException(CommonResponses.emailTakenMsg);
             }
-            currentStudent.setEmail(updateStudent.getEmail());
+            studentDB.setEmail(updateStudent.getEmail());
         }
 
         // no need process for the DOB becase it's @NonNull in the entity class
-        currentStudent.setDob(updateStudent.getDob());
-        log.info("Student updated: {} ", currentStudent.toString());
+        studentDB.setDob(updateStudent.getDob());
+        log.info("Student updated with E-mail: {} ", studentEmail);
         return BodyResponses.UPDATED;
     }
 
     @Override
     public String deleteStudentById(int studentId) {
         if (!studentRepository.existsById(studentId)) {
-            log.error(studentNotExistMsg + "ID: " + studentId);
-            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
+            String errorMsg = Utils.stringMerger(studentNotExistMsg, "ID: ", String.valueOf(studentId));
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
         }
         studentRepository.deleteById(studentId);
-        log.info(studentSuccessfullyDeleteMsg + "ID: " + studentId);
+        log.info(studentSuccessfullyDeleteMsg, "ID: ", String.valueOf(studentId));
         return BodyResponses.DELETED;
     }
 
     @Override
     public String deleteStudentByEmail(String studentEmail) {
         if (!studentRepository.isExistByEmail(studentEmail)) {
-            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
-            throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
+            String errorMsg = Utils.stringMerger(studentNotExistMsg, "E-mail: ", studentEmail);
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
         }
         studentRepository.deleteByEmail(studentEmail);
-        log.info(studentSuccessfullyDeleteMsg + "E-MAIL: " + studentEmail);
+        log.info(studentSuccessfullyDeleteMsg, "E-MAIL: ", studentEmail);
         return BodyResponses.DELETED;
     }
 
     @Override
     public StudentDTO getStudentById(int studentId) {
-        Optional<Student> studentRecord = studentRepository.findById(studentId);
-        if (!studentRecord.isPresent()) {
-            log.error(studentNotExistMsg + "ID: " + studentId);
-            throw new NotFoundException(studentNotExistMsg + "ID: " + studentId);
-        }
-        Student student = studentRecord.get();
-        log.info(studentSuccessfullyFoundMsg + student.toString());
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(studentNotExistMsg, "ID: ", String.valueOf(studentId));
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
+
+        log.info(studentSuccessfullyFoundMsg, String.valueOf(studentId));
         return studentMapper.toDTO(student);
     }
 
     @Override
     public StudentDTO getStudentByEmail(String studentEmail) {
-        Optional<Student> studentOptional = studentRepository.findByEmail(studentEmail);
-        if (!studentOptional.isPresent()) {
-            log.error(studentNotExistMsg + "E-MAIL: " + studentEmail);
-            throw new NotFoundException(studentNotExistMsg + "E-MAIL: " + studentEmail);
-        }
-        Student student = studentOptional.get();
-        log.info(studentSuccessfullyFoundMsg + student.toString());
+        Student student = studentRepository.findByEmail(studentEmail).orElseThrow(() -> {
+            String errorMsg = Utils.stringMerger(studentNotExistMsg, "E-mail: ", studentEmail);
+            log.error(errorMsg);
+            throw new NotFoundException(errorMsg);
+        });
+
+        log.info(studentSuccessfullyFoundMsg, studentEmail);
         return studentMapper.toDTO(student);
     }
 

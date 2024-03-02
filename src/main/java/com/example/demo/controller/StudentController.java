@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.StudentDTO;
-import com.example.demo.entity.Student;
 import com.example.demo.response.Response;
 import com.example.demo.response.ResponseEnum;
 import com.example.demo.service.StudentService;
@@ -39,7 +38,7 @@ public class StudentController {
     }
 
     @PutMapping(path = "{studentEmail}")
-    public Response<String> updateStudent(@PathVariable("studentEmail") String studentEmail, @RequestBody Student updateStudent) {
+    public Response<String> updateStudent(@PathVariable("studentEmail") String studentEmail, @RequestBody StudentDTO updateStudent) {
         return Response.<String>builder()
                 .data(studentService.updateStudent(studentEmail, updateStudent))
                 .statusCode(ResponseEnum.SUCCESS.getStatusCode())
