@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 
-import com.example.demo.entity.Teacher;
+import com.example.demo.dto.TeacherDTO;
 
 public interface TeacherService {
     public final String teacherNotExistMsg = "Teacher does not exist with ";
@@ -10,11 +10,11 @@ public interface TeacherService {
     public final String teacherSuccessfullyDeleteMsg = "Teacher successfully deleted with ";
     public final String teacherSuccessfullyFound = "Teacher successfully found: ";
     
-    public void addNewTeacher(Teacher teacher);
-    public void deleteTeacherById(int teacherId);
-    public void deleteByEmail(String teacherEmail);
-    public void updateTeacherById(String teacherEmail, Teacher Updateteacher);
-    public Teacher getTeacherById(int teacherId);
-    public Teacher getTeacherByEmail(String teacherId);
-    public List<Teacher> getTeachers();
+    public String addNewTeacher(TeacherDTO teacher);
+    public String deleteTeacherById(int teacherId);
+    public String deleteByEmail(String teacherEmail);
+    public String updateTeacherById(String teacherEmail, TeacherDTO Updateteacher);
+    public TeacherDTO getTeacherById(int teacherId);
+    public TeacherDTO getTeacherByEmail(String teacherId);
+    public List<TeacherDTO> getTeachers();
 }

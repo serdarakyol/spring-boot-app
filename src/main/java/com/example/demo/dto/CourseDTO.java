@@ -1,18 +1,22 @@
 package com.example.demo.dto;
 
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.example.demo.entity.Student;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-
-@NonNull
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CourseDTO {
+
+    @JsonProperty("course_name")
     private String courseName;
+
+    @JsonProperty("course_credit")
     private Integer courseCredit;
-    private Set<Student> enrolledStudents;
+
 }

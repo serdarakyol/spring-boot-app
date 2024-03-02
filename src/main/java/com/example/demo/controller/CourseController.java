@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -14,50 +15,65 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CourseDTO;
-import com.example.demo.entity.Course;
-import com.example.demo.mapper.CourseMapper;
-import com.example.demo.serviceIml.CourseServiceIml;
+import com.example.demo.response.Response;
+import com.example.demo.response.ResponseEnum;
+import com.example.demo.service.CourseService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
+@Tag(name = "Course", description = "Course module")
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/course")
 public class CourseController {
 
-    private final CourseServiceIml courseServiceImpl;
-
-    private final CourseMapper courseMapper;
+    private final CourseService courseService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String registerNewCourse(@RequestBody Course course) {
-        courseServiceImpl.addNewCourse(course);
-        return BodyResponses.CREATED;
+    public Response<String> registerNewCourse(@RequestBody CourseDTO course) {
+        return Response.<String>builder()
+                .data(courseService.addNewCourse(course))
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @PatchMapping(path = "{courseId}")
-    public String updateCourse(@PathVariable("courseId") String courseId, @RequestBody Course updateCourse) {
-        courseServiceImpl.updateCourse(courseId, updateCourse);
-
-        return BodyResponses.UPDATED;
+    public Response<String> updateCourse(@PathVariable("courseId") String courseId, @RequestBody CourseDTO courseDTO) {
+        return Response.<String>builder()
+                .data(courseService.updateCourse(courseId, courseDTO))
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @DeleteMapping(path = "{courseId}")
-    public String deleteCourseById(@PathVariable("courseId") String courseId){
-        courseServiceImpl.deleteCourseById(courseId);
-        return BodyResponses.DELETED;
+    public Response<String> deleteCourseById(@PathVariable("courseId") String courseId) {
+        return Response.<String>builder()
+                .data(courseService.deleteCourseById(courseId))
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @GetMapping(path = "{courseId}")
-    public CourseDTO getCourseById(@PathVariable("courseId") String courseId){
-        Course course = courseServiceImpl.getCourseById(courseId);
-        return courseMapper.courseToDto(course);
+    public Response<CourseDTO> getCourseById(@PathVariable("courseId") String courseId) {
+        return Response.<CourseDTO>builder()
+                .data(courseService.getCourseById(courseId))
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString()).build();
     }
 
     @GetMapping
-    public List<CourseDTO> getCourses(){
-        List<Course> courses = courseServiceImpl.getCourses();
-        return courseMapper.courseToDto(courses);
+    public Response<List<CourseDTO>> getCourses() {
+        return Response.<List<CourseDTO>>builder()
+                .data(courseService.getCourses())
+                .statusCode(ResponseEnum.SUCCESS.getStatusCode())
+                .statusMessage(ResponseEnum.SUCCESS.getStatusMessage())
+                .timestamp(Instant.now().toString())
+                .build();
     }
 }

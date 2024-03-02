@@ -1,107 +1,113 @@
 package com.example.demo.serviceIml;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.controller.BodyResponses;
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.entity.Course;
 import com.example.demo.exception.BadRequestException;
+import com.example.demo.mapper.CourseMapper;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.service.CourseService;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Log4j2
-@RequiredArgsConstructor
+@Slf4j
+@AllArgsConstructor
 public class CourseServiceIml implements CourseService {
     private final String courseNotExist = "Course is not exist with ID: ";
-    private final String courseNameNotValid = "courseName can not be null, empty or only whitespace";
-    private final String creditNotValid = "courseCredit must be equal or greater than 0";
+    private final String courseNameNotValid = "course_name can not be null, empty or only whitespace";
+    private final String creditNotValid = "course_credit must be greater than 0";
     private final String courseDeleted = "Course successfully deleted with ID: ";
-    private final String courseFound = "Course successfully found: ";
 
     private final CourseRepository courseRepository;
 
+    private CourseMapper courseMapper;
+
     @Override
-    public void addNewCourse(Course course) {
-        String courseName = course.getCourseName();
-        if (courseName == null || courseName.trim().length() == 0) {
+    public String addNewCourse(CourseDTO courseDTO) {
+        if (!isValidCourseName(courseDTO.getCourseName())) {
             log.error(courseNameNotValid);
             throw new BadRequestException(courseNameNotValid);
         }
 
-        if (course.getCourseCredit() < 0) {
+        if (courseDTO.getCourseCredit() < 1) {
             log.error(creditNotValid);
             throw new BadRequestException(creditNotValid);
         }
-
+        Course course = courseMapper.toEntity(courseDTO);
+        course.setIsActive(true);
         courseRepository.save(course);
-        log.info("New course saved: {}", course.toString());
+        log.info("New course successfully saved.");
+        return BodyResponses.CREATED;
     }
 
     @Transactional
     @Override
-    public void updateCourse(String courseId, final Course updateCourse) {
-        Optional<Course> optionalCourse = courseRepository.findById(courseId);
-        if (!optionalCourse.isPresent()) {
+    public String updateCourse(String courseId, CourseDTO courseDTO) {
+        Course currentCourse = courseRepository.findById(courseId).orElseThrow(() -> {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
-        }
-
-        Course currentCourse = optionalCourse.get();
+        });
 
         // Check course name
-        String courseName = updateCourse.getCourseName();
-        if (!courseName.equals(currentCourse.getCourseName())) {
-            if (courseName == null || courseName.trim().length() == 0) {
-                log.error(courseNameNotValid);
-                throw new BadRequestException(courseNameNotValid);
-            }
-            currentCourse.setCourseName(updateCourse.getCourseName());
+        String courseName = courseDTO.getCourseName();
+        if (!courseName.equals(currentCourse.getCourseName()) && !isValidCourseName(courseName)) {
+            log.error(courseNameNotValid);
+            throw new BadRequestException(courseNameNotValid);
         }
+        currentCourse.setCourseName(courseDTO.getCourseName());
 
         // Check course credit
-        if (updateCourse.getCourseCredit() != currentCourse.getCourseCredit()) {
-            if (updateCourse.getCourseCredit() < 0 || updateCourse.getCourseCredit().equals(null)) {
+        if (courseDTO.getCourseCredit() != currentCourse.getCourseCredit()) {
+            if (courseDTO.getCourseCredit() < 0 || courseDTO.getCourseCredit() == null) {
                 log.error(creditNotValid);
                 throw new BadRequestException(creditNotValid);
             }
-            currentCourse.setCourseCredit(updateCourse.getCourseCredit());
+            currentCourse.setCourseCredit(courseDTO.getCourseCredit());
         }
 
-        log.info("Course updated: {}", updateCourse.toString());
+        log.info("Course successfully updated with ID: {}", currentCourse.getId());
+        return BodyResponses.UPDATED;
     }
 
     @Override
-    public void deleteCourseById(String courseId) {
-        if (!courseRepository.existsById(courseId)) {
+    public String deleteCourseById(String courseId) {
+        Course course = courseRepository.findByIdAndIsActiveTrue(courseId).orElseThrow(() -> {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
-        }
-        courseRepository.deleteById(courseId);
+        });
+        course.setIsActive(Boolean.FALSE);
+        courseRepository.save(course);
         log.info(courseDeleted + courseId);
+        return BodyResponses.DELETED;
     }
 
     @Override
-    public Course getCourseById(String courseId) {
-        Optional<Course> courseOpt = courseRepository.findById(courseId);
-        if (!courseOpt.isPresent()) {
+    public CourseDTO getCourseById(String courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> {
             log.error(courseNotExist + courseId);
             throw new BadRequestException(courseNotExist + courseId);
-        }
+        });
 
-        Course course = courseOpt.get();
-        log.info(courseFound + course.toString());
-        return course;
+        return courseMapper.toDTO(course);
     }
 
     @Override
-    public List<Course> getCourses() {
+    public List<CourseDTO> getCourses() {
         log.info("All courses are called.");
-        return courseRepository.findAll();
+        List<Course> courses = courseRepository.findAll();
+        return courses.stream().map(c -> courseMapper.toDTO(c)).toList();
     }
+
+    private boolean isValidCourseName(String courseName) {
+        return courseName.isBlank() || courseName == null ? false : true;
+    }
+
+    
 }

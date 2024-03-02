@@ -2,13 +2,13 @@ package com.example.demo.service;
 
 import java.util.List;
 
-import com.example.demo.entity.Course;
+import com.example.demo.dto.CourseDTO;
 
 public interface CourseService {
 
-    public void addNewCourse(final Course course);
-    public void updateCourse(String courseId, final Course course);
-    public void deleteCourseById(String courseId);
-    public Course getCourseById(String courseId);
-    public List<Course> getCourses();
+    public String addNewCourse(CourseDTO course);
+    public String updateCourse(String courseId, CourseDTO course);
+    public String deleteCourseById(String courseId);
+    public CourseDTO getCourseById(String courseId);
+    public List<CourseDTO> getCourses();
 }

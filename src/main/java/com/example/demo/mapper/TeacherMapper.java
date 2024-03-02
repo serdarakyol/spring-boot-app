@@ -1,7 +1,5 @@
 package com.example.demo.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -10,9 +8,11 @@ import com.example.demo.entity.Teacher;
 
 @Mapper(componentModel = "spring")
 public interface TeacherMapper {
+
     TeacherMapper INSTANCE = Mappers.getMapper(TeacherMapper.class);
 
-    TeacherDTO teacherToDto(Teacher teacher);
+    TeacherDTO toDTO(Teacher teacher);
 
-    List<TeacherDTO> teacherToDto(List<Teacher> teachers);
+    Teacher toEntity(TeacherDTO teacherDTO);
+
 }

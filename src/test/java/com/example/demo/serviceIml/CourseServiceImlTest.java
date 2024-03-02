@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,8 +23,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.demo.dto.CourseDTO;
 import com.example.demo.entity.Course;
 import com.example.demo.exception.BadRequestException;
+import com.example.demo.mapper.CourseMapper;
 import com.example.demo.repository.CourseRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +38,11 @@ public class CourseServiceImlTest {
     @InjectMocks
     private CourseServiceIml courseServiceIml;
 
-    private Course testCourse;
+    @InjectMocks
+    private CourseMapper courseMapper = spy(CourseMapper.INSTANCE);
+
+    private Course course;
+    private CourseDTO courseDTO;
 
     @Captor
     private ArgumentCaptor<String> idCaptor;
@@ -45,34 +52,35 @@ public class CourseServiceImlTest {
     // Given
     @BeforeEach
     void setUp() {
-        testCourse = new Course("Data Structure", 10, 200);
-        testCourse.setCourseId("61a4acb0-123b-4641-a722-448fd3a95b60");
+        course = Course.builder().id("61a4acb0-123b-4641-a722-448fd3a95b60").courseName("Data Structure")
+                .courseCredit(3).isActive(true).build();
+
+        courseDTO = CourseDTO.builder().courseName(course.getCourseName()).courseCredit(course.getCourseCredit())
+                .build();
     }
 
     @Test
     void testAddNewCourse() {
-        // When
-        courseServiceIml.addNewCourse(testCourse);
+        // Given - When
+        courseServiceIml.addNewCourse(courseDTO);
 
         // Then
         ArgumentCaptor<Course> courseArgumentCaptor = ArgumentCaptor.forClass(Course.class);
         verify(courseRepository).save(courseArgumentCaptor.capture());
-        Course courseRecord = courseArgumentCaptor.getValue();
-        assertNotNull(courseRecord);
-        assertEquals(courseRecord, testCourse);
-        assertEquals(courseRecord.getCourseName(), testCourse.getCourseName());
-        assertEquals(courseRecord.getCourseCredit(), testCourse.getCourseCredit());
-        assertEquals(courseRecord.getCourseTeacherId(), testCourse.getCourseTeacherId());
+        Course savedCourse = courseArgumentCaptor.getValue();
+        assertNotNull(savedCourse);
+        assertEquals(savedCourse.getCourseName(), course.getCourseName());
+        assertEquals(savedCourse.getCourseCredit(), course.getCourseCredit());
     }
 
     @Test
     void testAddNewCourseInvalidCourseName() {
         // Given
-        testCourse.setCourseName("   ");
+        courseDTO.setCourseName("   ");
 
         // When
         assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.addNewCourse(testCourse);
+            courseServiceIml.addNewCourse(courseDTO);
         });
 
         // Then
@@ -82,39 +90,39 @@ public class CourseServiceImlTest {
     @Test
     void testAddNewCourseInvalidCredit() {
         // Given
-        testCourse.setCourseCredit(-5);
+        courseDTO.setCourseCredit(-5);
 
         // When
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.addNewCourse(testCourse);
+            courseServiceIml.addNewCourse(courseDTO);
         });
 
         // Then
-        assertEquals("courseCredit must be equal or greater than 0", exp.getMessage());
+        assertEquals("course_credit must be greater than 0", exp.getMessage());
     }
 
     @Test
     void testUpdateCourse() {
         // Given
-        Course newCourse = new Course("Advanced programming technique", 5, 1);
+        CourseDTO expectedCourseDTO = CourseDTO.builder().courseCredit(3).courseName("Data Structure").build();
+        String expectedResponse = "Successfully updated";
 
         // When
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
-        courseServiceIml.updateCourse(testCourse.getCourseId(), newCourse);
+        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
+        String response = courseServiceIml.updateCourse(course.getId(), expectedCourseDTO);
 
         // Then
-        assertEquals(testCourse.getCourseName(), newCourse.getCourseName());
-        assertEquals(testCourse.getCourseCredit(), newCourse.getCourseCredit());
+        assertEquals(expectedCourseDTO.getCourseName(), course.getCourseName());
+        assertEquals(expectedCourseDTO.getCourseCredit(), course.getCourseCredit());
+        assertEquals(expectedResponse, response);
     }
 
     @Test
     void testUpdateCourseNotFound() {
-        // Given
-        Course newCourse = new Course("Advanced programming technique", 5, 1);
-
-        // When
+        // Given - When
+        when(courseRepository.findById(nonExistId)).thenReturn(Optional.empty());
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.updateCourse(nonExistId, newCourse);
+            courseServiceIml.updateCourse(nonExistId, courseDTO);
         });
 
         // Then
@@ -124,45 +132,47 @@ public class CourseServiceImlTest {
     @Test
     void testUpdateCourseInvalidCourseName() {
         // Given
-        Course newCourse = new Course("   ", 5, 1);
+        courseDTO.setCourseName("   ");
 
         // When
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
+        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.updateCourse(testCourse.getCourseId(), newCourse);
+            courseServiceIml.updateCourse(course.getId(), courseDTO);
         });
 
         // Then
-        assertEquals("courseName can not be null, empty or only whitespace", exp.getMessage());
+        assertEquals("course_name can not be null, empty or only whitespace", exp.getMessage());
     }
 
     @Test
     void testUpdateCourseInvalidCredit() {
         // Given
-        Course newCourse = new Course("Advanced programming technique", -5, 1);
+        courseDTO.setCourseCredit(-1);
 
         // When
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
+        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
         BadRequestException exp = assertThrows(BadRequestException.class, () -> {
-            courseServiceIml.updateCourse(testCourse.getCourseId(), newCourse);
+            courseServiceIml.updateCourse(course.getId(), courseDTO);
         });
 
         // Then
-        assertEquals("courseCredit must be equal or greater than 0", exp.getMessage());
+        assertEquals("course_credit must be greater than 0", exp.getMessage());
     }
 
     @Test
     void testDeleteCourseById() {
         // Given
-        when(courseRepository.existsById(testCourse.getCourseId())).thenReturn(true);
+        when(courseRepository.findByIdAndIsActiveTrue(course.getId())).thenReturn(Optional.of(course));
 
         // When
-        courseServiceIml.deleteCourseById(testCourse.getCourseId());
+        courseServiceIml.deleteCourseById(course.getId());
 
         // Then
-        verify(courseRepository, times(1)).deleteById(idCaptor.capture());
-        String capturedId = idCaptor.getValue();
-        assertEquals(testCourse.getCourseId(), capturedId);
+        verify(courseRepository, times(1)).findByIdAndIsActiveTrue(idCaptor.capture());
+        ArgumentCaptor<Course> argumentCaptorCourse = ArgumentCaptor.forClass(Course.class);
+        verify(courseRepository).save(argumentCaptorCourse.capture());
+        Course capturedCourse = argumentCaptorCourse.getValue();
+        assertEquals(false, capturedCourse.getIsActive());
     }
 
     @Test
@@ -179,18 +189,15 @@ public class CourseServiceImlTest {
     @Test
     void testGetCourseById() {
         // Given
-        when(courseRepository.findById(testCourse.getCourseId())).thenReturn(Optional.of(testCourse));
+        when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
 
         // When
-        Course courseRecord = courseServiceIml.getCourseById(testCourse.getCourseId());
+        CourseDTO actualCourse = courseServiceIml.getCourseById(course.getId());
 
         // Then
-        assertNotNull(courseRecord);
-        assertEquals(courseRecord, testCourse);
-        assertEquals(courseRecord.getCourseId(), testCourse.getCourseId());
-        assertEquals(courseRecord.getCourseName(), testCourse.getCourseName());
-        assertEquals(courseRecord.getCourseCredit(), testCourse.getCourseCredit());
-        assertEquals(courseRecord.getCourseTeacherId(), testCourse.getCourseTeacherId());
+        assertNotNull(actualCourse);
+        assertEquals(course.getCourseName(), actualCourse.getCourseName());
+        assertEquals(course.getCourseCredit(), actualCourse.getCourseCredit());
     }
 
     @Test
@@ -207,26 +214,20 @@ public class CourseServiceImlTest {
     @Test
     void testGetCourses() {
         // Given
-        List<Course> actuals = new ArrayList<Course>();
-        Course APT = new Course("Advanced programming technique", 5, 1);
-        Course PL = new Course("Programming languages", 7, 2);
-        actuals.add(PL);
-        actuals.add(APT);
-        actuals.add(testCourse);
+        List<CourseDTO> expectedCourses = new ArrayList<>();
+        expectedCourses.add(courseDTO);
+        List<Course> actualCourses = new ArrayList<>();
+        actualCourses.add(course);
 
         // When
-        when(courseRepository.findAll()).thenReturn(actuals);
-        List<Course> records = courseServiceIml.getCourses();
+        when(courseRepository.findAll()).thenReturn(actualCourses);
+        List<CourseDTO> actualResponse = courseServiceIml.getCourses();
 
         // Then
-        verify(courseRepository, times(1)).findAll();
-        assertNotNull(records);
-        System.out.println(records.size());
-        assertEquals(3, records.size());
-        for (int i = 0; i < records.size(); i++) {
-            assertEquals(records.get(i).getCourseName(), actuals.get(i).getCourseName());
-            assertEquals(records.get(i).getCourseCredit(), actuals.get(i).getCourseCredit());
-            assertEquals(records.get(i).getCourseTeacherId(), actuals.get(i).getCourseTeacherId());
-        }
+        assertNotNull(actualResponse);
+        assertEquals(1, actualResponse.size());
+        assertEquals(expectedCourses.get(0).getCourseName(), actualResponse.get(0).getCourseName());
+        assertEquals(expectedCourses.get(0).getCourseCredit(), actualResponse.get(0).getCourseCredit());
+
     }
 }
